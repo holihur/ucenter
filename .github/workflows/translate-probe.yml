@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - ".github/workflows/translate-probe.yml"
-  workflow_dispatch
+  workflow_dispatch:
 jobs:
   probe:
     runs-on: ubuntu-latest
