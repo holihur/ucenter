@@ -1,0 +1,9 @@
+# Toolchain for UCenter. Run `mise install` once, then `mise exec -- <command>`.
+[tools]
+go = "1.27.3"
+node = "26.12.1"
+"npm:pnpm" = "12.15.0"
+
+[env]
+# Gin's msgpack binding pulls in a very large codec; UCenter does not use it.
+GOFLAGS = "-tags=nomsgpack"

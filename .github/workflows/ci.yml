@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      MONGO_URI: mongodb://127.0.0.1:27017
+      MONGO_DB: ucenter_ci
+      BASE_URL: http://127.0.0.1:8080
+      DEV: "true"
+      MAIL_DRIVER: mock
+      ENCRYPTION_KEY: ci-test-encryption-key
+      E2E_BASE_URL: http://127.0.0.1:8080
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.x"
+          cache-dependency-path: server/go.sum
+
+      - name: Go test
+        working-directory: server
+        run: go test -tags nomsgpack ./...
+
+      - name: Go vet
+        working-directory: server
+        run: go vet -tags nomsgpack ./...
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.15.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+          cache-dependency-path: web/pnpm-lock.yaml
+
+      - name: Install frontend
+        working-directory: web
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        working-directory: web
+        run: pnpm typecheck
+
+      - name: Build frontend
+        working-directory: web
+        run: pnpm build
+
+      - name: Seed demo data
+        working-directory: server
+        run: go run ./cmd/seed
+
+      - name: Build server
+        working-directory: server
+        run: go build -tags nomsgpack -o /tmp/ucenter ./cmd/server
+
+      - name: Start server
+        working-directory: server
+        run: |
+          WEB_DIR=../web/dist /tmp/ucenter > /tmp/ucenter.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:8080/readyz >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/ucenter.log
+          exit 1
+
+      - name: Install Playwright browser
+        working-directory: web
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Playwright
+        working-directory: web
+        run: pnpm e2e
+
+      - name: Upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            web/playwright-report
+            web/test-results
+          retention-days: 7
