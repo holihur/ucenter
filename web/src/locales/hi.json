@@ -487,5 +487,6 @@
   "You can now sign in with your new password.": "अब आप अपने नए पासवर्ड से साइन इन कर सकते हैं।",
   "You can sign in with your password and set up MFA again.": "आप अपने पासवर्ड से साइन इन कर सकते हैं और MFA को फिर से सेट कर सकते हैं।",
   "Your email address has been verified.": "आपका ईमेल पता सत्यापित कर दिया गया है।",
-  "Your sessions will be signed out.": "आपके सत्र साइन आउट हो जाएंगे."
+  "Your sessions will be signed out.": "आपके सत्र साइन आउट हो जाएंगे.",
+  "Select": "चुनें"
 }

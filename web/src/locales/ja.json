@@ -485,5 +485,8 @@
   "You can now sign in with your new password.": "新しいパスワードを使用してサインインできるようになりました。",
   "You can sign in with your password and set up MFA again.": "パスワードを使用してサインインし、MFA を再度セットアップできます。",
   "Your email address has been verified.": "あなたのメールアドレスが確認されました。",
-  "Your sessions will be signed out.": "セッションはサインアウトされます。"
+  "Your sessions will be signed out.": "セッションはサインアウトされます。",
+  "Select": "選択",
+  "To": "宛先",
+  "Prompt members without MFA to enroll after signing in.": "MFA 未設定のメンバーに、サインイン後の登録を促します。"
 }
