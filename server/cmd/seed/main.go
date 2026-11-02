@@ -43,6 +43,8 @@ func main() {
 			PrimaryColor:    "#4f46e5",
 			BackgroundColor: "#f8fafc",
 			SupportEmail:    "support@acme.test",
+			LoginTemplate:   "aurora",
+			LoginTagline:    "One identity for the whole Acme ecosystem.",
 		},
 		Settings: func() models.TenantSettings {
 			s := models.DefaultSettings()
@@ -59,6 +61,8 @@ func main() {
 			PrimaryColor:    "#0f766e",
 			BackgroundColor: "#f0fdfa",
 			SupportEmail:    "it@globex.test",
+			LoginTemplate:   "fintech",
+			LoginTagline:    "Secure access to the Globex platform.",
 		},
 		Settings: models.DefaultSettings(),
 	})

@@ -27,6 +27,25 @@ type Branding struct {
 	PrimaryColor    string `bson:"primary_color" json:"primaryColor"`
 	BackgroundColor string `bson:"background_color" json:"backgroundColor"`
 	SupportEmail    string `bson:"support_email" json:"supportEmail"`
+	LoginTemplate   string `bson:"login_template" json:"loginTemplate"`
+	LoginTagline    string `bson:"login_tagline" json:"loginTagline"`
+}
+
+var LoginTemplates = []string{
+	"aurora", "minimal", "glass", "enterprise", "fintech",
+	"healthcare", "education", "developer", "government", "retail",
+}
+
+func ValidLoginTemplate(id string) bool {
+	if id == "" {
+		return true
+	}
+	for _, t := range LoginTemplates {
+		if t == id {
+			return true
+		}
+	}
+	return false
 }
 
 type TenantSettings struct {

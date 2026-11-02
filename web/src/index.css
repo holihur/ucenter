@@ -89,3 +89,46 @@
     background-size: 32px 32px;
   }
 }
+
+@layer components {
+  .auth-grid-pattern {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .auth-waves {
+    background-image:
+      radial-gradient(ellipse at 10% 90%, rgb(13 148 136 / 0.22), transparent 55%),
+      radial-gradient(ellipse at 90% 10%, rgb(56 189 248 / 0.2), transparent 55%),
+      repeating-radial-gradient(circle at 0 100%, transparent 0 28px, rgb(13 148 136 / 0.08) 28px 29px);
+  }
+  .auth-blobs {
+    background-image:
+      radial-gradient(circle at 18% 25%, rgb(255 255 255 / 0.3) 0, transparent 32%),
+      radial-gradient(circle at 82% 18%, rgb(255 237 213 / 0.35) 0, transparent 30%),
+      radial-gradient(circle at 70% 85%, rgb(251 113 133 / 0.28) 0, transparent 34%);
+  }
+  .auth-terminal-lines {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 23px,
+      rgb(34 197 94 / 0.06) 23px 24px
+    );
+  }
+  .auth-seal {
+    background-image:
+      radial-gradient(circle at 78% 28%, rgb(212 175 55 / 0.18) 0 2px, transparent 2px 100%),
+      linear-gradient(135deg, rgb(255 255 255 / 0.04) 0 1px, transparent 1px 22px);
+    background-size: 22px 22px, 22px 22px;
+  }
+  .auth-retail-shapes {
+    background-image:
+      radial-gradient(circle at 12% 78%, rgb(249 115 22 / 0.16) 0 90px, transparent 91px),
+      radial-gradient(circle at 88% 20%, rgb(244 63 94 / 0.14) 0 120px, transparent 121px);
+  }
+  .auth-shell .auth-form-card input,
+  .auth-shell .auth-form-card textarea {
+    background-color: hsl(var(--background));
+  }
+}

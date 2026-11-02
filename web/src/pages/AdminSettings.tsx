@@ -16,8 +16,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
+import { AUTH_TEMPLATES, type AuthTemplate } from "@/lib/authTemplates";
 import { api, type Tenant, type TenantSettings } from "@/lib/api";
-import { applyBrandColor } from "@/lib/utils";
+import { applyBrandColor, cn } from "@/lib/utils";
 
 export function AdminSettings() {
   const { can, me } = useAuth();
@@ -35,6 +36,8 @@ export function AdminSettings() {
     primaryColor: "#4f46e5",
     backgroundColor: "#f8fafc",
     supportEmail: "",
+    loginTemplate: "aurora",
+    loginTagline: "",
   });
   const [settings, setSettings] = useState<TenantSettings>({
     allowRegistration: false,
@@ -59,6 +62,8 @@ export function AdminSettings() {
       primaryColor: tenant.branding?.primaryColor || "#4f46e5",
       backgroundColor: tenant.branding?.backgroundColor || "#f8fafc",
       supportEmail: tenant.branding?.supportEmail ?? "",
+      loginTemplate: tenant.branding?.loginTemplate || "aurora",
+      loginTagline: tenant.branding?.loginTagline ?? "",
     });
     setSettings({
       ...tenant.settings,
@@ -290,6 +295,50 @@ export function AdminSettings() {
                   </div>
                 </div>
               </div>
+              <div className="space-y-3 rounded-lg border p-4">
+                <div>
+                  <Label>{t("Login page template")}</Label>
+                  <p className="text-xs text-muted-foreground">
+                    {t("Choose a built-in design language for login, registration and consent pages.")}
+                  </p>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {AUTH_TEMPLATES.map((template) => (
+                    <button
+                      key={template.id}
+                      type="button"
+                      disabled={!editable}
+                      onClick={() => setBranding({ ...branding, loginTemplate: template.id })}
+                      className={cn(
+                        "rounded-xl border p-2.5 text-left transition hover:-translate-y-0.5 hover:shadow-md disabled:pointer-events-none disabled:opacity-60",
+                        branding.loginTemplate === template.id && "ring-2 ring-primary ring-offset-2 ring-offset-background",
+                      )}
+                    >
+                      <TemplatePreview template={template} />
+                      <div className="mt-2 flex items-baseline justify-between gap-2">
+                        <span className="text-sm font-medium">{template.name}</span>
+                        <span className="truncate text-[10px] text-muted-foreground">{template.industry}</span>
+                      </div>
+                      <p className="mt-0.5 line-clamp-1 text-[10px] text-muted-foreground">{template.description}</p>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="login-tagline">{t("Login page tagline")}</Label>
+                <Input
+                  id="login-tagline"
+                  value={branding.loginTagline}
+                  onChange={(e) => setBranding({ ...branding, loginTagline: e.target.value })}
+                  disabled={!editable}
+                  placeholder={t("One identity for the whole organization.")}
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  {t("Shown on the login page next to the organization name.")}
+                </p>
+              </div>
+
               <div className="rounded-lg border p-4">
                 <p className="mb-2 text-xs font-medium text-muted-foreground">Preview</p>
                 <div
@@ -418,6 +467,42 @@ export function AdminSettings() {
         loading={rotating}
         onConfirm={rotateSigningKey}
       />
+    </div>
+  );
+}
+
+const previewPatternClass: Record<AuthTemplate["pattern"], string> = {
+  mesh: "brand-mesh",
+  grid: "auth-grid-pattern",
+  waves: "auth-waves",
+  blobs: "auth-blobs",
+  terminal: "auth-terminal-lines",
+  seal: "auth-seal",
+  retail: "auth-retail-shapes",
+  none: "",
+};
+
+function TemplatePreview({ template }: { template: AuthTemplate }) {
+  const centered = template.layout !== "split";
+  return (
+    <div className={cn("relative h-24 overflow-hidden rounded-lg border", template.shellClass, template.panelClass)}>
+      <div className={cn("absolute inset-0 opacity-80", previewPatternClass[template.pattern])} />
+      <div className={cn("absolute left-2.5 top-2.5 h-5 w-5 rounded bg-white/85 shadow-sm", centered && "left-1/2 -translate-x-1/2")} />
+      <div className={cn("absolute bottom-2.5 left-2.5 space-y-1", centered && "left-1/2 w-14 -translate-x-1/2")}>
+        <div className="h-1.5 w-12 rounded bg-white/75" />
+        <div className="h-1 w-8 rounded bg-white/50" />
+      </div>
+      <div
+        className={cn(
+          "absolute right-2.5 top-2.5 w-[82px] rounded-md border bg-white/90 p-2 shadow-sm dark:border-white/10 dark:bg-slate-900/90",
+          centered && "left-1/2 right-auto top-9 -translate-x-1/2",
+        )}
+      >
+        <div className="h-1.5 w-10 rounded bg-slate-300 dark:bg-slate-600" />
+        <div className="mt-1.5 h-2.5 rounded border bg-white dark:border-slate-700 dark:bg-slate-950" />
+        <div className="mt-1 h-2.5 rounded border bg-white dark:border-slate-700 dark:bg-slate-950" />
+        <div className="mt-1.5 h-2.5 rounded" style={{ backgroundColor: template.accent }} />
+      </div>
     </div>
   );
 }

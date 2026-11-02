@@ -970,6 +970,10 @@ func (a *API) updateSettings(c *gin.Context) {
 			fail(c, http.StatusBadRequest, "invalid_color", "Primary color must be a hex color like #4f46e5")
 			return
 		}
+		if !models.ValidLoginTemplate(b.LoginTemplate) {
+			fail(c, http.StatusBadRequest, "invalid_login_template", "Unknown login page template")
+			return
+		}
 		update["branding"] = b
 	}
 	if body.Domains != nil {

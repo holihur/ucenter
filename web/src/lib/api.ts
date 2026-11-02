@@ -79,6 +79,8 @@ export interface Branding {
   primaryColor: string;
   backgroundColor: string;
   supportEmail: string;
+  loginTemplate?: string;
+  loginTagline?: string;
 }
 
 export interface TenantSettings {
