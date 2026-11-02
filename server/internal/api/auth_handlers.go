@@ -67,7 +67,7 @@ func (a *API) login(c *gin.Context) {
 		return
 	}
 	key := a.clientIP(c) + "|" + req.Tenant + "|" + req.Email
-	if !a.limiter.allow(key) {
+	if ok, _ := a.limiter.Allow(c.Request.Context(), key); !ok {
 		a.Metrics.Login("rate_limited")
 		fail(c, http.StatusTooManyRequests, "rate_limited", "Too many sign-in attempts. Please wait a few minutes and try again.")
 		return
@@ -120,7 +120,7 @@ func (a *API) login(c *gin.Context) {
 		return
 	}
 	a.setSessionCookie(c, raw, sess.ExpiresAt)
-	a.limiter.reset(key)
+	_ = a.limiter.Reset(ctx, key)
 
 	var authReq *models.AuthRequest
 	var client *models.Client

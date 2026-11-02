@@ -33,6 +33,8 @@ type Config struct {
 	MetricsToken        string
 	LogFormat           string
 	LogLevel            string
+	RedisURL            string
+	RedisPrefix         string
 }
 
 func Load() Config {
@@ -61,6 +63,8 @@ func Load() Config {
 		MetricsToken:        env("METRICS_TOKEN", ""),
 		LogFormat:           env("LOG_FORMAT", ""),
 		LogLevel:            env("LOG_LEVEL", "info"),
+		RedisURL:            env("REDIS_URL", ""),
+		RedisPrefix:         env("REDIS_PREFIX", "ucenter:rl:"),
 	}
 	if origins := env("ALLOWED_ORIGINS", ""); origins != "" {
 		c.AllowedOrigins = strings.Split(origins, ",")

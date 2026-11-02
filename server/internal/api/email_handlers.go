@@ -105,7 +105,7 @@ func (a *API) forgotPassword(c *gin.Context) {
 	}
 	body.Email = security.NormalizeEmail(body.Email)
 	key := a.clientIP(c) + "|forgot|" + body.Tenant + "|" + body.Email
-	if !a.mailLimiter.allow(key) {
+	if ok, _ := a.mailLimiter.Allow(c.Request.Context(), key); !ok {
 		fail(c, http.StatusTooManyRequests, "rate_limited", "Too many requests. Please wait a few minutes and try again.")
 		return
 	}
@@ -202,7 +202,7 @@ func (a *API) requestMFARecovery(c *gin.Context) {
 	}
 	body.Email = security.NormalizeEmail(body.Email)
 	key := a.clientIP(c) + "|mfa|" + body.Tenant + "|" + body.Email
-	if !a.mailLimiter.allow(key) {
+	if ok, _ := a.mailLimiter.Allow(c.Request.Context(), key); !ok {
 		fail(c, http.StatusTooManyRequests, "rate_limited", "Too many requests. Please wait a few minutes and try again.")
 		return
 	}

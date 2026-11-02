@@ -37,6 +37,8 @@ services:
       SMTP_FROM: ${SMTP_FROM:-no-reply@ucenter.local}
       SMTP_FROM_NAME: ${SMTP_FROM_NAME:-UCenter}
       SMTP_TLS: ${SMTP_TLS:-false}
+      REDIS_URL: ${REDIS_URL:-}
+      REDIS_PREFIX: ${REDIS_PREFIX:-ucenter:rl:}
       METRICS_TOKEN: ${METRICS_TOKEN:-}
       LOG_FORMAT: ${LOG_FORMAT:-json}
       LOG_LEVEL: ${LOG_LEVEL:-info}
@@ -45,6 +47,13 @@ services:
       interval: 30s
       timeout: 5s
       retries: 5
+
+  redis:
+    image: redis:7-alpine
+    profiles: ["redis"]
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
 
   prometheus:
     image: prom/prometheus:v2.55.1

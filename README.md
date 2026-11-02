@@ -314,6 +314,11 @@ tenant with `X-Tenant-ID: <id-or-slug>`.
 | `BOOTSTRAP_TENANT_NAME` | slug | First tenant display name |
 | `VITE_API_TARGET` | `http://localhost:8080` | Vite dev proxy target (frontend only) |
 | `ENCRYPTION_KEY` | empty (dev key) | AES-256-GCM master key for signing PEMs and client-secret copies. **Set in production.** |
+| `REDIS_URL` | empty | Optional Redis URL for shared rate limiting (`redis://host:6379/0`); falls back to in-memory if unavailable |
+| `REDIS_PREFIX` | `ucenter:rl:` | Redis key prefix |
+| `METRICS_TOKEN` | empty | Bearer token required for `/metrics` when set |
+| `LOG_FORMAT` | `text` in dev / `json` | Structured log format |
+| `LOG_LEVEL` | `info` | `debug`, `info`, `warn` or `error` |
 | `MAIL_DRIVER` | `mock` | `mock` stores messages in `mail_outbox`; `smtp` sends email |
 | `SMTP_HOST` / `SMTP_PORT` | empty / `587` | SMTP server |
 | `SMTP_USER` / `SMTP_PASS` | empty | SMTP credentials (optional for local relays) |
@@ -388,11 +393,12 @@ frontend typecheck/build, seed, server startup, `/readyz`, Playwright E2E (10-la
 switches, dark theme, RTL, admin/MCP/mail pages). Playwright reports are uploaded on
 failure.
 
-Local metrics:
+Local metrics and Redis:
 
 ```bash
-docker compose --profile observability up -d --build
+docker compose --profile observability --profile redis up -d --build
 # Prometheus: http://localhost:9090
+# Redis: localhost:6379 (set REDIS_URL=redis://redis:6379/0 for the app)
 ```
 
 ## Testing
@@ -444,8 +450,9 @@ MongoDB (signing keys and encrypted secrets live in the database).
   are not implemented. Administrators generate temporary passwords in the console.
 - Access tokens are stateless JWTs; revocation applies to refresh tokens and sessions, so
   an access token remains valid until it expires (default 1 hour, configurable per client).
-- Login rate limiting is in-memory per process; use a shared store for multi-replica
-  deployments.
+- Rate limiting uses an in-memory sliding window by default. Set `REDIS_URL` (or run
+  `docker compose --profile redis up -d`) for a shared fixed-window limiter across
+  replicas; Redis failures fall back to memory and log a warning.
 - SAML, SCIM provisioning, WebAuthn/passkeys and social/OIDC federation as an upstream
   identity source are not included.
 - Tenant deletion is a soft disable; there is no cascading data purge.

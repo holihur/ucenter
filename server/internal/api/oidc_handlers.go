@@ -186,6 +186,10 @@ func (a *API) token(c *gin.Context) {
 		oauthError(c, http.StatusUnauthorized, "invalid_client", "Client authentication failed")
 		return
 	}
+	if ok, _ := a.tokenLimiter.Allow(ctx, a.clientIP(c)+"|token|"+client.ClientID); !ok {
+		oauthError(c, http.StatusTooManyRequests, "slow_down", "Too many token requests")
+		return
+	}
 	grantType := c.PostForm("grant_type")
 	defer func() {
 		if a.Metrics != nil {

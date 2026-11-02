@@ -1,11 +1,12 @@
 package api
 
 import (
+	"context"
 	"errors"
 	"log"
+	"log/slog"
 	"net/http"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +15,7 @@ import (
 	"ucenter/internal/mail"
 	"ucenter/internal/models"
 	"ucenter/internal/observability"
+	"ucenter/internal/ratelimit"
 	"ucenter/internal/security"
 	"ucenter/internal/service"
 	"ucenter/internal/store"
@@ -28,26 +30,41 @@ const (
 )
 
 type API struct {
-	Store       *store.Store
-	Svc         *service.Service
-	Cfg         config.Config
-	Mailer      mail.Mailer
-	Cipher      *security.Cipher
-	Metrics     *observability.Metrics
-	limiter     *loginLimiter
-	mailLimiter *loginLimiter
+	Store        *store.Store
+	Svc          *service.Service
+	Cfg          config.Config
+	Mailer       mail.Mailer
+	Cipher       *security.Cipher
+	Metrics      *observability.Metrics
+	limiter      ratelimit.Limiter
+	mailLimiter  ratelimit.Limiter
+	tokenLimiter ratelimit.Limiter
 }
 
 func New(s *store.Store, svc *service.Service, cfg config.Config, cipher *security.Cipher, metrics *observability.Metrics) *API {
+	limiter := ratelimit.Limiter(ratelimit.NewMemory(10, 5*time.Minute))
+	mailLimiter := ratelimit.Limiter(ratelimit.NewMemory(5, 15*time.Minute))
+	tokenLimiter := ratelimit.Limiter(ratelimit.NewMemory(120, time.Minute))
+	if cfg.RedisURL != "" {
+		client, err := ratelimit.Connect(context.Background(), cfg.RedisURL)
+		if err != nil {
+			slog.Warn("redis_unavailable_using_memory_rate_limits", "error", err)
+		} else {
+			limiter = ratelimit.NewRedis(client, 10, 5*time.Minute, cfg.RedisPrefix+"login:", slog.Default())
+			mailLimiter = ratelimit.NewRedis(client, 5, 15*time.Minute, cfg.RedisPrefix+"mail:", slog.Default())
+			tokenLimiter = ratelimit.NewRedis(client, 120, time.Minute, cfg.RedisPrefix+"token:", slog.Default())
+		}
+	}
 	return &API{
-		Store:       s,
-		Svc:         svc,
-		Cfg:         cfg,
-		Mailer:      mail.New(cfg, s),
-		Cipher:      cipher,
-		Metrics:     metrics,
-		limiter:     newLoginLimiter(10, 5*time.Minute),
-		mailLimiter: newLoginLimiter(5, 15*time.Minute),
+		Store:        s,
+		Svc:          svc,
+		Cfg:          cfg,
+		Mailer:       mail.New(cfg, s),
+		Cipher:       cipher,
+		Metrics:      metrics,
+		limiter:      limiter,
+		mailLimiter:  mailLimiter,
+		tokenLimiter: tokenLimiter,
 	}
 }
 
@@ -260,64 +277,4 @@ func describeScopes(scope string) []gin.H {
 		out = append(out, gin.H{"key": s, "description": desc})
 	}
 	return out
-}
-
-type loginLimiter struct {
-	mu       sync.Mutex
-	attempts map[string][]time.Time
-	max      int
-	window   time.Duration
-}
-
-func newLoginLimiter(max int, window time.Duration) *loginLimiter {
-	return &loginLimiter{attempts: map[string][]time.Time{}, max: max, window: window}
-}
-
-func promptHas(prompt, want string) bool {
-	for _, p := range strings.Fields(prompt) {
-		if p == want {
-			return true
-		}
-	}
-	return false
-}
-
-func (l *loginLimiter) allow(key string) bool {
-	now := time.Now()
-	l.mu.Lock()
-	defer l.mu.Unlock()
-	list := l.attempts[key]
-	cutoff := now.Add(-l.window)
-	kept := list[:0]
-	for _, t := range list {
-		if t.After(cutoff) {
-			kept = append(kept, t)
-		}
-	}
-	if len(kept) >= l.max {
-		l.attempts[key] = kept
-		return false
-	}
-	l.attempts[key] = append(kept, now)
-	if len(l.attempts) > 5000 {
-		for k, list := range l.attempts {
-			active := false
-			for _, t := range list {
-				if t.After(cutoff) {
-					active = true
-					break
-				}
-			}
-			if !active {
-				delete(l.attempts, k)
-			}
-		}
-	}
-	return true
-}
-
-func (l *loginLimiter) reset(key string) {
-	l.mu.Lock()
-	delete(l.attempts, key)
-	l.mu.Unlock()
 }

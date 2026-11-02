@@ -1,24 +1,15 @@
 package api
 
-import (
-	"testing"
-	"time"
-)
+import "testing"
 
-func TestLoginLimiter(t *testing.T) {
-	l := newLoginLimiter(2, time.Minute)
-	key := "127.0.0.1|acme|user@example.com"
-	if !l.allow(key) || !l.allow(key) {
-		t.Fatal("first attempts should be allowed")
+func TestPromptHas(t *testing.T) {
+	if !promptHas("login consent", "login") {
+		t.Fatal("login prompt not detected")
 	}
-	if l.allow(key) {
-		t.Fatal("attempt over the limit should be rejected")
+	if promptHas("login consent", "none") {
+		t.Fatal("none prompt should not be present")
 	}
-	l.reset(key)
-	if !l.allow(key) {
-		t.Fatal("attempt after reset should be allowed")
-	}
-	if l.allow("other-key") != true {
-		t.Fatal("different keys must not share limits")
+	if !promptHas("none", "none") {
+		t.Fatal("none prompt not detected")
 	}
 }
