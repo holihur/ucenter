@@ -40,8 +40,8 @@ interface PlatformTenant {
 }
 
 export function AdminTenants() {
-  const { can } = useAuth();
   const { t } = useI18n();
+  const { can } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [creating, setCreating] = useState(false);
@@ -66,7 +66,7 @@ export function AdminTenants() {
     const next = tenant.status === "active" ? "disabled" : "active";
     try {
       await api.patch(`/admin/tenants/${tenant.id}`, { status: next });
-      toast.success(`${tenant.name} ${next === "active" ? "enabled" : "disabled"}`);
+      toast.success(`${tenant.name}: ${next === "active" ? t("Enabled") : t("Disabled")}`);
       queryClient.invalidateQueries({ queryKey: ["admin-tenants"] });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Unable to update tenant");
@@ -77,7 +77,7 @@ export function AdminTenants() {
     <div className="space-y-6">
       <PageHeader
         title={t("Tenants")}
-        description="Organizations hosted on this UCenter instance. Each tenant has isolated users, roles and OIDC clients."
+        description={t("Organizations hosted on this UCenter instance. Each tenant has isolated users, roles and OIDC clients.")}
         actions={
           can("platform:manage") ? (
             <Button onClick={() => setCreating(true)}>
@@ -99,12 +99,12 @@ export function AdminTenants() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Organization</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Users</TableHead>
-                <TableHead>Applications</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Enabled</TableHead>
+                <TableHead>{t("Organization")}</TableHead>
+                <TableHead>{t("Status")}</TableHead>
+                <TableHead>{t("Users")}</TableHead>
+                <TableHead>{t("Applications")}</TableHead>
+                <TableHead>{t("Created")}</TableHead>
+                <TableHead>{t("Enabled")}</TableHead>
                 <TableHead className="w-28" />
               </TableRow>
             </TableHeader>
@@ -150,7 +150,7 @@ export function AdminTenants() {
             <EmptyState
               icon={Building2}
               title={t("No tenants yet")}
-              description="Create the first organization to start onboarding users."
+              description={t("Create the first organization to start onboarding users.")}
               action={
                 <Button onClick={() => setCreating(true)}>
                   <Plus className="h-4 w-4" />
@@ -171,7 +171,7 @@ export function AdminTenants() {
           if (info.password) {
             setTempPassword(info);
           } else {
-            toast.success("Tenant created");
+            toast.success(t("Tenant created"));
           }
         }}
       />
@@ -179,7 +179,7 @@ export function AdminTenants() {
       <Dialog open={Boolean(tempPassword)} onOpenChange={(open) => !open && setTempPassword(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Tenant owner created</DialogTitle>
+            <DialogTitle>{t("Tenant owner created")}</DialogTitle>
             <DialogDescription>
               Share these credentials with the owner of {tempPassword?.tenant}. The password is shown only once.
             </DialogDescription>
@@ -188,7 +188,7 @@ export function AdminTenants() {
             <div className="space-y-3">
               <div className="rounded-lg border bg-muted/40 p-3 text-sm">
                 <p>
-                  <span className="text-muted-foreground">Email:</span> {tempPassword.email}
+                  <span className="text-muted-foreground">{t("Email:")}</span> {tempPassword.email}
                 </p>
                 <div className="mt-2 flex items-center gap-2">
                   <code className="flex-1 break-all font-mono text-xs">{tempPassword.password}</code>
@@ -196,12 +196,12 @@ export function AdminTenants() {
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">
-                The owner should sign in and change their password immediately.
+                {t("The owner should sign in and change their password immediately.")}
               </p>
             </div>
           )}
           <DialogFooter>
-            <Button onClick={() => setTempPassword(null)}>Done</Button>
+            <Button onClick={() => setTempPassword(null)}>{t("Done")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -218,6 +218,7 @@ function CreateTenantDialog({
   onOpenChange: (open: boolean) => void;
   onCreated: (info: { tenant: string; email: string; password: string }) => void;
 }) {
+  const { t } = useI18n();
   const [slug, setSlug] = useState("");
   const [name, setName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
@@ -255,19 +256,19 @@ function CreateTenantDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create tenant</DialogTitle>
+          <DialogTitle>{t("Create tenant")}</DialogTitle>
           <DialogDescription>
-            A new isolated organization with owner/admin/member roles and its own signing key.
+            {t("A new isolated organization with owner/admin/member roles and its own signing key.")}
           </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={submit}>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="tenant-name-new">Organization name</Label>
+              <Label htmlFor="tenant-name-new">{t("Organization name")}</Label>
               <Input id="tenant-name-new" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="tenant-slug-new">Slug</Label>
+              <Label htmlFor="tenant-slug-new">{t("Slug")}</Label>
               <Input
                 id="tenant-slug-new"
                 value={slug}
@@ -275,12 +276,12 @@ function CreateTenantDialog({
                 placeholder="acme"
                 required
               />
-              <p className="text-[11px] text-muted-foreground">Used in the OIDC issuer URL and cannot change.</p>
+              <p className="text-[11px] text-muted-foreground">{t("Used in the OIDC issuer URL and cannot change.")}</p>
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="owner-email">Owner email (optional)</Label>
+              <Label htmlFor="owner-email">{t("Owner email (optional)")}</Label>
               <Input
                 id="owner-email"
                 type="email"
@@ -290,7 +291,7 @@ function CreateTenantDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="owner-name">Owner name</Label>
+              <Label htmlFor="owner-name">{t("Owner name")}</Label>
               <Input
                 id="owner-name"
                 value={ownerName}
@@ -301,12 +302,12 @@ function CreateTenantDialog({
           </div>
           {ownerEmail && (
             <p className="rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground">
-              A temporary password will be generated for the owner and shown once after creation.
+              {t("A temporary password will be generated for the owner and shown once after creation.")}
             </p>
           )}
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button type="submit" disabled={saving}>
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Power className="h-4 w-4" />}

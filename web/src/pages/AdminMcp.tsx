@@ -69,7 +69,7 @@ export function AdminMcp() {
     setBusy(true);
     try {
       await api.del(`/admin/api-tokens/${revoking.id}`);
-      toast.success("MCP token revoked");
+      toast.success(t("MCP token revoked"));
       setRevoking(null);
       queryClient.invalidateQueries({ queryKey: ["api-tokens"] });
     } catch (err) {
@@ -364,8 +364,8 @@ function CreateTokenDialog({
             </div>
             <div className="max-h-72 space-y-4 overflow-y-auto rounded-lg border p-4">
               {groups.map(([group, items]) => (
-                <div key={group}>
-                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{group}</p>
+                <div key={t(group)}>
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t(group)}</p>
                   <div className="grid gap-1.5 sm:grid-cols-2">
                     {items.map((permission) => (
                       <label key={permission.key} className="flex cursor-pointer items-start gap-2 rounded-md p-1.5 hover:bg-muted/60">
@@ -375,7 +375,7 @@ function CreateTokenDialog({
                           className="mt-0.5"
                         />
                         <span>
-                          <span className="block text-sm font-medium">{permission.label}</span>
+                          <span className="block text-sm font-medium">{t(permission.label)}</span>
                           <span className="block font-mono text-[10px] text-muted-foreground">{permission.key}</span>
                         </span>
                       </label>

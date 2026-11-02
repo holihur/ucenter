@@ -34,8 +34,8 @@ import { api, type Permission, type Role } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export function AdminRoles() {
-  const { can } = useAuth();
   const { t } = useI18n();
+  const { can } = useAuth();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<Role | null>(null);
   const [creating, setCreating] = useState(false);
@@ -65,7 +65,7 @@ export function AdminRoles() {
     setBusy(true);
     try {
       await api.del(`/admin/roles/${deleting.id}`);
-      toast.success("Role deleted");
+      toast.success(t("Role deleted"));
       setDeleting(null);
       refresh();
     } catch (err) {
@@ -79,7 +79,7 @@ export function AdminRoles() {
     <div className="space-y-6">
       <PageHeader
         title={t("Roles & permissions")}
-        description="Define reusable access policies and assign them to tenant members."
+        description={t("Define reusable access policies and assign them to tenant members.")}
         actions={
           can("roles:write") ? (
             <Button onClick={() => setCreating(true)}>
@@ -123,7 +123,7 @@ export function AdminRoles() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onSelect={() => setEditing(role)}>Edit role</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => setEditing(role)}>{t("Edit role")}</DropdownMenuItem>
                       {!role.system && (
                         <>
                           <DropdownMenuSeparator />
@@ -132,7 +132,7 @@ export function AdminRoles() {
                             onSelect={() => setDeleting(role)}
                           >
                             <Trash2 className="h-4 w-4" />
-                            Delete role
+                            {t("Delete role")}
                           </DropdownMenuItem>
                         </>
                       )}
@@ -142,12 +142,12 @@ export function AdminRoles() {
               </CardHeader>
               <CardContent className="flex flex-1 flex-col gap-4">
                 <CardDescription className="line-clamp-2 min-h-10">
-                  {role.description || "No description provided."}
+                  {role.description || t("No description provided.")}
                 </CardDescription>
                 <div className="flex flex-wrap gap-1.5">
                   {role.system && <Badge variant="secondary">{t("System")}</Badge>}
                   <Badge variant="outline">{role.permissions.length} permissions</Badge>
-                  {role.key === "owner" && <Badge variant="default">Full access</Badge>}
+                  {role.key === "owner" && <Badge variant="default">{t("Full access")}</Badge>}
                 </div>
                 <div className="mt-auto flex flex-wrap gap-1.5">
                   {role.permissions.slice(0, 4).map((p) => (
@@ -174,8 +174,8 @@ export function AdminRoles() {
       ) : (
         <EmptyState
           icon={ShieldCheck}
-          title="No roles yet"
-          description="Create a role to group permissions and assign it to users."
+          title={t("No roles yet")}
+          description={t("Create a role to group permissions and assign it to users.")}
         />
       )}
 
@@ -194,16 +194,16 @@ export function AdminRoles() {
           refresh();
           setCreating(false);
           setEditing(null);
-          toast.success(editing ? "Role updated" : "Role created");
+          toast.success(editing ? t("Role updated") : t("Role created"));
         }}
       />
 
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={(open) => !open && setDeleting(null)}
-        title="Delete role?"
+        title={t("Delete role?")}
         description={`The role "${deleting?.name}" will be permanently deleted. Roles assigned to users cannot be deleted.`}
-        confirmLabel="Delete role"
+        confirmLabel={t("Delete role")}
         destructive
         loading={busy}
         onConfirm={onDelete}
@@ -227,6 +227,7 @@ function RoleDialog({
   permissionMap: Map<string, Permission>;
   onSaved: () => void;
 }) {
+  const { t } = useI18n();
   const isEdit = Boolean(role);
   const [key, setKey] = useState("");
   const [name, setName] = useState("");
@@ -281,17 +282,17 @@ function RoleDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{isEdit ? `Edit ${role?.name}` : "Create role"}</DialogTitle>
+          <DialogTitle>{isEdit ? t("Edit {name}", { name: role?.name ?? "" }) : t("Create role")}</DialogTitle>
           <DialogDescription>
             {locked
-              ? "System role permissions are fixed. You can still update the display name and description."
-              : "Select the permissions members with this role should receive."}
+              ? t("System role permissions are fixed. You can still update the display name and description.")
+              : t("Select the permissions members with this role should receive.")}
           </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={submit}>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="role-key">Key</Label>
+              <Label htmlFor="role-key">{t("Key")}</Label>
               <Input
                 id="role-key"
                 value={key}
@@ -303,31 +304,31 @@ function RoleDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="role-name">Display name</Label>
+              <Label htmlFor="role-name">{t("Display name")}</Label>
               <Input id="role-name" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="role-description">Description</Label>
+            <Label htmlFor="role-description">{t("Description")}</Label>
             <Textarea
               id="role-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What is this role responsible for?"
+              placeholder={t("What is this role responsible for?")}
               rows={2}
             />
           </div>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label>Permissions</Label>
+              <Label>{t("Permissions")}</Label>
               <span className="text-xs text-muted-foreground">{selected.length} selected</span>
             </div>
             <div className="max-h-[320px] space-y-4 overflow-y-auto rounded-lg border p-4">
               {groups.map(([group, items]) => (
-                <div key={group}>
+                <div key={t(group)}>
                   <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {group}
+                    {t(group)}
                   </p>
                   <div className="grid gap-1.5 sm:grid-cols-2">
                     {items.map((permission) => (
@@ -345,9 +346,9 @@ function RoleDialog({
                           className="mt-0.5"
                         />
                         <span>
-                          <span className="block text-sm font-medium">{permission.label}</span>
+                          <span className="block text-sm font-medium">{t(permission.label)}</span>
                           <span className="block text-[11px] text-muted-foreground">
-                            {permissionMap.get(permission.key)?.description}
+                            {t(permissionMap.get(permission.key)?.description ?? "")}
                           </span>
                         </span>
                       </label>
@@ -360,10 +361,10 @@ function RoleDialog({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button type="submit" disabled={saving}>
-              {saving ? "Saving…" : isEdit ? "Save changes" : "Create role"}
+              {saving ? t("Saving…") : isEdit ? t("Save changes") : t("Create role")}
             </Button>
           </DialogFooter>
         </form>

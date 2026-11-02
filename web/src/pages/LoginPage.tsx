@@ -267,7 +267,7 @@ export function LoginPage() {
                     id="email"
                     type="email"
                     autoComplete="username"
-                    placeholder="you@company.com"
+                    placeholder={t("you@company.com")}
                     className="ps-9"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -291,7 +291,7 @@ export function LoginPage() {
                     id="password"
                     type="password"
                     autoComplete="current-password"
-                    placeholder="••••••••••"
+                    placeholder={t("••••••••••")}
                     className="ps-9"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -307,7 +307,7 @@ export function LoginPage() {
                 id="totp"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                placeholder="123456 or recovery code"
+                placeholder={t("123456 or recovery code")}
                 autoFocus
                 value={totp}
                 onChange={(e) => setTotp(e.target.value)}

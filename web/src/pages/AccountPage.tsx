@@ -98,7 +98,7 @@ export function AccountPage() {
     try {
       await api.patch("/me", { name, username, picture });
       await refresh();
-      toast.success("Profile updated");
+      toast.success(t("Profile updated"));
     } catch (err) {
       toast.error(errorText(err));
     } finally {
@@ -192,7 +192,7 @@ export function AccountPage() {
         window.location.assign("/login");
         return;
       }
-      toast.success("Session revoked");
+      toast.success(t("Session revoked"));
       setRevoking(null);
       queryClient.invalidateQueries({ queryKey: ["my-sessions"] });
     } catch (err) {
@@ -269,7 +269,7 @@ export function AccountPage() {
                           {role}
                         </Badge>
                       ))}
-                      {me.user.emailVerified && <Badge variant="success">Verified</Badge>}
+                      {me.user.emailVerified && <Badge variant="success">{t("Verified")}</Badge>}
                     </div>
                   </div>
                 </div>
@@ -309,7 +309,7 @@ export function AccountPage() {
                 <KeyRound className="h-4 w-4 text-primary" />
                 {t("Password")}
               </CardTitle>
-              <CardDescription>Use a strong password you do not reuse elsewhere.</CardDescription>
+              <CardDescription>{t("Use a strong password you do not reuse elsewhere.")}</CardDescription>
             </CardHeader>
             <CardContent>
               <form className="space-y-4" onSubmit={changePassword}>
@@ -364,15 +364,15 @@ export function AccountPage() {
                 <Smartphone className="h-4 w-4 text-primary" />
                 {t("Two-factor authentication")}
               </CardTitle>
-              <CardDescription>Protect your account with a time-based one-time password.</CardDescription>
+              <CardDescription>{t("Protect your account with a time-based one-time password.")}</CardDescription>
             </div>
-            {me.user.mfa.enabled ? <Badge variant="success">Enabled</Badge> : <Badge variant="muted">Off</Badge>}
+            {me.user.mfa.enabled ? <Badge variant="success">{t("Enabled")}</Badge> : <Badge variant="muted">Off</Badge>}
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
               {me.user.mfa.enabled
-                ? "Your account is protected by an authenticator app. Recovery codes can be used if you lose access."
-                : "Add an extra layer of security. You will be asked for a 6-digit code when signing in."}
+                ? t("Your account is protected by an authenticator app. Recovery codes can be used if you lose access.")
+                : t("Add an extra layer of security. You will be asked for a 6-digit code when signing in.")}
             </p>
             <div className="flex flex-wrap gap-2">
               {me.user.mfa.enabled ? (
@@ -401,7 +401,7 @@ export function AccountPage() {
               <MonitorSmartphone className="h-4 w-4 text-primary" />
               {t("Your sessions")}
             </CardTitle>
-            <CardDescription>Devices currently signed in to your account.</CardDescription>
+            <CardDescription>{t("Devices currently signed in to your account.")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             {sessionsQuery.isLoading ? (
@@ -416,7 +416,7 @@ export function AccountPage() {
                     <div className="flex flex-wrap items-center gap-2">
                       <p className="text-sm font-medium">{displayIP(session.ip)}</p>
                       {session.current && <Badge variant="success">{t("This device")}</Badge>}
-                      {session.mfa && <Badge variant="outline">MFA</Badge>}
+                      {session.mfa && <Badge variant="outline">{t("MFA")}</Badge>}
                     </div>
                     <p className="truncate text-xs text-muted-foreground" title={session.userAgent}>
                       {session.userAgent || "Unknown client"}
@@ -444,9 +444,9 @@ export function AccountPage() {
       <Dialog open={setupOpen} onOpenChange={setSetupOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Set up two-factor authentication</DialogTitle>
+            <DialogTitle>{t("Set up two-factor authentication")}</DialogTitle>
             <DialogDescription>
-              Scan the QR code with Google Authenticator, 1Password, Authy or any TOTP app.
+              {t("Scan the QR code with Google Authenticator, 1Password, Authy or any TOTP app.")}
             </DialogDescription>
           </DialogHeader>
           {setup && (
@@ -455,14 +455,14 @@ export function AccountPage() {
                 <img src={setup.qr} alt="TOTP QR code" className="rounded-lg border bg-white p-2" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Manual entry secret</Label>
+                <Label className="text-xs text-muted-foreground">{t("Manual entry secret")}</Label>
                 <div className="flex items-center gap-2 rounded-lg border bg-muted/40 p-2.5">
                   <code className="flex-1 break-all font-mono text-xs">{setup.secret}</code>
                   <CopyButton value={setup.secret} label="" />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="mfa-code">Verification code</Label>
+                <Label htmlFor="mfa-code">{t("Verification code")}</Label>
                 <Input
                   id="mfa-code"
                   inputMode="numeric"
@@ -475,7 +475,7 @@ export function AccountPage() {
               </div>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setSetupOpen(false)}>
-                  Cancel
+                  {t("Cancel")}
                 </Button>
                 <Button type="submit" disabled={enabling}>
                   {enabling ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
@@ -490,9 +490,9 @@ export function AccountPage() {
       <Dialog open={Boolean(recoveryCodes)} onOpenChange={(open) => !open && setRecoveryCodes(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Save your recovery codes</DialogTitle>
+            <DialogTitle>{t("Save your recovery codes")}</DialogTitle>
             <DialogDescription>
-              Each code can be used once if you lose access to your authenticator. Store them somewhere safe.
+              {t("Each code can be used once if you lose access to your authenticator. Store them somewhere safe.")}
             </DialogDescription>
           </DialogHeader>
           {recoveryCodes && (
@@ -504,11 +504,11 @@ export function AccountPage() {
                   </code>
                 ))}
               </div>
-              <CopyButton value={recoveryCodes.join("\n")} label="Copy all codes" />
+              <CopyButton value={recoveryCodes.join("\n")} label={t("Copy all codes")} />
             </div>
           )}
           <DialogFooter>
-            <Button onClick={() => setRecoveryCodes(null)}>I have saved them</Button>
+            <Button onClick={() => setRecoveryCodes(null)}>{t("I have saved them")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -517,13 +517,13 @@ export function AccountPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {passwordAction === "disable" ? "Disable two-factor authentication" : "Regenerate recovery codes"}
+              {passwordAction === "disable" ? t("Disable two-factor authentication") : t("Regenerate recovery codes")}
             </DialogTitle>
-            <DialogDescription>Confirm your password to continue.</DialogDescription>
+            <DialogDescription>{t("Confirm your password to continue.")}</DialogDescription>
           </DialogHeader>
           <form className="space-y-4" onSubmit={runPasswordAction}>
             <div className="space-y-2">
-              <Label htmlFor="action-password">Password</Label>
+              <Label htmlFor="action-password">{t("Password")}</Label>
               <Input
                 id="action-password"
                 type="password"
@@ -535,7 +535,7 @@ export function AccountPage() {
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setPasswordAction(null)}>
-                Cancel
+                {t("Cancel")}
               </Button>
               <Button
                 type="submit"
@@ -543,7 +543,7 @@ export function AccountPage() {
                 disabled={actionBusy}
               >
                 {actionBusy && <Loader2 className="h-4 w-4 animate-spin" />}
-                {passwordAction === "disable" ? "Disable MFA" : "Regenerate codes"}
+                {passwordAction === "disable" ? t("Disable MFA") : t("Regenerate codes")}
               </Button>
             </DialogFooter>
           </form>
@@ -556,10 +556,10 @@ export function AccountPage() {
         title="Revoke this session?"
         description={
           revoking?.current
-            ? "This is your current session. You will be signed out immediately."
-            : "The device will be signed out and must authenticate again."
+            ? t("This is your current session. You will be signed out immediately.")
+            : t("The device will be signed out and must authenticate again.")
         }
-        confirmLabel="Revoke session"
+        confirmLabel={t("Revoke session")}
         destructive
         onConfirm={revokeSession}
       />

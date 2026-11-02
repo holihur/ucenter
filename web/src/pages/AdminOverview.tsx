@@ -191,7 +191,7 @@ export function AdminOverview() {
                 ))}
               </div>
             ) : (
-              <p className="py-10 text-center text-sm text-muted-foreground">No activity recorded yet.</p>
+              <p className="py-10 text-center text-sm text-muted-foreground">{t("No activity recorded yet.")}</p>
             )}
           </CardContent>
         </Card>
@@ -234,7 +234,7 @@ export function AdminOverview() {
                 ))}
               </div>
             ) : (
-              <p className="py-10 text-center text-sm text-muted-foreground">No users yet.</p>
+              <p className="py-10 text-center text-sm text-muted-foreground">{t("No users yet.")}</p>
             )}
           </CardContent>
         </Card>

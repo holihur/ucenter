@@ -32,7 +32,7 @@ export function AdminSessions() {
     setBusy(true);
     try {
       await api.del(`/admin/sessions/${revoking.id}`);
-      toast.success("Session revoked");
+      toast.success(t("Session revoked"));
       setRevoking(null);
       queryClient.invalidateQueries({ queryKey: ["sessions"] });
     } catch (err) {
@@ -48,7 +48,7 @@ export function AdminSessions() {
     <div className="space-y-6">
       <PageHeader
         title={t("Active sessions")}
-        description="Browser sessions currently signed in to this tenant."
+        description={t("Browser sessions currently signed in to this tenant.")}
       />
 
       <Card>
@@ -57,7 +57,7 @@ export function AdminSessions() {
             <MonitorSmartphone className="h-4 w-4 text-primary" />
             {sessions.length} {t("Active sessions").toLowerCase()}
           </CardTitle>
-          <CardDescription>Sessions expire automatically according to the tenant session policy.</CardDescription>
+          <CardDescription>{t("Sessions expire automatically according to the tenant session policy.")}</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           {query.isLoading ? (
@@ -124,7 +124,7 @@ export function AdminSessions() {
               <EmptyState
                 icon={MonitorSmartphone}
                 title={t("No active sessions")}
-                description="Sessions will appear here when users sign in."
+                description={t("Sessions will appear here when users sign in.")}
               />
             </div>
           )}
@@ -134,9 +134,9 @@ export function AdminSessions() {
       <ConfirmDialog
         open={Boolean(revoking)}
         onOpenChange={(open) => !open && setRevoking(null)}
-        title="Revoke session?"
+        title={t("Revoke session?")}
         description={`${revoking?.email ?? "This user"} will be signed out of this device immediately.`}
-        confirmLabel="Revoke session"
+        confirmLabel={t("Revoke session")}
         destructive
         loading={busy}
         onConfirm={onRevoke}

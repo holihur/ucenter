@@ -34,6 +34,22 @@ test("login, dark theme and Chinese UI persist", async ({ page }) => {
   await expect(page.locator("h1").first()).toContainText("欢迎回来");
 });
 
+test("tenants can use different built-in auth templates", async ({ page }) => {
+  await page.goto("/login?tenant=acme");
+  await expect(page.locator('[data-template="aurora"]')).toBeVisible();
+  await page.goto("/login?tenant=globex");
+  await expect(page.locator('[data-template="fintech"]')).toBeVisible();
+});
+
+test("admin can browse the login template gallery", async ({ page }) => {
+  await login(page);
+  await page.goto("/admin/settings");
+  await page.getByRole("tab", { name: /Branding/i }).click();
+  await expect(page.getByText("Login page template")).toBeVisible();
+  await expect(page.getByText("Fintech", { exact: true })).toBeVisible();
+  await expect(page.getByText("Government", { exact: true })).toBeVisible();
+});
+
 test("Arabic switches the shell to RTL", async ({ page }) => {
   await page.goto("/login");
   await page.getByTestId("language-menu").click();

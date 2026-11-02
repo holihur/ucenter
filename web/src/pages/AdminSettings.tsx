@@ -107,7 +107,7 @@ export function AdminSettings() {
         },
       });
       applyBrandColor(branding.primaryColor);
-      toast.success("Settings saved");
+      toast.success(t("Settings saved"));
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["settings"] }),
         queryClient.invalidateQueries({ queryKey: ["admin-context"] }),
@@ -135,7 +135,7 @@ export function AdminSettings() {
     <div className="space-y-6">
       <PageHeader
         title={t("Tenant settings")}
-        description="Branding, registration and security policy for this organization."
+        description={t("Branding, registration and security policy for this organization.")}
         actions={
           editable ? (
             <Button onClick={save} disabled={saving}>
@@ -152,7 +152,7 @@ export function AdminSettings() {
             <Globe className="h-4 w-4 text-primary" />
             OIDC issuer
           </CardTitle>
-          <CardDescription>Use this issuer with any OpenID Connect client library.</CardDescription>
+          <CardDescription>{t("Use this issuer with any OpenID Connect client library.")}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center gap-2 rounded-lg border bg-muted/30 p-2.5">
@@ -161,12 +161,12 @@ export function AdminSettings() {
           </div>
           <div className="flex flex-wrap gap-3 text-xs">
             <a className="text-primary hover:underline" href={`${issuer}/.well-known/openid-configuration`} target="_blank" rel="noreferrer">
-              Discovery document
+              {t("Discovery document")}
             </a>
             <a className="text-primary hover:underline" href={`${issuer}/oidc/jwks`} target="_blank" rel="noreferrer">
-              JWKS
+              {t("JWKS")}
             </a>
-            <span className="text-muted-foreground">Tenant slug: <code className="font-mono">{tenant?.slug}</code></span>
+            <span className="text-muted-foreground">{t("Tenant slug:")} <code className="font-mono">{tenant?.slug}</code></span>
           </div>
         </CardContent>
       </Card>
@@ -190,24 +190,24 @@ export function AdminSettings() {
         <TabsContent value="general">
           <Card>
             <CardHeader>
-              <CardTitle>Organization profile</CardTitle>
-              <CardDescription>Shown to users on the sign-in and consent screens.</CardDescription>
+              <CardTitle>{t("Organization profile")}</CardTitle>
+              <CardDescription>{t("Shown to users on the sign-in and consent screens.")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="tenant-name">Display name</Label>
+                  <Label htmlFor="tenant-name">{t("Display name")}</Label>
                   <Input id="tenant-name" value={name} onChange={(e) => setName(e.target.value)} disabled={!editable} />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="tenant-slug">Slug</Label>
+                  <Label htmlFor="tenant-slug">{t("Slug")}</Label>
                   <Input id="tenant-slug" value={tenant?.slug ?? ""} disabled />
-                  <p className="text-[11px] text-muted-foreground">The slug is permanent and used in the issuer URL.</p>
+                  <p className="text-[11px] text-muted-foreground">{t("The slug is permanent and used in the issuer URL.")}</p>
                 </div>
               </div>
               <Separator />
               <div className="space-y-2">
-                <Label htmlFor="tenant-domains">Custom domains</Label>
+                <Label htmlFor="tenant-domains">{t("Custom domains")}</Label>
                 <Textarea
                   id="tenant-domains"
                   rows={3}
@@ -218,7 +218,7 @@ export function AdminSettings() {
                   className="font-mono text-xs"
                 />
                 <p className="text-[11px] text-muted-foreground">
-                  One domain per line. Domains can be used to resolve the tenant by hostname in a future deployment.
+                  {t("One domain per line. Domains can be used to resolve the tenant by hostname in a future deployment.")}
                 </p>
               </div>
             </CardContent>
@@ -228,13 +228,13 @@ export function AdminSettings() {
         <TabsContent value="branding">
           <Card>
             <CardHeader>
-              <CardTitle>Brand appearance</CardTitle>
-              <CardDescription>Applied to the login experience and admin console accents.</CardDescription>
+              <CardTitle>{t("Brand appearance")}</CardTitle>
+              <CardDescription>{t("Applied to the login experience and admin console accents.")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="logo-url">Logo URL</Label>
+                  <Label htmlFor="logo-url">{t("Logo URL")}</Label>
                   <Input
                     id="logo-url"
                     value={branding.logoUrl}
@@ -244,7 +244,7 @@ export function AdminSettings() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="support-email">Support email</Label>
+                  <Label htmlFor="support-email">{t("Support email")}</Label>
                   <Input
                     id="support-email"
                     type="email"
@@ -257,7 +257,7 @@ export function AdminSettings() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="primary-color">Primary color</Label>
+                  <Label htmlFor="primary-color">{t("Primary color")}</Label>
                   <div className="flex gap-2">
                     <input
                       id="primary-color"
@@ -276,7 +276,7 @@ export function AdminSettings() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="background-color">Background color</Label>
+                  <Label htmlFor="background-color">{t("Background color")}</Label>
                   <div className="flex gap-2">
                     <input
                       id="background-color"
@@ -317,9 +317,9 @@ export function AdminSettings() {
                       <TemplatePreview template={template} />
                       <div className="mt-2 flex items-baseline justify-between gap-2">
                         <span className="text-sm font-medium">{template.name}</span>
-                        <span className="truncate text-[10px] text-muted-foreground">{template.industry}</span>
+                        <span className="truncate text-[10px] text-muted-foreground">{t(template.industry)}</span>
                       </div>
-                      <p className="mt-0.5 line-clamp-1 text-[10px] text-muted-foreground">{template.description}</p>
+                      <p className="mt-0.5 line-clamp-1 text-[10px] text-muted-foreground">{t(template.description)}</p>
                     </button>
                   ))}
                 </div>
@@ -340,7 +340,7 @@ export function AdminSettings() {
               </div>
 
               <div className="rounded-lg border p-4">
-                <p className="mb-2 text-xs font-medium text-muted-foreground">Preview</p>
+                <p className="mb-2 text-xs font-medium text-muted-foreground">{t("Preview")}</p>
                 <div
                   className="rounded-lg p-4"
                   style={{ backgroundColor: branding.backgroundColor || "#f8fafc" }}
@@ -354,7 +354,7 @@ export function AdminSettings() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-slate-900">{name || "Organization"}</p>
-                      <p className="text-xs text-slate-500">Sign in to continue</p>
+                      <p className="text-xs text-slate-500">{t("Sign in to continue")}</p>
                     </div>
                   </div>
                 </div>
@@ -366,28 +366,28 @@ export function AdminSettings() {
         <TabsContent value="security">
           <Card>
             <CardHeader>
-              <CardTitle>Authentication policy</CardTitle>
-              <CardDescription>Controls how members sign in and how long sessions last.</CardDescription>
+              <CardTitle>{t("Authentication policy")}</CardTitle>
+              <CardDescription>{t("Controls how members sign in and how long sessions last.")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <ToggleRow
-                  title="Allow password sign-in"
-                  description="When disabled, users can only be authenticated through external identity flows."
+                  title={t("Allow password sign-in")}
+                  description={t("When disabled, users can only be authenticated through external identity flows.")}
                   checked={settings.allowPasswordLogin}
                   onCheckedChange={(v) => setSettings({ ...settings, allowPasswordLogin: v })}
                   disabled={!editable}
                 />
                 <ToggleRow
-                  title="Allow self-registration"
-                  description="Let people create an account from the login page without an invitation."
+                  title={t("Allow self-registration")}
+                  description={t("Let people create an account from the login page without an invitation.")}
                   checked={settings.allowRegistration}
                   onCheckedChange={(v) => setSettings({ ...settings, allowRegistration: v })}
                   disabled={!editable}
                 />
                 <ToggleRow
-                  title="Require two-factor authentication"
-                  description="Prompt members without MFA to enroll after signing in."
+                  title={t("Require two-factor authentication")}
+                  description={t("Prompt members without MFA to enroll after signing in.")}
                   checked={settings.requireMfa}
                   onCheckedChange={(v) => setSettings({ ...settings, requireMfa: v })}
                   disabled={!editable}
@@ -398,7 +398,7 @@ export function AdminSettings() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="password-length">Minimum password length</Label>
+                  <Label htmlFor="password-length">{t("Minimum password length")}</Label>
                   <Input
                     id="password-length"
                     type="number"
@@ -410,7 +410,7 @@ export function AdminSettings() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="session-ttl">Session lifetime (hours)</Label>
+                  <Label htmlFor="session-ttl">{t("Session lifetime (hours)")}</Label>
                   <Input
                     id="session-ttl"
                     type="number"
@@ -439,7 +439,7 @@ export function AdminSettings() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email-domains">Allowed email domains</Label>
+                <Label htmlFor="email-domains">{t("Allowed email domains")}</Label>
                 <Textarea
                   id="email-domains"
                   rows={3}
@@ -450,7 +450,7 @@ export function AdminSettings() {
                   className="font-mono text-xs"
                 />
                 <p className="text-[11px] text-muted-foreground">
-                  Leave empty to allow any email domain for registration.
+                  {t("Leave empty to allow any email domain for registration.")}
                 </p>
               </div>
             </CardContent>

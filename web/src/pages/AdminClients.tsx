@@ -56,9 +56,9 @@ interface ClientSecretInfo {
 }
 
 export function AdminClients() {
+  const { t } = useI18n();
   const { can } = useAuth();
   const tenant = useAdminTenant();
-  const { t } = useI18n();
   const queryClient = useQueryClient();
   const [params, setParams] = useSearchParams();
   const [creating, setCreating] = useState(false);
@@ -93,7 +93,7 @@ export function AdminClients() {
     setBusy(true);
     try {
       await api.del(`/admin/clients/${deleting.id}`);
-      toast.success("Application deleted");
+      toast.success(t("Application deleted"));
       setDeleting(null);
       refresh();
     } catch (err) {
@@ -122,7 +122,7 @@ export function AdminClients() {
     <div className="space-y-6">
       <PageHeader
         title={t("Applications")}
-        description="OIDC clients that use this tenant as their identity provider."
+        description={t("OIDC clients that use this tenant as their identity provider.")}
         actions={
           can("clients:write") ? (
             <Button onClick={() => setCreating(true)}>
@@ -134,7 +134,7 @@ export function AdminClients() {
       />
 
       <div className="rounded-xl border bg-muted/30 px-4 py-3 text-xs text-muted-foreground">
-        <span className="font-medium text-foreground">Issuer:</span>{" "}
+        <span className="font-medium text-foreground">{t("Issuer:")}</span>{" "}
         <code className="break-all font-mono">{window.location.origin}/t/{tenant?.slug ?? "tenant"}</code>
         <span className="mx-2">·</span>
         <a
@@ -182,11 +182,11 @@ export function AdminClients() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onSelect={() => setEditing(client)}>Edit application</DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => setEditing(client)}>{t("Edit application")}</DropdownMenuItem>
                       {client.type === "confidential" && (
                         <DropdownMenuItem onSelect={() => setRotating(client)}>
                           <RefreshCw className="h-4 w-4" />
-                          Rotate secret
+                          {t("Rotate secret")}
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuSeparator />
@@ -195,7 +195,7 @@ export function AdminClients() {
                         onSelect={() => setDeleting(client)}
                       >
                         <Trash2 className="h-4 w-4" />
-                        Delete application
+                        {t("Delete application")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -206,7 +206,7 @@ export function AdminClients() {
                   <p className="text-sm text-muted-foreground">{client.description}</p>
                 )}
                 <div className="space-y-1.5">
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Client ID</p>
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">{t("Client ID")}</p>
                   <div className="flex items-center gap-2 rounded-md border bg-muted/30 px-2.5 py-1.5">
                     <code className="flex-1 truncate font-mono text-xs">{client.clientId}</code>
                     <Button
@@ -215,7 +215,7 @@ export function AdminClients() {
                       className="h-6 w-6"
                       onClick={() => {
                         void copyText(client.clientId);
-                        toast.success("Client ID copied");
+                        toast.success(t("Client ID copied"));
                       }}
                     >
                       <Copy className="h-3 w-3" />
@@ -225,7 +225,7 @@ export function AdminClients() {
 
                 <div className="space-y-1.5">
                   <p className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-                    Redirect URIs
+                    {t("Redirect URIs")}
                   </p>
                   <div className="space-y-1">
                     {(client.redirectUris ?? []).length ? (
@@ -270,13 +270,13 @@ export function AdminClients() {
       ) : (
         <EmptyState
           icon={AppWindow}
-          title="No applications yet"
-          description="Register your first OIDC client to enable single sign-on."
+          title={t("No applications yet")}
+          description={t("Register your first OIDC client to enable single sign-on.")}
           action={
             can("clients:write") ? (
               <Button onClick={() => setCreating(true)}>
                 <Plus className="h-4 w-4" />
-                New application
+                {t("New application")}
               </Button>
             ) : null
           }
@@ -299,7 +299,7 @@ export function AdminClients() {
           if (clientSecret && client) {
             setSecret({ name: client.name, clientId: client.clientId, secret: clientSecret });
           } else {
-            toast.success(editing ? "Application updated" : "Application created");
+            toast.success(editing ? t("Application updated") : t("Application created"));
           }
         }}
       />
@@ -307,7 +307,7 @@ export function AdminClients() {
       <Dialog open={Boolean(secret)} onOpenChange={(open) => !open && setSecret(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Client secret</DialogTitle>
+            <DialogTitle>{t("Client secret")}</DialogTitle>
             <DialogDescription>
               {t("Copy the secret for {name} now. It will not be shown again.", { name: secret?.name ?? "" })}
             </DialogDescription>
@@ -335,7 +335,7 @@ export function AdminClients() {
             </div>
           )}
           <DialogFooter>
-            <Button onClick={() => setSecret(null)}>Done</Button>
+            <Button onClick={() => setSecret(null)}>{t("Done")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -343,9 +343,9 @@ export function AdminClients() {
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={(open) => !open && setDeleting(null)}
-        title="Delete application?"
+        title={t("Delete application?")}
         description={`"${deleting?.name}" will stop working immediately and all refresh tokens for this client will be revoked.`}
-        confirmLabel="Delete application"
+        confirmLabel={t("Delete application")}
         destructive
         loading={busy}
         onConfirm={onDelete}
@@ -354,9 +354,9 @@ export function AdminClients() {
       <ConfirmDialog
         open={Boolean(rotating)}
         onOpenChange={(open) => !open && setRotating(null)}
-        title="Rotate client secret?"
+        title={t("Rotate client secret?")}
         description={`The current secret for "${rotating?.name}" will stop working immediately. Update your application with the new secret.`}
-        confirmLabel="Rotate secret"
+        confirmLabel={t("Rotate secret")}
         loading={busy}
         onConfirm={onRotate}
       />
@@ -382,6 +382,7 @@ function ClientDialog({
   client: OidcClient | null;
   onSaved: (client?: OidcClient, secret?: string) => void;
 }) {
+  const { t } = useI18n();
   const isEdit = Boolean(client);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -485,17 +486,17 @@ function ClientDialog({
         <DialogHeader>
           <DialogTitle>{isEdit ? `Edit ${client?.name}` : "Register application"}</DialogTitle>
           <DialogDescription>
-            Configure an OpenID Connect client. Redirect URIs must match exactly.
+            {t("Configure an OpenID Connect client. Redirect URIs must match exactly.")}
           </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={submit}>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="client-name">Name</Label>
+              <Label htmlFor="client-name">{t("Name")}</Label>
               <Input id="client-name" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
             <div className="space-y-2">
-              <Label>Client type</Label>
+              <Label>{t("Client type")}</Label>
               <Select
                 value={type}
                 onValueChange={(v) => {
@@ -507,27 +508,27 @@ function ClientDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="confidential">Confidential (server-side)</SelectItem>
-                  <SelectItem value="public">Public (SPA / native)</SelectItem>
+                  <SelectItem value="confidential">{t("Confidential (server-side)")}</SelectItem>
+                  <SelectItem value="public">{t("Public (SPA / native)")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="client-description">Description</Label>
+            <Label htmlFor="client-description">{t("Description")}</Label>
             <Textarea
               id="client-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
-              placeholder="What does this application do?"
+              placeholder={t("What does this application do?")}
             />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="redirect-uris">Redirect URIs</Label>
+              <Label htmlFor="redirect-uris">{t("Redirect URIs")}</Label>
               <Textarea
                 id="redirect-uris"
                 value={redirectUris}
@@ -536,10 +537,10 @@ function ClientDialog({
                 className="font-mono text-xs"
                 placeholder={"https://app.example.com/callback\nhttp://localhost:3000/callback"}
               />
-              <p className="text-[11px] text-muted-foreground">One per line. HTTP is only allowed for localhost.</p>
+              <p className="text-[11px] text-muted-foreground">{t("One per line. HTTP is only allowed for localhost.")}</p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="logout-uris">Post-logout redirect URIs</Label>
+              <Label htmlFor="logout-uris">{t("Post-logout redirect URIs")}</Label>
               <Textarea
                 id="logout-uris"
                 value={postLogoutUris}
@@ -548,12 +549,12 @@ function ClientDialog({
                 className="font-mono text-xs"
                 placeholder={"https://app.example.com\nhttp://localhost:3000"}
               />
-              <p className="text-[11px] text-muted-foreground">Used by the OIDC end-session endpoint.</p>
+              <p className="text-[11px] text-muted-foreground">{t("Used by the OIDC end-session endpoint.")}</p>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label>Scopes</Label>
+            <Label>{t("Scopes")}</Label>
             <div className="flex flex-wrap gap-3 rounded-lg border p-3">
               {scopeOptions.map((scope) => (
                 <label key={scope} className="flex cursor-pointer items-center gap-2 text-sm">
@@ -565,7 +566,7 @@ function ClientDialog({
             <Input
               value={customScope}
               onChange={(e) => setCustomScope(e.target.value)}
-              placeholder="Additional scopes, comma separated (optional)"
+              placeholder={t("Additional scopes, comma separated (optional)")}
               className="text-xs"
             />
             {effectiveScopes.length > 0 && (
@@ -574,12 +575,12 @@ function ClientDialog({
           </div>
 
           <div className="space-y-2">
-            <Label>Grant types</Label>
+            <Label>{t("Grant types")}</Label>
             <div className="flex flex-wrap gap-4 rounded-lg border p-3">
               {grantOptions.map((grant) => (
                 <label key={grant.value} className="flex cursor-pointer items-center gap-2 text-sm">
                   <Checkbox checked={grants.includes(grant.value)} onCheckedChange={() => toggleGrant(grant.value)} />
-                  {grant.label}
+                  {t(grant.label)}
                 </label>
               ))}
             </div>
@@ -588,8 +589,8 @@ function ClientDialog({
           <div className="grid gap-3 rounded-lg border p-4 sm:grid-cols-2">
             <label className="flex items-center justify-between gap-3 text-sm">
               <span>
-                <span className="block font-medium">Require PKCE</span>
-                <span className="block text-xs text-muted-foreground">Recommended for all clients</span>
+                <span className="block font-medium">{t("Require PKCE")}</span>
+                <span className="block text-xs text-muted-foreground">{t("Recommended for all clients")}</span>
               </span>
               <Switch
                 checked={type === "public" ? true : requirePkce}
@@ -599,21 +600,21 @@ function ClientDialog({
             </label>
             <label className="flex items-center justify-between gap-3 text-sm">
               <span>
-                <span className="block font-medium">Trusted application</span>
-                <span className="block text-xs text-muted-foreground">Skip the consent screen</span>
+                <span className="block font-medium">{t("Trusted application")}</span>
+                <span className="block text-xs text-muted-foreground">{t("Skip the consent screen")}</span>
               </span>
               <Switch checked={trusted} onCheckedChange={setTrusted} />
             </label>
             <label className="flex items-center justify-between gap-3 text-sm">
               <span>
-                <span className="block font-medium">Enabled</span>
-                <span className="block text-xs text-muted-foreground">Allow new sign-ins</span>
+                <span className="block font-medium">{t("Enabled")}</span>
+                <span className="block text-xs text-muted-foreground">{t("Allow new sign-ins")}</span>
               </span>
               <Switch checked={enabled} onCheckedChange={setEnabled} />
             </label>
             <div className="space-y-1.5">
               <Label htmlFor="logo-url" className="text-xs">
-                Logo URL
+                {t("Logo URL")}
               </Label>
               <Input
                 id="logo-url"
@@ -626,15 +627,15 @@ function ClientDialog({
           </div>
 
           <details className="rounded-lg border p-4">
-            <summary className="cursor-pointer text-sm font-medium">Token lifetimes</summary>
+            <summary className="cursor-pointer text-sm font-medium">{t("Token lifetimes")}</summary>
             <div className="mt-3 grid gap-3 sm:grid-cols-3">
               {[
                 { label: "Access token (s)", value: accessTtl, set: setAccessTtl },
                 { label: "ID token (s)", value: idTtl, set: setIdTtl },
                 { label: "Refresh token (s)", value: refreshTtl, set: setRefreshTtl },
               ].map((field) => (
-                <div key={field.label} className="space-y-1.5">
-                  <Label className="text-xs">{field.label}</Label>
+                <div key={t(field.label)} className="space-y-1.5">
+                  <Label className="text-xs">{t(field.label)}</Label>
                   <Input
                     type="number"
                     value={field.value}
@@ -648,10 +649,10 @@ function ClientDialog({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button type="submit" disabled={saving}>
-              {saving ? "Saving…" : isEdit ? "Save changes" : "Create application"}
+              {saving ? t("Saving…") : isEdit ? t("Save changes") : t("Create application")}
             </Button>
           </DialogFooter>
         </form>

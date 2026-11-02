@@ -82,7 +82,7 @@ export function AdminAudit() {
     <div className="space-y-6">
       <PageHeader
         title={t("Audit log")}
-        description="Immutable record of authentication, authorization and administration events."
+        description={t("Immutable record of authentication, authorization and administration events.")}
       />
 
       <div className="flex flex-col gap-3 sm:flex-row">
@@ -90,7 +90,7 @@ export function AdminAudit() {
           <Search className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             className="ps-9"
-            placeholder="Search actor, action or target…"
+            placeholder={t("Search actor, action or target…")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -103,10 +103,10 @@ export function AdminAudit() {
           }}
         >
           <SelectTrigger className="w-full sm:w-64">
-            <SelectValue placeholder="Action" />
+            <SelectValue placeholder={t("Action")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All actions</SelectItem>
+            <SelectItem value="all">{t("All actions")}</SelectItem>
             {actionOptions.map((a) => (
               <SelectItem key={a} value={a}>
                 {a}
@@ -166,7 +166,7 @@ export function AdminAudit() {
             <EmptyState
               icon={ScrollText}
               title={t("No audit events")}
-              description="Activity will be recorded as users sign in and administrators make changes."
+              description={t("Activity will be recorded as users sign in and administrators make changes.")}
             />
           </div>
         )}
@@ -178,13 +178,13 @@ export function AdminAudit() {
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
               <ChevronLeft className="h-4 w-4" />
-              Previous
+              {t("Previous")}
             </Button>
             <span className="text-xs">
               Page {page} of {totalPages}
             </span>
             <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
-              Next
+              {t("Next")}
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -194,31 +194,31 @@ export function AdminAudit() {
       <Dialog open={Boolean(selected)} onOpenChange={(open) => !open && setSelected(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Audit event</DialogTitle>
+            <DialogTitle>{t("Audit event")}</DialogTitle>
             <DialogDescription>{selected?.action}</DialogDescription>
           </DialogHeader>
           {selected && (
             <div className="space-y-3 text-sm">
               <dl className="grid grid-cols-3 gap-2">
-                <dt className="text-muted-foreground">Event ID</dt>
+                <dt className="text-muted-foreground">{t("Event ID")}</dt>
                 <dd className="col-span-2 break-all font-mono text-xs">{selected.id}</dd>
-                <dt className="text-muted-foreground">Actor</dt>
+                <dt className="text-muted-foreground">{t("Actor")}</dt>
                 <dd className="col-span-2">{selected.actorEmail || "system"}</dd>
-                <dt className="text-muted-foreground">Target</dt>
+                <dt className="text-muted-foreground">{t("Target")}</dt>
                 <dd className="col-span-2">
                   {selected.targetType}
                   {selected.targetId ? ` · ${selected.targetId}` : ""}
                 </dd>
                 <dt className="text-muted-foreground">IP</dt>
                 <dd className="col-span-2 font-mono text-xs">{selected.ip || "—"}</dd>
-                <dt className="text-muted-foreground">User agent</dt>
+                <dt className="text-muted-foreground">{t("User agent")}</dt>
                 <dd className="col-span-2 break-all text-xs">{selected.userAgent || "—"}</dd>
-                <dt className="text-muted-foreground">Time</dt>
+                <dt className="text-muted-foreground">{t("Time")}</dt>
                 <dd className="col-span-2">{formatDate(selected.createdAt)}</dd>
               </dl>
               {selected.metadata && Object.keys(selected.metadata).length > 0 && (
                 <div>
-                  <p className="mb-1 text-xs font-medium text-muted-foreground">Metadata</p>
+                  <p className="mb-1 text-xs font-medium text-muted-foreground">{t("Metadata")}</p>
                   <pre className="max-h-64 overflow-auto rounded-lg border bg-muted/40 p-3 text-xs">
                     {JSON.stringify(selected.metadata, null, 2)}
                   </pre>

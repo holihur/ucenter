@@ -132,7 +132,7 @@ export function ConsentPage() {
         <div className="space-y-4">
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error || "This request is invalid or has expired."}</AlertDescription>
+            <AlertDescription>{error || t("This request is invalid or has expired.")}</AlertDescription>
           </Alert>
           <Button variant="outline" className="w-full" asChild>
             <Link to="/login">{t("Back to sign in")}</Link>
@@ -170,7 +170,7 @@ export function ConsentPage() {
                     <Check className="h-3 w-3 text-emerald-600" />
                   </span>
                   <span>
-                    <span className="font-medium">{scope.description}</span>
+                    <span className="font-medium">{t(scope.description)}</span>
                     <span className="ml-2 font-mono text-[11px] text-muted-foreground">{scope.key}</span>
                   </span>
                 </li>

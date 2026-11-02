@@ -58,9 +58,9 @@ interface SecretInfo {
 }
 
 export function AdminUsers() {
+  const { t } = useI18n();
   const { can } = useAuth();
   const tenant = useAdminTenant();
-  const { t } = useI18n();
   const queryClient = useQueryClient();
   const [params, setParams] = useSearchParams();
   const [page, setPage] = useState(1);
@@ -141,7 +141,7 @@ export function AdminUsers() {
     setBusy(true);
     try {
       await api.del(`/admin/users/${deleting.id}`);
-      toast.success("User removed");
+      toast.success(t("User removed"));
       setDeleting(null);
       refresh();
     } catch (err) {
@@ -165,7 +165,7 @@ export function AdminUsers() {
     setBusy(true);
     try {
       await api.post(`/admin/users/${revoking.id}/revoke-sessions`);
-      toast.success("Sessions revoked");
+      toast.success(t("Sessions revoked"));
       setRevoking(null);
       refresh();
     } catch (err) {
@@ -194,7 +194,7 @@ export function AdminUsers() {
         <div className="relative flex-1">
           <Search className="absolute start-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name, email or username…"
+            placeholder={t("Search by name, email or username…")}
             className="ps-9"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -208,13 +208,13 @@ export function AdminUsers() {
           }}
         >
           <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="Status" />
+            <SelectValue placeholder={t("Status")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="disabled">Disabled</SelectItem>
-            <SelectItem value="invited">Invited</SelectItem>
+            <SelectItem value="all">{t("All statuses")}</SelectItem>
+            <SelectItem value="active">{t("Active")}</SelectItem>
+            <SelectItem value="disabled">{t("Disabled")}</SelectItem>
+            <SelectItem value="invited">{t("Invited")}</SelectItem>
           </SelectContent>
         </Select>
         <Select
@@ -225,10 +225,10 @@ export function AdminUsers() {
           }}
         >
           <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="Role" />
+            <SelectValue placeholder={t("Role")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All roles</SelectItem>
+            <SelectItem value="all">{t("All roles")}</SelectItem>
             {roles.map((r) => (
               <SelectItem key={r.key} value={r.key}>
                 {r.name}
@@ -292,10 +292,10 @@ export function AdminUsers() {
                   <TableCell>
                     {user.mfaEnabled ? (
                       <Badge variant="success">
-                        <ShieldCheck className="mr-1 h-3 w-3" /> Enabled
+                        <ShieldCheck className="mr-1 h-3 w-3" /> {t("Enabled")}
                       </Badge>
                     ) : (
-                      <span className="text-xs text-muted-foreground">Not enabled</span>
+                      <span className="text-xs text-muted-foreground">{t("Not enabled")}</span>
                     )}
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
@@ -348,7 +348,7 @@ export function AdminUsers() {
           <div className="p-6">
             <EmptyState
               icon={Users}
-              title="No users found"
+              title={t("No users found")}
               description={q ? "Try a different search term or filter." : "Invite your first teammate to get started."}
               action={
                 can("users:write") ? (
@@ -371,13 +371,13 @@ export function AdminUsers() {
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
               <ChevronLeft className="h-4 w-4" />
-              Previous
+              {t("Previous")}
             </Button>
             <span className="text-xs">
               Page {page} of {totalPages}
             </span>
             <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
-              Next
+              {t("Next")}
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -398,7 +398,7 @@ export function AdminUsers() {
               kind: "password",
             });
           } else {
-            toast.success("User added to the organization");
+            toast.success(t("User added to the organization"));
           }
         }}
       />
@@ -411,7 +411,7 @@ export function AdminUsers() {
         onSaved={() => {
           refresh();
           setEditing(null);
-          toast.success("User updated");
+          toast.success(t("User updated"));
         }}
       />
 
@@ -431,12 +431,12 @@ export function AdminUsers() {
                 <CopyButton value={secret.value} />
               </div>
               <p className="text-xs text-muted-foreground">
-                The user should sign in and change this password immediately.
+                {t("The user should sign in and change this password immediately.")}
               </p>
             </div>
           )}
           <DialogFooter>
-            <Button onClick={() => setSecret(null)}>Done</Button>
+            <Button onClick={() => setSecret(null)}>{t("Done")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -444,9 +444,9 @@ export function AdminUsers() {
       <ConfirmDialog
         open={Boolean(deleting)}
         onOpenChange={(open) => !open && setDeleting(null)}
-        title="Remove user from tenant?"
+        title={t("Remove user from tenant?")}
         description={`${deleting?.email ?? "This user"} will lose access to this organization and all active sessions will be revoked.`}
-        confirmLabel="Remove user"
+        confirmLabel={t("Remove user")}
         destructive
         loading={busy}
         onConfirm={onDelete}
@@ -455,9 +455,9 @@ export function AdminUsers() {
       <ConfirmDialog
         open={Boolean(resetting)}
         onOpenChange={(open) => !open && setResetting(null)}
-        title="Reset password?"
+        title={t("Reset password?")}
         description={`A new temporary password will be generated for ${resetting?.email ?? "this user"} and all their sessions will be revoked.`}
-        confirmLabel="Reset password"
+        confirmLabel={t("Reset password")}
         loading={busy}
         onConfirm={onResetPassword}
       />
@@ -465,9 +465,9 @@ export function AdminUsers() {
       <ConfirmDialog
         open={Boolean(revoking)}
         onOpenChange={(open) => !open && setRevoking(null)}
-        title="Revoke all sessions?"
+        title={t("Revoke all sessions?")}
         description={`${revoking?.email ?? "This user"} will be signed out of every device and application.`}
-        confirmLabel="Revoke sessions"
+        confirmLabel={t("Revoke sessions")}
         loading={busy}
         onConfirm={onRevokeSessions}
       />
@@ -488,6 +488,7 @@ function UserDialog({
   roles: Role[];
   onSaved: (result: { email: string; tempPassword?: string }) => void;
 }) {
+  const { t } = useI18n();
   const isEdit = Boolean(user);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -545,17 +546,17 @@ function UserDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>{isEdit ? "Edit user" : "Invite a user"}</DialogTitle>
+          <DialogTitle>{isEdit ? t("Edit user") : t("Invite a user")}</DialogTitle>
           <DialogDescription>
             {isEdit
-              ? "Update profile details, status and tenant roles."
-              : "Create an identity and add the user to this organization."}
+              ? t("Update profile details, status and tenant roles.")
+              : t("Create an identity and add the user to this organization.")}
           </DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={submit}>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="user-email">Email</Label>
+              <Label htmlFor="user-email">{t("Email")}</Label>
               <Input
                 id="user-email"
                 type="email"
@@ -566,13 +567,13 @@ function UserDialog({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="user-name">Full name</Label>
+              <Label htmlFor="user-name">{t("Full name")}</Label>
               <Input id="user-name" value={name} onChange={(e) => setName(e.target.value)} required />
             </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="user-username">Username</Label>
+              <Label htmlFor="user-username">{t("Username")}</Label>
               <Input
                 id="user-username"
                 value={username}
@@ -582,33 +583,33 @@ function UserDialog({
             </div>
             {isEdit ? (
               <div className="space-y-2">
-                <Label>Status</Label>
+                <Label>{t("Status")}</Label>
                 <Select value={status} onValueChange={setStatus}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="disabled">Disabled</SelectItem>
+                    <SelectItem value="active">{t("Active")}</SelectItem>
+                    <SelectItem value="disabled">{t("Disabled")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             ) : (
               <div className="space-y-2">
-                <Label htmlFor="user-password">Password (optional)</Label>
+                <Label htmlFor="user-password">{t("Password (optional)")}</Label>
                 <Input
                   id="user-password"
                   type="text"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Leave blank to auto-generate"
+                  placeholder={t("Leave blank to auto-generate")}
                 />
               </div>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label>Roles</Label>
+            <Label>{t("Roles")}</Label>
             <div className="grid gap-2 rounded-lg border p-3 sm:grid-cols-2">
               {roles.map((role) => (
                 <label
@@ -631,10 +632,10 @@ function UserDialog({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button type="submit" disabled={saving}>
-              {saving ? "Saving…" : isEdit ? "Save changes" : "Invite user"}
+              {saving ? t("Saving…") : isEdit ? t("Save changes") : t("Invite user")}
             </Button>
           </DialogFooter>
         </form>
