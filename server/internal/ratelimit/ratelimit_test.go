@@ -60,11 +60,11 @@ func TestRedisLimiterFallsBackWhenUnavailable(t *testing.T) {
 	client := redis.NewClient(&redis.Options{Addr: srv.Addr()})
 	ctx := context.Background()
 	l := NewRedis(client, 1, time.Minute, "test:", slog.Default())
-	if ok, _ := l.Allow(ctx, "fallback"); !ok {
-		t.Fatal("first attempt should be allowed")
-	}
 	srv.Close()
 	// The Redis call fails; the in-memory fallback still enforces the limit.
+	if ok, _ := l.Allow(ctx, "fallback"); !ok {
+		t.Fatal("first fallback attempt should be allowed")
+	}
 	if ok, _ := l.Allow(ctx, "fallback"); ok {
 		t.Fatal("fallback should reject the second attempt")
 	}
