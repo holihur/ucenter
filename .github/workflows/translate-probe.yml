@@ -1,5 +1,9 @@
 name: Translate probe
-on: workflow_dispatch
+on:
+  push:
+    paths:
+      - ".github/workflows/translate-probe.yml"
+  workflow_dispatch
 jobs:
   probe:
     runs-on: ubuntu-latest
