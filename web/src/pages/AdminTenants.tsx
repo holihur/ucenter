@@ -69,7 +69,7 @@ export function AdminTenants() {
       toast.success(`${tenant.name}: ${next === "active" ? t("Enabled") : t("Disabled")}`);
       queryClient.invalidateQueries({ queryKey: ["admin-tenants"] });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to update tenant");
+      toast.error(err instanceof Error ? err.message : t("Unable to update tenant"));
     }
   }
 
@@ -246,7 +246,7 @@ function CreateTenantDialog({
       onCreated({ tenant: res.tenant.name, email: ownerEmail, password: res.tempPassword });
       onOpenChange(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to create tenant");
+      toast.error(err instanceof Error ? err.message : t("Unable to create tenant"));
     } finally {
       setSaving(false);
     }

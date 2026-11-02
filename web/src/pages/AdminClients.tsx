@@ -97,7 +97,7 @@ export function AdminClients() {
       setDeleting(null);
       refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to delete application");
+      toast.error(err instanceof Error ? err.message : t("Unable to delete application"));
     } finally {
       setBusy(false);
     }
@@ -112,7 +112,7 @@ export function AdminClients() {
       setRotating(null);
       refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to rotate secret");
+      toast.error(err instanceof Error ? err.message : t("Unable to rotate secret"));
     } finally {
       setBusy(false);
     }
@@ -474,7 +474,7 @@ function ClientDialog({
       }
       onOpenChange(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to save application");
+      toast.error(err instanceof Error ? err.message : t("Unable to save application"));
     } finally {
       setSaving(false);
     }

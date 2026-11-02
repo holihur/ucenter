@@ -36,7 +36,7 @@ export function AdminSessions() {
       setRevoking(null);
       queryClient.invalidateQueries({ queryKey: ["sessions"] });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to revoke session");
+      toast.error(err instanceof Error ? err.message : t("Unable to revoke session"));
     } finally {
       setBusy(false);
     }

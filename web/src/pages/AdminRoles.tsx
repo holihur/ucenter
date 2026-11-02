@@ -69,7 +69,7 @@ export function AdminRoles() {
       setDeleting(null);
       refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to delete role");
+      toast.error(err instanceof Error ? err.message : t("Unable to delete role"));
     } finally {
       setBusy(false);
     }
@@ -270,7 +270,7 @@ function RoleDialog({
       onSaved();
       onOpenChange(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to save role");
+      toast.error(err instanceof Error ? err.message : t("Unable to save role"));
     } finally {
       setSaving(false);
     }

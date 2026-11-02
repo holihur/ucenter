@@ -82,7 +82,7 @@ export function AdminSettings() {
       toast.success(t("Signing key rotated"), { description: `${t("New key")}: ${res.kid}` });
       setRotateOpen(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to rotate signing key");
+      toast.error(err instanceof Error ? err.message : t("Unable to rotate signing key"));
     } finally {
       setRotating(false);
     }
@@ -114,7 +114,7 @@ export function AdminSettings() {
         queryClient.invalidateQueries({ queryKey: ["me"] }),
       ]);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to save settings");
+      toast.error(err instanceof Error ? err.message : t("Unable to save settings"));
     } finally {
       setSaving(false);
     }

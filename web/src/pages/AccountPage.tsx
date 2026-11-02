@@ -553,7 +553,7 @@ export function AccountPage() {
       <ConfirmDialog
         open={Boolean(revoking)}
         onOpenChange={(open) => !open && setRevoking(null)}
-        title="Revoke this session?"
+        title={t("Revoke this session?")}
         description={
           revoking?.current
             ? t("This is your current session. You will be signed out immediately.")

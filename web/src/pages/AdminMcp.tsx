@@ -73,7 +73,7 @@ export function AdminMcp() {
       setRevoking(null);
       queryClient.invalidateQueries({ queryKey: ["api-tokens"] });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to revoke token");
+      toast.error(err instanceof Error ? err.message : t("Unable to revoke token"));
     } finally {
       setBusy(false);
     }
@@ -318,7 +318,7 @@ function CreateTokenDialog({
       onCreated({ raw: res.token, item: res.item });
       onOpenChange(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to create token");
+      toast.error(err instanceof Error ? err.message : t("Unable to create token"));
     } finally {
       setSaving(false);
     }

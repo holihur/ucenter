@@ -234,7 +234,7 @@ export function LoginPage() {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select organization" />
+                  <SelectValue placeholder={t("Select organization")} />
                 </SelectTrigger>
                 <SelectContent>
                   {tenants.map((t) => (

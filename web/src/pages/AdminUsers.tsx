@@ -126,11 +126,11 @@ export function AdminUsers() {
     setBusy(true);
     try {
       const res = await api.post<{ tempPassword: string }>(`/admin/users/${resetting.id}/reset-password`);
-      setSecret({ title: "Temporary password", email: resetting.email, value: res.tempPassword, kind: "password" });
+      setSecret({ title: t("Temporary password"), email: resetting.email, value: res.tempPassword, kind: "password" });
       setResetting(null);
       refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to reset password");
+      toast.error(err instanceof Error ? err.message : t("Unable to reset password"));
     } finally {
       setBusy(false);
     }
@@ -145,7 +145,7 @@ export function AdminUsers() {
       setDeleting(null);
       refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to remove user");
+      toast.error(err instanceof Error ? err.message : t("Unable to remove user"));
     } finally {
       setBusy(false);
     }
@@ -156,7 +156,7 @@ export function AdminUsers() {
       await api.post(`/admin/users/${user.id}/send-invite`);
       toast.success(t("Invitation email sent"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to send invitation");
+      toast.error(err instanceof Error ? err.message : t("Unable to send invitation"));
     }
   }
 
@@ -169,7 +169,7 @@ export function AdminUsers() {
       setRevoking(null);
       refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to revoke sessions");
+      toast.error(err instanceof Error ? err.message : t("Unable to revoke sessions"));
     } finally {
       setBusy(false);
     }
@@ -349,7 +349,7 @@ export function AdminUsers() {
             <EmptyState
               icon={Users}
               title={t("No users found")}
-              description={q ? "Try a different search term or filter." : "Invite your first teammate to get started."}
+              description={q ? t("Try a different search term or filter.") : t("Invite your first teammate to get started.")}
               action={
                 can("users:write") ? (
                   <Button onClick={() => setCreateOpen(true)}>
@@ -536,7 +536,7 @@ function UserDialog({
       }
       onOpenChange(false);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Unable to save user");
+      toast.error(err instanceof Error ? err.message : t("Unable to save user"));
     } finally {
       setSaving(false);
     }
@@ -578,7 +578,7 @@ function UserDialog({
                 id="user-username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="optional"
+                placeholder={t("Optional")}
               />
             </div>
             {isEdit ? (
