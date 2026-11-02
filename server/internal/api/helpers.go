@@ -278,3 +278,12 @@ func describeScopes(scope string) []gin.H {
 	}
 	return out
 }
+
+func promptHas(prompt, want string) bool {
+	for _, p := range strings.Fields(prompt) {
+		if p == want {
+			return true
+		}
+	}
+	return false
+}
