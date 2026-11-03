@@ -93,23 +93,42 @@ func (a *API) login(c *gin.Context) {
 		return
 	}
 
-	mfaUsed := false
+	webauthnCount, _ := a.Store.CountWebAuthnCredentials(ctx, tenant.ID, user.ID)
+	mfaMethods := []string{}
 	if user.MFA.Enabled {
-		if strings.TrimSpace(req.TOTP) == "" {
+		mfaMethods = append(mfaMethods, "totp")
+	}
+	if webauthnCount > 0 {
+		mfaMethods = append(mfaMethods, "webauthn")
+	}
+	mfaUsed := false
+	if len(mfaMethods) > 0 {
+		if strings.TrimSpace(req.TOTP) != "" && user.MFA.Enabled {
+			remaining, valid := a.Svc.VerifyMFA(user, req.TOTP)
+			if !valid {
+				a.Svc.Audit(ctx, tenant.ID, user, "auth.mfa.failed", "user", user.ID.Hex(), a.clientIP(c), c.Request.UserAgent(), nil)
+				fail(c, http.StatusUnauthorized, "invalid_mfa", "The verification code is invalid")
+				return
+			}
+			mfaUsed = true
+			if len(remaining) != len(user.MFA.RecoveryCodes) {
+				_ = a.Store.UpdateUser(ctx, user.ID, bson.M{"mfa.recovery_codes": remaining})
+				user.MFA.RecoveryCodes = remaining
+			}
+		} else {
+			pending, err := a.createMFAPending(ctx, tenant, user, req.RequestID)
+			if err != nil {
+				fail(c, http.StatusInternalServerError, "internal_error", "Unable to start MFA")
+				return
+			}
 			a.Metrics.Login("mfa_required")
-			c.JSON(http.StatusOK, gin.H{"mfaRequired": true})
+			c.JSON(http.StatusOK, gin.H{
+				"mfaRequired": true,
+				"mfaToken":    pending,
+				"mfaMethods":  mfaMethods,
+				"tenant":      publicTenant(tenant),
+			})
 			return
-		}
-		remaining, valid := a.Svc.VerifyMFA(user, req.TOTP)
-		if !valid {
-			a.Svc.Audit(ctx, tenant.ID, user, "auth.mfa.failed", "user", user.ID.Hex(), a.clientIP(c), c.Request.UserAgent(), nil)
-			fail(c, http.StatusUnauthorized, "invalid_mfa", "The verification code is invalid")
-			return
-		}
-		mfaUsed = true
-		if len(remaining) != len(user.MFA.RecoveryCodes) {
-			_ = a.Store.UpdateUser(ctx, user.ID, bson.M{"mfa.recovery_codes": remaining})
-			user.MFA.RecoveryCodes = remaining
 		}
 	}
 
@@ -142,7 +161,7 @@ func (a *API) login(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"mfaRequired":      false,
-		"mfaSetupRequired": tenant.Settings.RequireMFA && !user.MFA.Enabled,
+		"mfaSetupRequired": tenant.Settings.RequireMFA && !user.MFA.Enabled && webauthnCount == 0,
 		"user":             user,
 		"tenant":           publicTenant(tenant),
 		"next":             next,

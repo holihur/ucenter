@@ -23,11 +23,11 @@ jobs:
     env:
       MONGO_URI: mongodb://127.0.0.1:27017
       MONGO_DB: ucenter_ci
-      BASE_URL: http://127.0.0.1:8080
+      BASE_URL: http://localhost:8080
       DEV: "true"
       MAIL_DRIVER: mock
       ENCRYPTION_KEY: ci-test-encryption-key
-      E2E_BASE_URL: http://127.0.0.1:8080
+      E2E_BASE_URL: http://localhost:8080
     steps:
       - uses: actions/checkout@v4
 

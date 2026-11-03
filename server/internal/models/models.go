@@ -215,6 +215,7 @@ type Session struct {
 	UserID    primitive.ObjectID `bson:"user_id" json:"userId"`
 	AuthTime  time.Time          `bson:"auth_time" json:"authTime"`
 	MFA       bool               `bson:"mfa" json:"mfa"`
+	StepUpAt  *time.Time         `bson:"step_up_at,omitempty" json:"stepUpAt,omitempty"`
 	IP        string             `bson:"ip" json:"ip"`
 	UserAgent string             `bson:"user_agent" json:"userAgent"`
 	ExpiresAt time.Time          `bson:"expires_at" json:"expiresAt"`
@@ -344,4 +345,43 @@ type IdPState struct {
 	ExpiresAt     time.Time           `bson:"expires_at" json:"expiresAt"`
 	Used          bool                `bson:"used" json:"used"`
 	CreatedAt     time.Time           `bson:"created_at" json:"createdAt"`
+}
+
+type WebAuthnCredential struct {
+	ID              primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	TenantID        primitive.ObjectID `bson:"tenant_id" json:"tenantId"`
+	UserID          primitive.ObjectID `bson:"user_id" json:"userId"`
+	CredentialID    []byte             `bson:"credential_id" json:"credentialId"`
+	PublicKey       []byte             `bson:"public_key" json:"-"`
+	AAGUID          []byte             `bson:"aaguid,omitempty" json:"aaguid,omitempty"`
+	SignCount       uint32             `bson:"sign_count" json:"signCount"`
+	AttestationType string             `bson:"attestation_type,omitempty" json:"attestationType,omitempty"`
+	Transports      []string           `bson:"transports,omitempty" json:"transports,omitempty"`
+	Name            string             `bson:"name" json:"name"`
+	BackupEligible  bool               `bson:"backup_eligible" json:"backupEligible"`
+	BackupState     bool               `bson:"backup_state" json:"backupState"`
+	CreatedAt       time.Time          `bson:"created_at" json:"createdAt"`
+	LastUsedAt      *time.Time         `bson:"last_used_at,omitempty" json:"lastUsedAt,omitempty"`
+}
+
+type WebAuthnSession struct {
+	ID        string             `bson:"_id" json:"id"`
+	TenantID  primitive.ObjectID `bson:"tenant_id" json:"tenantId"`
+	UserID    primitive.ObjectID `bson:"user_id" json:"userId"`
+	Kind      string             `bson:"kind" json:"kind"`
+	Data      string             `bson:"data" json:"-"`
+	RequestID string             `bson:"request_id,omitempty" json:"requestId,omitempty"`
+	ExpiresAt time.Time          `bson:"expires_at" json:"expiresAt"`
+	Used      bool               `bson:"used" json:"used"`
+	CreatedAt time.Time          `bson:"created_at" json:"createdAt"`
+}
+
+type MFAPending struct {
+	ID        string             `bson:"_id" json:"id"`
+	TenantID  primitive.ObjectID `bson:"tenant_id" json:"tenantId"`
+	UserID    primitive.ObjectID `bson:"user_id" json:"userId"`
+	RequestID string             `bson:"request_id,omitempty" json:"requestId,omitempty"`
+	ExpiresAt time.Time          `bson:"expires_at" json:"expiresAt"`
+	Used      bool               `bson:"used" json:"used"`
+	CreatedAt time.Time          `bson:"created_at" json:"createdAt"`
 }

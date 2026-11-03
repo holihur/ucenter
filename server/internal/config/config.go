@@ -35,6 +35,8 @@ type Config struct {
 	LogLevel            string
 	RedisURL            string
 	RedisPrefix         string
+	WebAuthnRPID        string
+	WebAuthnOrigins     []string
 }
 
 func Load() Config {
@@ -65,12 +67,16 @@ func Load() Config {
 		LogLevel:            env("LOG_LEVEL", "info"),
 		RedisURL:            env("REDIS_URL", ""),
 		RedisPrefix:         env("REDIS_PREFIX", "ucenter:rl:"),
+		WebAuthnRPID:        env("WEBAUTHN_RP_ID", ""),
 	}
 	if origins := env("ALLOWED_ORIGINS", ""); origins != "" {
 		c.AllowedOrigins = strings.Split(origins, ",")
 	}
 	if proxies := env("TRUSTED_PROXIES", ""); proxies != "" {
 		c.TrustedProxies = strings.Split(proxies, ",")
+	}
+	if origins := env("WEBAUTHN_ORIGINS", ""); origins != "" {
+		c.WebAuthnOrigins = strings.Split(origins, ",")
 	}
 	return c
 }

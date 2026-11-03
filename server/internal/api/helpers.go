@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-webauthn/webauthn/webauthn"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"ucenter/internal/config"
 	"ucenter/internal/mail"
@@ -55,6 +56,10 @@ func New(s *store.Store, svc *service.Service, cfg config.Config, cipher *securi
 			tokenLimiter = ratelimit.NewRedis(client, 120, time.Minute, cfg.RedisPrefix+"token:", slog.Default())
 		}
 	}
+	wa, waErr := newWebAuthn(cfg)
+	if waErr != nil {
+		slog.Warn("webauthn_disabled", "error", waErr)
+	}
 	return &API{
 		Store:        s,
 		Svc:          svc,
@@ -62,6 +67,7 @@ func New(s *store.Store, svc *service.Service, cfg config.Config, cipher *securi
 		Mailer:       mail.New(cfg, s),
 		Cipher:       cipher,
 		Metrics:      metrics,
+		WebAuthn:     wa,
 		limiter:      limiter,
 		mailLimiter:  mailLimiter,
 		tokenLimiter: tokenLimiter,

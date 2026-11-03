@@ -616,5 +616,17 @@
   "This token is shown only once. Store it in your identity provider.": "This token is shown only once. Store it in your identity provider.",
   "Content-Type": "Content-Type",
   "Filter": "Filter",
-  "Groups": "Groups"
+  "Groups": "Groups",
+  "Use a passkey": "Use a passkey",
+  "Use your passkey to finish signing in": "Use your passkey to finish signing in",
+  "Passkey verification failed": "Passkey verification failed",
+  "Passkey added": "Passkey added",
+  "Passkey removed": "Passkey removed",
+  "Passkeys": "Passkeys",
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "Use Face ID, Touch ID, Windows Hello or a security key to sign in.",
+  "Add passkey": "Add passkey",
+  "Added {date}": "Added {date}",
+  "Last used {date}": "Last used {date}",
+  "Remove": "Remove",
+  "No passkeys registered yet.": "No passkeys registered yet."
 }

@@ -37,6 +37,8 @@ services:
       SMTP_FROM: ${SMTP_FROM:-no-reply@ucenter.local}
       SMTP_FROM_NAME: ${SMTP_FROM_NAME:-UCenter}
       SMTP_TLS: ${SMTP_TLS:-false}
+      WEBAUTHN_RP_ID: ${WEBAUTHN_RP_ID:-}
+      WEBAUTHN_ORIGINS: ${WEBAUTHN_ORIGINS:-}
       REDIS_URL: ${REDIS_URL:-}
       REDIS_PREFIX: ${REDIS_PREFIX:-ucenter:rl:}
       METRICS_TOKEN: ${METRICS_TOKEN:-}

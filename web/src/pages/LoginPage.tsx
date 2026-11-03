@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { startAuthentication } from "@simplewebauthn/browser";
 import { AlertCircle, ArrowRight, Building2, Globe, KeyRound, Loader2, LockKeyhole, Mail, MessageCircle, ShieldCheck, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/AuthShell";
@@ -19,6 +20,8 @@ import { useErrorText, useI18n } from "@/lib/i18n";
 interface LoginResponse {
   mfaRequired: boolean;
   mfaSetupRequired?: boolean;
+  mfaToken?: string;
+  mfaMethods?: string[];
   user?: User;
   tenant?: PublicTenant;
   next?: string;
@@ -43,6 +46,9 @@ export function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [continuing, setContinuing] = useState(false);
+  const [mfaToken, setMfaToken] = useState("");
+  const [mfaMethods, setMfaMethods] = useState<string[]>([]);
+  const [passkeyBusy, setPasskeyBusy] = useState(false);
 
   const tenantsQuery = useQuery({
     queryKey: ["public-tenants"],
@@ -122,6 +128,45 @@ export function LoginPage() {
     window.location.assign(`/t/${tenant.slug}/idp/${type}/start?${sp.toString()}`);
   }
 
+  async function completeLogin(res: LoginResponse) {
+    if (!tenant) return;
+    localStorage.setItem("uc_tenant", tenant.slug);
+    if (res.user?.platformAdmin && res.tenant?.id) {
+      setAdminTenantId(res.tenant.id);
+    }
+    await refresh();
+    if (res.mfaSetupRequired) {
+      toast.warning(t("Your organization requires two-factor authentication. Please set it up in Account → Security."));
+    }
+    if (requestId) {
+      await finishRequest();
+    } else {
+      window.location.assign("/admin");
+    }
+  }
+
+  async function passkeyLogin() {
+    if (!mfaToken) return;
+    setPasskeyBusy(true);
+    setError("");
+    try {
+      const begin = await api.post<{ sessionId: string; options: { publicKey: any } }>(
+        "/auth/webauthn/begin",
+        { mfaToken },
+      );
+      const credential = await startAuthentication({ optionsJSON: begin.options.publicKey });
+      const res = await api.post<LoginResponse>("/auth/webauthn/finish", {
+        sessionId: begin.sessionId,
+        credential,
+      });
+      await completeLogin(res);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : t("Passkey verification failed"));
+    } finally {
+      setPasskeyBusy(false);
+    }
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!tenant) return;
@@ -138,22 +183,16 @@ export function LoginPage() {
       if (res.mfaRequired) {
         setStep("mfa");
         setTotp("");
-        toast.info(t("Enter the 6-digit code from your authenticator app"));
+        setMfaToken(res.mfaToken ?? "");
+        setMfaMethods(res.mfaMethods ?? []);
+        if (res.mfaMethods?.includes("webauthn") && !res.mfaMethods?.includes("totp")) {
+          toast.info(t("Use your passkey to finish signing in"));
+        } else {
+          toast.info(t("Enter the 6-digit code from your authenticator app"));
+        }
         return;
       }
-      localStorage.setItem("uc_tenant", tenant.slug);
-      if (res.user?.platformAdmin && res.tenant?.id) {
-        setAdminTenantId(res.tenant.id);
-      }
-      await refresh();
-      if (res.mfaSetupRequired) {
-        toast.warning(t("Your organization requires two-factor authentication. Please set it up in Account → Security."));
-      }
-      if (requestId) {
-        await finishRequest();
-      } else {
-        window.location.assign("/admin");
-      }
+      await completeLogin(res);
     } catch (err) {
       setError(errorText(err));
     } finally {
@@ -333,21 +372,31 @@ export function LoginPage() {
               </div>
             </>
           ) : (
-            <div className="space-y-2">
-              <Label htmlFor="totp">{t("Verification code")}</Label>
-              <Input
-                id="totp"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                placeholder={t("123456 or recovery code")}
-                autoFocus
-                value={totp}
-                onChange={(e) => setTotp(e.target.value)}
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                {t("Open your authenticator app and enter the 6-digit code. You can also use a recovery code.")}
-              </p>
+            <div className="space-y-3">
+              {(mfaMethods.length === 0 || mfaMethods.includes("totp")) && (
+                <>
+                  <Label htmlFor="totp">{t("Verification code")}</Label>
+                  <Input
+                    id="totp"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    placeholder={t("123456 or recovery code")}
+                    autoFocus
+                    value={totp}
+                    onChange={(e) => setTotp(e.target.value)}
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {t("Open your authenticator app and enter the 6-digit code. You can also use a recovery code.")}
+                  </p>
+                </>
+              )}
+              {mfaMethods.includes("webauthn") && (
+                <Button type="button" variant="outline" className="w-full" onClick={() => void passkeyLogin()} disabled={passkeyBusy}>
+                  {passkeyBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                  {t("Use a passkey")}
+                </Button>
+              )}
               <div className="flex items-center justify-between">
                 <button
                   type="button"
@@ -355,6 +404,8 @@ export function LoginPage() {
                   onClick={() => {
                     setStep("credentials");
                     setTotp("");
+                    setMfaToken("");
+                    setMfaMethods([]);
                   }}
                 >
                   {t("Back to password")}
@@ -376,10 +427,12 @@ export function LoginPage() {
             </Alert>
           )}
 
-          <Button type="submit" className="w-full" size="lg" disabled={submitting || !tenant}>
-            {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            {step === "mfa" ? t("Verify and sign in") : t("Sign in")}
-          </Button>
+          {(step !== "mfa" || mfaMethods.length === 0 || mfaMethods.includes("totp")) && (
+            <Button type="submit" className="w-full" size="lg" disabled={submitting || !tenant}>
+              {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+              {step === "mfa" ? t("Verify and sign in") : t("Sign in")}
+            </Button>
+          )}
 
           {tenant && !tenant.allowPasswordLogin && (
             <p className="text-center text-xs text-muted-foreground">

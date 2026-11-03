@@ -145,6 +145,33 @@ test("hand-drawn auth template renders and can be restored", async ({ page }) =>
   }
 });
 
+test("passkey enrollment, password + passkey login, and removal", async ({ page, context }) => {
+  await login(page);
+  const client = await context.newCDPSession(page);
+  await client.send("WebAuthn.enable");
+  const { authenticatorId } = await client.send("WebAuthn.addVirtualAuthenticator", {
+    options: { protocol: "ctap2", transport: "internal", hasResidentKey: true, hasUserVerification: true, isUserVerified: true },
+  });
+
+  await page.goto("/account");
+  await page.getByRole("button", { name: "Add passkey" }).click();
+  await expect(page.getByRole("button", { name: "Remove" }).first()).toBeVisible({ timeout: 30_000 });
+
+  await page.request.post("/api/auth/logout");
+  await page.goto("/login");
+  await page.fill("#email", "owner@acme.test");
+  await page.fill("#password", "Password123!");
+  await page.locator('button[type="submit"]').click();
+  await expect(page.getByRole("button", { name: "Use a passkey" })).toBeVisible({ timeout: 30_000 });
+  await page.getByRole("button", { name: "Use a passkey" }).click();
+  await page.waitForURL(/\/admin$/, { timeout: 60_000 });
+
+  await page.goto("/account");
+  await page.getByRole("button", { name: "Remove" }).first().click();
+  await expect(page.getByText("No passkeys registered yet.")).toBeVisible({ timeout: 30_000 });
+  await client.send("WebAuthn.removeVirtualAuthenticator", { authenticatorId });
+});
+
 test("Arabic switches the shell to RTL", async ({ page }) => {
   await page.goto("/login");
   await page.getByTestId("language-menu").click();

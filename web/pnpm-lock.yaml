@@ -199,6 +199,9 @@ importers:
       '@radix-ui/react-tabs':
         specifier: ^1.1.2
         version: 1.2.1(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@simplewebauthn/browser':
+        specifier: ^14.0.0
+        version: 14.0.0
       '@tanstack/react-query':
         specifier: ^5.62.11
         version: 5.105.0(@types/react@19.3.0)(react@19.3.1)
@@ -1117,6 +1120,9 @@ packages:
     resolution: {integrity: sha512-tlynfm3LIQtOCjFdT7kjyMnGrl0PbhyldgCfj7b1VxafD6uYiJFjd2ATzmYb+YnzNIzNezpK7XzFzDtPu37IeA==}
     cpu: [x64]
     os: [win32]
+
+  '@simplewebauthn/browser@14.0.0':
+    resolution: {integrity: sha512-1odWVqeEBTl7lJ9zMKLEsmTlnyrDO5iRcTvfMKKk1WThUnp/i8JJdffdj2icP+tty159s4PgwE3BiMoEW9NFow==}
 
   '@tanstack/query-core@5.105.0':
     resolution: {integrity: sha512-7p56vRmT/z4UJ6sctGIdl5WRUQyUv53IUpUwEKi2g97zMbO7zh8ZsCLffGAvCPBR4xD72e3VXsDyLwXHhoNTMQ==}
@@ -2554,6 +2560,8 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.67.3':
     optional: true
+
+  '@simplewebauthn/browser@14.0.0': {}
 
   '@tanstack/query-core@5.105.0': {}
 

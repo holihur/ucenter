@@ -24,6 +24,9 @@ audit trail. A single platform administrator can manage every tenant from one co
   custom OAuth2/OIDC. Only configured and enabled providers are shown on the login page;
   account linking, JIT provisioning and a local mock provider are included. See
   [docs/UPSTREAM-IDP.md](docs/UPSTREAM-IDP.md).
+- **Passkeys / WebAuthn** — account enrolment, password + passkey login, TOTP coexistence
+  and session step-up, with a Chromium virtual-authenticator E2E test. See
+  [docs/WEBAUTHN.md](docs/WEBAUTHN.md).
 - **Platform administration** — create tenants, assign owners, enable/disable tenants and
   switch between organizations without re-authenticating.
 - **Security first** — Argon2id passwords, TOTP MFA with hashed recovery codes, exact
@@ -298,6 +301,9 @@ tenant with `X-Tenant-ID: <id-or-slug>`.
 | `GET/POST` | `/api/admin/api-tokens` | List / create MCP API tokens |
 | `DELETE` | `/api/admin/api-tokens/:id` | Revoke an MCP API token |
 | `POST` | `/mcp` | MCP Streamable HTTP endpoint (Bearer token) |
+| `POST` | `/api/auth/webauthn/begin` | Start passkey assertion |
+| `POST` | `/api/auth/webauthn/finish` | Finish passkey login |
+| `GET/POST` | `/api/me/webauthn/*` | Passkey enrolment and credential management |
 | `GET` | `/api/public/tenants/:slug/identity-providers` | Enabled upstream providers |
 | `GET/PUT/DELETE` | `/api/admin/identity-providers` | Tenant provider configuration |
 | `GET` | `/t/:slug/idp/:type/start` | Start upstream login |
@@ -324,6 +330,8 @@ tenant with `X-Tenant-ID: <id-or-slug>`.
 | `BOOTSTRAP_TENANT_NAME` | slug | First tenant display name |
 | `VITE_API_TARGET` | `http://localhost:8080` | Vite dev proxy target (frontend only) |
 | `ENCRYPTION_KEY` | empty (dev key) | AES-256-GCM master key for signing PEMs and client-secret copies. **Set in production.** |
+| `WEBAUTHN_RP_ID` | `BASE_URL` hostname | WebAuthn Relying Party ID (`localhost` for local dev) |
+| `WEBAUTHN_ORIGINS` | `BASE_URL` | Comma-separated allowed WebAuthn origins |
 | `REDIS_URL` | empty | Optional Redis URL for shared rate limiting (`redis://host:6379/0`); falls back to in-memory if unavailable |
 | `REDIS_PREFIX` | `ucenter:rl:` | Redis key prefix |
 | `METRICS_TOKEN` | empty | Bearer token required for `/metrics` when set |
@@ -348,6 +356,7 @@ ucenter/
 │   └── internal/
 │       ├── api/             # Gin routes, OIDC + admin + MCP + IdP handlers
 │       ├── idp/             # upstream provider framework and adapters
+│       ├── api/webauthn.go   # passkey enrolment/login/step-up handlers
 │       ├── config/          # environment configuration
 │       ├── models/          # BSON models and permission catalogue
 │       ├── security/        # Argon2id, PKCE, TOTP, recovery codes
@@ -365,6 +374,7 @@ ucenter/
 ├── docs/OIDC.md             # OIDC reference
 ├── docs/MCP.md              # MCP integration and tool reference
 ├── docs/UPSTREAM-IDP.md     # WeChat/Alipay/social provider reference
+├── docs/WEBAUTHN.md         # Passkeys and step-up authentication
 ├── Dockerfile
 └── docker-compose.yml
 ```

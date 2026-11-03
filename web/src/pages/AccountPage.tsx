@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import QRCode from "qrcode";
+import { startRegistration } from "@simplewebauthn/browser";
 import {
   ArrowLeft,
   Check,
@@ -66,6 +67,7 @@ export function AccountPage() {
   const [actionPassword, setActionPassword] = useState("");
   const [actionBusy, setActionBusy] = useState(false);
   const [revoking, setRevoking] = useState<SessionItem | null>(null);
+  const [passkeyBusy, setPasskeyBusy] = useState(false);
 
   const sessionsQuery = useQuery({
     queryKey: ["my-sessions"],
@@ -75,6 +77,11 @@ export function AccountPage() {
   const identitiesQuery = useQuery({
     queryKey: ["my-identities"],
     queryFn: () => api.get<{ items: LinkedIdentity[] }>("/me/identities"),
+    enabled: Boolean(me),
+  });
+  const webauthnQuery = useQuery({
+    queryKey: ["webauthn-credentials"],
+    queryFn: () => api.get<{ items: { id: string; name: string; createdAt: string; lastUsedAt?: string }[] }>("/me/webauthn/credentials"),
     enabled: Boolean(me),
   });
   const providersQuery = useQuery({
@@ -192,6 +199,37 @@ export function AccountPage() {
       toast.error(errorText(err));
     } finally {
       setActionBusy(false);
+    }
+  }
+
+  async function addPasskey() {
+    setPasskeyBusy(true);
+    try {
+      const begin = await api.post<{ sessionId: string; options: { publicKey: any } }>(
+        "/me/webauthn/register/begin",
+      );
+      const credential = await startRegistration({ optionsJSON: begin.options.publicKey });
+      await api.post("/me/webauthn/register/finish", {
+        sessionId: begin.sessionId,
+        name: `Passkey ${new Date().toLocaleDateString()}`,
+        credential,
+      });
+      toast.success(t("Passkey added"));
+      queryClient.invalidateQueries({ queryKey: ["webauthn-credentials"] });
+    } catch (err) {
+      toast.error(errorText(err));
+    } finally {
+      setPasskeyBusy(false);
+    }
+  }
+
+  async function deletePasskey(id: string) {
+    try {
+      await api.del(`/me/webauthn/credentials/${id}`);
+      toast.success(t("Passkey removed"));
+      queryClient.invalidateQueries({ queryKey: ["webauthn-credentials"] });
+    } catch (err) {
+      toast.error(errorText(err));
     }
   }
 
@@ -403,6 +441,44 @@ export function AccountPage() {
                 </Button>
               )}
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex-row items-start justify-between space-y-0">
+            <div>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <KeyRound className="h-4 w-4 text-primary" />
+                {t("Passkeys")}
+              </CardTitle>
+              <CardDescription>{t("Use Face ID, Touch ID, Windows Hello or a security key to sign in.")}</CardDescription>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => void addPasskey()} disabled={passkeyBusy}>
+              {passkeyBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <KeyRound className="h-3.5 w-3.5" />}
+              {t("Add passkey")}
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {webauthnQuery.isLoading ? (
+              <Skeleton className="h-12 w-full" />
+            ) : webauthnQuery.data?.items.length ? (
+              webauthnQuery.data.items.map((credential) => (
+                <div key={credential.id} className="flex items-center justify-between gap-3 rounded-lg border p-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium">{credential.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("Added {date}", { date: new Date(credential.createdAt).toLocaleDateString() })}
+                      {credential.lastUsedAt ? ` · ${t("Last used {date}", { date: new Date(credential.lastUsedAt).toLocaleDateString() })}` : ""}
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" className="text-destructive" onClick={() => void deletePasskey(credential.id)}>
+                    {t("Remove")}
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <p className="py-2 text-sm text-muted-foreground">{t("No passkeys registered yet.")}</p>
+            )}
           </CardContent>
         </Card>
 
