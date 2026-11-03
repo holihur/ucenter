@@ -114,6 +114,31 @@ func (a *API) putIdentityProvider(c *gin.Context) {
 	}
 	ctx := c.Request.Context()
 	tenantID := a.currentTenantID(c)
+	if typ == "saml" {
+		tenant, err := a.Store.FindTenantByID(ctx, tenantID)
+		if err != nil {
+			fail(c, http.StatusNotFound, "not_found", "Tenant not found")
+			return
+		}
+		existing, err := a.Store.FindIdentityProvider(ctx, tenantID, typ)
+		existingCfg := idp.Config{}
+		if err == nil {
+			existingCfg, _ = a.idpConfig(existing)
+		}
+		merged := idp.Config{}
+		for k, v := range existingCfg {
+			merged[k] = v
+		}
+		for k, v := range body.Config {
+			v = strings.TrimSpace(v)
+			if v == "••••••••" || v == "********" {
+				continue
+			}
+			merged[k] = v
+		}
+		a.saveSAMLProvider(c, tenant, merged, body)
+		return
+	}
 	existing, err := a.Store.FindIdentityProvider(ctx, tenantID, typ)
 	existingCfg := idp.Config{}
 	if err == nil {
@@ -190,7 +215,12 @@ func (a *API) publicIdentityProviders(c *gin.Context) {
 		if !rec.Enabled {
 			continue
 		}
-		if _, err := idp.New(rec.Type, mustConfig(a, rec)); err != nil {
+		cfg := mustConfig(a, rec)
+		if rec.Type == "saml" {
+			if strings.TrimSpace(cfg["idpMetadataXML"]) == "" {
+				continue
+			}
+		} else if _, err := idp.New(rec.Type, cfg); err != nil {
 			continue
 		}
 		def, _ := idp.DefinitionFor(rec.Type)
@@ -212,6 +242,10 @@ func (a *API) startIdentityProvider(c *gin.Context) {
 		return
 	}
 	typ := strings.ToLower(strings.TrimSpace(c.Param("type")))
+	if typ == "saml" {
+		a.startSAML(c, tenant)
+		return
+	}
 	rec, cfg, err := a.configuredIdP(ctx, tenant.ID, typ)
 	if err != nil {
 		c.Redirect(http.StatusFound, "/login?tenant="+url.QueryEscape(tenant.Slug)+"&idp_error=unavailable")

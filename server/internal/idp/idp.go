@@ -28,6 +28,7 @@ type Field struct {
 	Label       string `json:"label"`
 	Secret      bool   `json:"secret"`
 	Required    bool   `json:"required"`
+	Multiline   bool   `json:"multiline,omitempty"`
 	Placeholder string `json:"placeholder,omitempty"`
 	Help        string `json:"help,omitempty"`
 }
@@ -70,6 +71,14 @@ var Catalog = []Definition{
 	{Type: "apple", Name: "Apple", Category: "Global", Mode: "redirect", Description: "Sign in with Apple.", Fields: generalFields()},
 	{Type: "custom_oauth2", Name: "Custom OAuth 2.0", Category: "Custom", Mode: "redirect", Description: "Any OAuth2 provider with configurable endpoints.", Fields: generalFields()},
 	{Type: "custom_oidc", Name: "Custom OIDC", Category: "Custom", Mode: "redirect", Description: "Any OpenID Connect provider.", Fields: generalFields()},
+	{Type: "saml", Name: "SAML 2.0", Category: "Enterprise", Mode: "redirect", Description: "Tenant-level SAML 2.0 Service Provider with signed assertion validation.", Fields: []Field{
+		{Key: "idpMetadataXML", Label: "IdP metadata XML", Required: true, Multiline: true, Help: "Paste the IdP metadata document. The SP metadata URL and ACS URL are generated below."},
+		{Key: "entityId", Label: "SP Entity ID", Placeholder: "auto-generated"},
+		{Key: "nameIDFormat", Label: "NameID format", Placeholder: "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress"},
+		{Key: "emailAttribute", Label: "Email attribute", Placeholder: "email"},
+		{Key: "nameAttribute", Label: "Name attribute", Placeholder: "displayName"},
+		{Key: "groupsAttribute", Label: "Groups attribute", Placeholder: "groups"},
+	}},
 	{Type: "mock", Name: "Mock Provider", Category: "Development", Mode: "redirect", Description: "Local test provider that returns a fixed identity.", Fields: []Field{
 		{Key: "subject", Label: "Subject", Placeholder: "mock-user"}, {Key: "email", Label: "Email", Placeholder: "mock@example.com"},
 		{Key: "name", Label: "Display name", Placeholder: "Mock User"},

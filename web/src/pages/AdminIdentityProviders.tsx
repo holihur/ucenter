@@ -29,6 +29,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/lib/i18n";
 import { api, type IdentityProviderItem } from "@/lib/api";
@@ -239,14 +240,25 @@ function IdentityProviderDialog({
                   {field.label}
                   {field.required && <span className="text-destructive"> *</span>}
                 </Label>
-                <Input
-                  id={`idp-${field.key}`}
-                  type={field.secret ? "password" : "text"}
-                  value={config[field.key] ?? ""}
-                  onChange={(e) => setConfig({ ...config, [field.key]: e.target.value })}
-                  placeholder={field.placeholder}
-                  autoComplete="off"
-                />
+                {field.multiline ? (
+                  <Textarea
+                    id={`idp-${field.key}`}
+                    value={config[field.key] ?? ""}
+                    onChange={(e) => setConfig({ ...config, [field.key]: e.target.value })}
+                    placeholder={field.placeholder}
+                    rows={6}
+                    className="font-mono text-xs"
+                  />
+                ) : (
+                  <Input
+                    id={`idp-${field.key}`}
+                    type={field.secret ? "password" : "text"}
+                    value={config[field.key] ?? ""}
+                    onChange={(e) => setConfig({ ...config, [field.key]: e.target.value })}
+                    placeholder={field.placeholder}
+                    autoComplete="off"
+                  />
+                )}
                 {field.help && <p className="text-[11px] text-muted-foreground">{field.help}</p>}
               </div>
             ))}

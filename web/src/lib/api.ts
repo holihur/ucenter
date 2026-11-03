@@ -233,6 +233,7 @@ export interface IdPField {
   label: string;
   secret: boolean;
   required: boolean;
+  multiline?: boolean;
   placeholder?: string;
   help?: string;
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"ucenter/internal/models"
 	"ucenter/internal/observability"
 )
 
@@ -130,6 +131,16 @@ func (a *API) Router() *gin.Engine {
 
 	r.Any("/mcp", a.mcpAuth(), a.mcpHTTPHandler())
 
+	r.GET("/t/:slug/saml/metadata", a.samlMetadata)
+	r.GET("/t/:slug/saml/login", func(c *gin.Context) {
+		tenant, err := a.Store.FindTenantBySlug(c.Request.Context(), strings.ToLower(c.Param("slug")))
+		if err != nil || tenant.Status != models.StatusActive {
+			fail(c, http.StatusNotFound, "tenant_not_found", "Organization not found")
+			return
+		}
+		a.startSAML(c, tenant)
+	})
+	r.POST("/t/:slug/saml/acs", a.samlACS)
 	r.GET("/t/:slug/idp/:type/start", a.startIdentityProvider)
 	r.GET("/t/:slug/idp/:type/callback", a.callbackIdentityProvider)
 
