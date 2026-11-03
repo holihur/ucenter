@@ -73,7 +73,7 @@ test("mock upstream provider provisions and links a user", async ({ page, browse
   try {
     await mockPage.goto("/t/acme/idp/mock/start?return_to=/account");
     await mockPage.waitForURL(/\/account/);
-    await expect(mockPage.locator("body")).toContainText("Mock IdP User");
+    await expect(mockPage.locator("#account-name")).toHaveValue("Mock IdP User");
     await expect(mockPage.locator("body")).toContainText("Mock Provider");
   } finally {
     await mockContext.close();
