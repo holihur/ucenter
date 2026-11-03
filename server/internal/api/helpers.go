@@ -28,6 +28,8 @@ const (
 	ctxTenantID    = "tenantID"
 	ctxPermissions = "permissions"
 	ctxRoles       = "roles"
+	ctxTokenAuth   = "tokenAuth"
+	ctxTokenScopes = "tokenScopes"
 )
 
 type API struct {
@@ -141,6 +143,54 @@ func (a *API) currentRoles(c *gin.Context) []string {
 	return r
 }
 
+// RequireAdminAuth accepts either the admin session cookie or a tenant-scoped
+// API bearer token (ucm_...). API tokens carry a subset of the owner's scopes
+// and are restricted to the tenant they were created for.
+func (a *API) RequireAdminAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx := c.Request.Context()
+		if b, err := a.Svc.SessionFromRaw(ctx, a.sessionCookie(c)); err == nil {
+			c.Set(ctxBundle, b)
+			c.Next()
+			return
+		}
+		raw := strings.TrimSpace(c.GetHeader("Authorization"))
+		if !strings.HasPrefix(strings.ToLower(raw), "bearer ") {
+			fail(c, http.StatusUnauthorized, "unauthenticated", "Authentication required")
+			return
+		}
+		tokenValue := strings.TrimSpace(raw[7:])
+		token, err := a.Store.FindAPITokenByHash(ctx, security.HashToken(tokenValue))
+		if err != nil {
+			fail(c, http.StatusUnauthorized, "invalid_token", "The API token is invalid or expired")
+			return
+		}
+		user, err := a.Store.FindUserByID(ctx, token.UserID)
+		if err != nil || user.Status != models.StatusActive {
+			fail(c, http.StatusUnauthorized, "invalid_token", "The token owner is not active")
+			return
+		}
+		tenant, err := a.Store.FindTenantByID(ctx, token.TenantID)
+		if err != nil || tenant.Status != models.StatusActive {
+			fail(c, http.StatusUnauthorized, "invalid_token", "The tenant is not active")
+			return
+		}
+		if user.Membership(tenant.ID) == nil && !user.PlatformAdmin {
+			fail(c, http.StatusForbidden, "forbidden", "The token owner is no longer a member of this tenant")
+			return
+		}
+		synthetic := &models.Session{
+			ID: "api-token:" + token.Prefix, TenantID: tenant.ID, UserID: user.ID,
+			AuthTime: token.CreatedAt, CreatedAt: token.CreatedAt,
+		}
+		c.Set(ctxBundle, &service.SessionBundle{Session: synthetic, User: user, Tenant: tenant})
+		c.Set(ctxTokenAuth, true)
+		c.Set(ctxTokenScopes, token.Scopes)
+		go a.Store.TouchAPIToken(context.Background(), token.ID)
+		c.Next()
+	}
+}
+
 // RequireAuth loads the session cookie and rejects unauthenticated requests.
 func (a *API) RequireAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -164,7 +214,8 @@ func (a *API) RequireAdmin() gin.HandlerFunc {
 			return
 		}
 		tenant := b.Tenant
-		if b.User.PlatformAdmin {
+		tokenAuth, _ := c.Get(ctxTokenAuth)
+		if b.User.PlatformAdmin && tokenAuth != true {
 			if raw := strings.TrimSpace(c.GetHeader("X-Tenant-ID")); raw != "" {
 				t, err := a.resolveTenant(c, raw)
 				if err != nil {
@@ -185,6 +236,20 @@ func (a *API) RequireAdmin() gin.HandlerFunc {
 		perms := a.Svc.Permissions(c.Request.Context(), tenant.ID, roles)
 		if b.User.PlatformAdmin {
 			perms = append(append([]string{}, models.TenantPermissions...), "platform:manage")
+		}
+		if tokenAuth, _ := c.Get(ctxTokenAuth); tokenAuth == true {
+			scopes, _ := c.Get(ctxTokenScopes)
+			allowed := map[string]bool{}
+			for _, p := range perms {
+				allowed[p] = true
+			}
+			filtered := []string{}
+			for _, s := range scopes.([]string) {
+				if allowed[s] {
+					filtered = append(filtered, s)
+				}
+			}
+			perms = filtered
 		}
 		c.Set(ctxTenant, tenant)
 		c.Set(ctxTenantID, tenant.ID)

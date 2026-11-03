@@ -518,3 +518,9 @@ console.log(items);
 The TypeScript SDK accepts a `cookie` option for server-side use; the Go client captures
 the `uc_session` cookie from `Login`. Admin API tokens are currently MCP-scoped; use an
 admin session cookie for the admin API.
+
+### API authorization
+
+API tokens created for MCP are also valid for the admin API as bearer credentials:
+`Authorization: Bearer ucm_...`. Their scopes are intersected with the owner's current
+permissions on every request. See [docs/AUTHZ.md](docs/AUTHZ.md).

@@ -396,7 +396,7 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT or ucs_ SCIM token
+      bearerFormat: ucm_ admin API token, JWT, or ucs_ SCIM token
   responses:
     Error:
       description: Error

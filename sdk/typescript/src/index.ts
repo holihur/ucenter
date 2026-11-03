@@ -104,6 +104,7 @@ export interface AuditLog {
 export interface ClientOptions {
   baseURL: string;
   tenantId?: string;
+  token?: string;
   cookie?: string;
   headers?: Record<string, string>;
   fetch?: typeof fetch;
@@ -123,7 +124,9 @@ export class UCenterError extends Error {
 export class UCenterClient {
   readonly baseURL: string;
   tenantId?: string;
+  token?: string;
   cookie?: string;
+  token?: string;
   headers: Record<string, string>;
   private fetchImpl: typeof fetch;
 
@@ -131,6 +134,7 @@ export class UCenterClient {
     this.baseURL = options.baseURL.replace(/\/$/, "");
     this.tenantId = options.tenantId;
     this.cookie = options.cookie;
+    this.token = options.token;
     this.headers = options.headers ?? {};
     this.fetchImpl = options.fetch ?? fetch;
   }
@@ -138,6 +142,7 @@ export class UCenterClient {
   private async request<T>(path: string, init: (Omit<RequestInit, "body"> & { body?: unknown }) = {}): Promise<T> {
     const headers = new Headers(this.headers);
     if (this.cookie) headers.set("Cookie", this.cookie);
+    if (this.token) headers.set("Authorization", `Bearer ${this.token}`);
     if (this.tenantId) headers.set("X-Tenant-ID", this.tenantId);
     let body = init.body as BodyInit | undefined;
     if (body && typeof body !== "string" && !(body instanceof FormData)) {
@@ -165,6 +170,11 @@ export class UCenterClient {
       throw new UCenterError(message, response.status, code);
     }
     return data as T;
+  }
+
+  setToken(token: string | undefined) {
+    this.token = token;
+    return this;
   }
 
   setTenant(tenantId: string | undefined) {

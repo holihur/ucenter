@@ -25,6 +25,7 @@ help:
 	@echo "  make scim-smoke   Run the SCIM 2.0 contract smoke test"
 	@echo "  make tenant-smoke Run the tenant lifecycle smoke test"
 	@echo "  make webhook-smoke Run the webhook retry/signature smoke test"
+	@echo "  make authz-smoke   Run the RBAC/API-scope smoke test"
 	@echo "  make docker-up    Start MongoDB + UCenter with Docker Compose"
 	@echo "  make docker-seed  Seed the Docker deployment"
 
@@ -72,6 +73,9 @@ tenant-smoke:
 
 webhook-smoke:
 	BASE_URL=$(BASE_URL) WEBHOOK_ALLOW_PRIVATE=true ./scripts/webhook-smoke.sh
+
+authz-smoke:
+	BASE_URL=$(BASE_URL) ./scripts/authz-smoke.sh
 
 docker-up:
 	docker compose up -d --build

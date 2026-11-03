@@ -95,7 +95,7 @@ func (a *API) Router() *gin.Engine {
 	me.POST("/step-up/webauthn/begin", a.beginWebAuthnStepUp)
 	me.POST("/step-up/webauthn/finish", a.finishWebAuthnStepUp)
 
-	admin := r.Group("/api/admin", a.RequireAuth(), a.RequireAdmin())
+	admin := r.Group("/api/admin", a.RequireAdminAuth(), a.RequireAdmin())
 	admin.GET("/context", a.adminContext)
 	admin.GET("/overview", a.overview)
 	admin.GET("/permissions", a.listPermissions)
@@ -137,9 +137,9 @@ func (a *API) Router() *gin.Engine {
 	admin.PATCH("/scim", a.RequirePermission("tenant:write"), a.updateSCIMSettings)
 	admin.POST("/scim/token", a.RequirePermission("tenant:write"), a.rotateSCIMToken)
 
-	admin.GET("/api-tokens", a.listAPITokens)
-	admin.POST("/api-tokens", a.createAPIToken)
-	admin.DELETE("/api-tokens/:id", a.revokeAPIToken)
+	admin.GET("/api-tokens", a.RequirePermission("tenant:write"), a.listAPITokens)
+	admin.POST("/api-tokens", a.RequirePermission("tenant:write"), a.createAPIToken)
+	admin.DELETE("/api-tokens/:id", a.RequirePermission("tenant:write"), a.revokeAPIToken)
 
 	admin.GET("/export", a.RequirePermission("tenant:write"), a.exportTenant)
 

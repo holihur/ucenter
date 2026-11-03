@@ -17,6 +17,7 @@ type Client struct {
 	BaseURL  string
 	HTTP     *http.Client
 	Cookie   string
+	Token    string
 	TenantID string
 	Headers  http.Header
 }
@@ -151,6 +152,9 @@ func (c *Client) do(ctx context.Context, method, path string, in, out any) error
 	}
 	if c.Cookie != "" {
 		req.Header.Set("Cookie", c.Cookie)
+	}
+	if c.Token != "" {
+		req.Header.Set("Authorization", "Bearer "+c.Token)
 	}
 	if c.TenantID != "" {
 		req.Header.Set("X-Tenant-ID", c.TenantID)

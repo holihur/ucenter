@@ -696,5 +696,6 @@
   "Endpoint URL": "エンドポイント URL",
   "Private and loopback addresses are blocked unless configured for development.": "開発用に構成されていない限り、プライベート アドレスとループバック アドレスはブロックされます。",
   "Save webhook": "Webhook を保存する",
-  "Events": "イベント"
+  "Events": "イベント",
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "Face ID、Touch ID、Windows Hello、またはセキュリティキーでサインインできます。"
 }
