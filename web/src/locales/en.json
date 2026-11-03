@@ -628,5 +628,10 @@
   "Added {date}": "Added {date}",
   "Last used {date}": "Last used {date}",
   "Remove": "Remove",
-  "No passkeys registered yet.": "No passkeys registered yet."
+  "No passkeys registered yet.": "No passkeys registered yet.",
+  "Reset MFA": "Reset MFA",
+  "Reset MFA?": "Reset MFA?",
+  "This will disable TOTP and remove all passkeys for {email}.": "This will disable TOTP and remove all passkeys for {email}.",
+  "MFA reset": "MFA reset",
+  "Unable to reset MFA": "Unable to reset MFA"
 }

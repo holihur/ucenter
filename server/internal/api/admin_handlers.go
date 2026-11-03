@@ -1318,3 +1318,25 @@ func (a *API) rotateSigningKey(c *gin.Context) {
 	a.audit(c, "tenant.signing_key.rotated", "signing_key", key.Kid, nil)
 	ok(c, gin.H{"kid": key.Kid})
 }
+
+func (a *API) resetUserMFA(c *gin.Context) {
+	target, err := a.findTenantUser(c)
+	if err != nil {
+		fail(c, http.StatusNotFound, "not_found", "User not found")
+		return
+	}
+	ctx := c.Request.Context()
+	tenantID := a.currentTenantID(c)
+	if err := a.Store.UpdateUser(ctx, target.ID, bson.M{
+		"mfa.enabled": false, "mfa.secret": "", "mfa.recovery_codes": []string{}, "mfa.enabled_at": nil,
+	}); err != nil {
+		fail(c, http.StatusInternalServerError, "internal_error", "Unable to reset MFA")
+		return
+	}
+	_ = a.Store.DeleteAllWebAuthnCredentials(ctx, tenantID, target.ID)
+	_ = a.Store.RevokeAllUserSessions(ctx, tenantID, target.ID)
+	_ = a.Store.RevokeUserRefreshTokens(ctx, tenantID, target.ID)
+	_ = a.Store.BumpTokenVersion(ctx, target.ID)
+	a.audit(c, "user.mfa.reset", "user", target.ID.Hex(), nil)
+	ok(c, gin.H{"ok": true})
+}

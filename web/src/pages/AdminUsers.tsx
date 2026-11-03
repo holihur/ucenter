@@ -10,6 +10,7 @@ import {
   RefreshCw,
   Search,
   ShieldCheck,
+  ShieldOff,
   Trash2,
   UserPlus,
   Users,
@@ -73,6 +74,7 @@ export function AdminUsers() {
   const [deleting, setDeleting] = useState<AdminUser | null>(null);
   const [resetting, setResetting] = useState<AdminUser | null>(null);
   const [revoking, setRevoking] = useState<AdminUser | null>(null);
+  const [resettingMFA, setResettingMFA] = useState<AdminUser | null>(null);
   const [busy, setBusy] = useState(false);
   const [secret, setSecret] = useState<SecretInfo | null>(null);
 
@@ -146,6 +148,21 @@ export function AdminUsers() {
       refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : t("Unable to remove user"));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onResetMFA() {
+    if (!resettingMFA) return;
+    setBusy(true);
+    try {
+      await api.post(`/admin/users/${resettingMFA.id}/reset-mfa`);
+      toast.success(t("MFA reset"));
+      setResettingMFA(null);
+      refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t("Unable to reset MFA"));
     } finally {
       setBusy(false);
     }
@@ -318,6 +335,10 @@ export function AdminUsers() {
                             <KeyRound className="h-4 w-4" />
                             {t("Reset password")}
                           </DropdownMenuItem>
+                          <DropdownMenuItem onSelect={() => setResettingMFA(user)}>
+                            <ShieldOff className="h-4 w-4" />
+                            {t("Reset MFA")}
+                          </DropdownMenuItem>
                           <DropdownMenuItem onSelect={() => void sendInvite(user)}>
                             <Mail className="h-4 w-4" />
                             {t("Send invite email")}
@@ -460,6 +481,17 @@ export function AdminUsers() {
         confirmLabel={t("Reset password")}
         loading={busy}
         onConfirm={onResetPassword}
+      />
+
+      <ConfirmDialog
+        open={Boolean(resettingMFA)}
+        onOpenChange={(open) => !open && setResettingMFA(null)}
+        title={t("Reset MFA?")}
+        description={t("This will disable TOTP and remove all passkeys for {email}.", { email: resettingMFA?.email ?? "" })}
+        confirmLabel={t("Reset MFA")}
+        destructive
+        loading={busy}
+        onConfirm={onResetMFA}
       />
 
       <ConfirmDialog

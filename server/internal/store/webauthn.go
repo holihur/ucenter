@@ -103,3 +103,8 @@ func (s *Store) MarkStepUp(ctx context.Context, sessionID string) error {
 	_, err := s.Sessions.UpdateOne(ctx, bson.M{"_id": sessionID}, bson.M{"$set": bson.M{"step_up_at": now}})
 	return err
 }
+
+func (s *Store) DeleteAllWebAuthnCredentials(ctx context.Context, tenantID, userID primitive.ObjectID) error {
+	_, err := s.DB.Collection("webauthn_credentials").DeleteMany(ctx, bson.M{"tenant_id": tenantID, "user_id": userID})
+	return err
+}

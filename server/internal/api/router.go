@@ -104,6 +104,7 @@ func (a *API) Router() *gin.Engine {
 	admin.DELETE("/users/:id", a.RequirePermission("users:write"), a.deleteUser)
 	admin.POST("/users/:id/reset-password", a.RequirePermission("users:write"), a.resetUserPassword)
 	admin.POST("/users/:id/revoke-sessions", a.RequirePermission("sessions:write"), a.revokeUserSessions)
+	admin.POST("/users/:id/reset-mfa", a.RequirePermission("users:write"), a.resetUserMFA)
 	admin.POST("/users/:id/send-invite", a.RequirePermission("users:write"), a.sendUserInvite)
 	admin.GET("/mail-outbox", a.RequirePermission("tenant:write"), a.mailOutbox)
 	admin.GET("/identity-providers", a.RequirePermission("tenant:read"), a.listIdentityProviders)
