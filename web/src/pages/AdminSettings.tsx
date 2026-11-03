@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Building2, Globe, KeyRound, Loader2, Palette, Save, ShieldCheck } from "lucide-react";
+import { Building2, Download, Globe, KeyRound, Loader2, Palette, Save, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { CopyButton } from "@/components/CopyButton";
@@ -46,6 +46,8 @@ export function AdminSettings() {
     sessionTtlHours: 12,
     allowedEmailDomains: [],
     allowPasswordLogin: true,
+    quotaUsers: 0,
+    quotaClients: 0,
   });
   const [emailDomains, setEmailDomains] = useState("");
   const [saving, setSaving] = useState(false);
@@ -138,10 +140,18 @@ export function AdminSettings() {
         description={t("Branding, registration and security policy for this organization.")}
         actions={
           editable ? (
-            <Button onClick={save} disabled={saving}>
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              Save changes
-            </Button>
+            <>
+              <Button variant="outline" asChild>
+                <a href="/api/admin/export">
+                  <Download className="h-4 w-4" />
+                  {t("Export tenant data")}
+                </a>
+              </Button>
+              <Button onClick={save} disabled={saving}>
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                {t("Save changes")}
+              </Button>
+            </>
           ) : null
         }
       />

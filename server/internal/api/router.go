@@ -52,6 +52,9 @@ func (a *API) Router() *gin.Engine {
 	})
 
 	public := r.Group("/api/public")
+	public.GET("/config", a.publicConfig)
+	public.GET("/tenant-by-host", a.tenantByHost)
+	public.POST("/signup", a.selfSignup)
 	public.GET("/tenants", a.listPublicTenants)
 	public.GET("/tenants/:slug", a.getPublicTenant)
 	public.GET("/tenants/:slug/identity-providers", a.publicIdentityProviders)
@@ -138,9 +141,14 @@ func (a *API) Router() *gin.Engine {
 	admin.POST("/api-tokens", a.createAPIToken)
 	admin.DELETE("/api-tokens/:id", a.revokeAPIToken)
 
+	admin.GET("/export", a.RequirePermission("tenant:write"), a.exportTenant)
+
 	admin.GET("/tenants", a.RequirePermission("platform:manage"), a.listTenants)
 	admin.POST("/tenants", a.RequirePermission("platform:manage"), a.createTenant)
 	admin.PATCH("/tenants/:id", a.RequirePermission("platform:manage"), a.updateTenant)
+	admin.DELETE("/tenants/:id", a.RequirePermission("platform:manage"), a.softDeleteTenant)
+	admin.POST("/tenants/:id/restore", a.RequirePermission("platform:manage"), a.restoreTenant)
+	admin.POST("/tenants/:id/purge", a.RequirePermission("platform:manage"), a.purgeTenant)
 
 	r.Any("/mcp", a.mcpAuth(), a.mcpHTTPHandler())
 

@@ -132,6 +132,10 @@ func (a *API) createUser(c *gin.Context) {
 		fail(c, http.StatusBadRequest, "invalid_name", "Name is required")
 		return
 	}
+	if err := a.checkUserQuota(c); err != nil {
+		fail(c, http.StatusForbidden, "quota_exceeded", err.Error())
+		return
+	}
 	roles := normalizeRoles(body.Roles)
 	if err := a.validateRoleAssignment(c, roles); err != nil {
 		fail(c, http.StatusForbidden, "invalid_roles", err.Error())
@@ -623,6 +627,10 @@ type clientRequest struct {
 }
 
 func (a *API) createClient(c *gin.Context) {
+	if err := a.checkClientQuota(c); err != nil {
+		fail(c, http.StatusForbidden, "quota_exceeded", err.Error())
+		return
+	}
 	var body clientRequest
 	if err := c.ShouldBindJSON(&body); err != nil {
 		fail(c, http.StatusBadRequest, "invalid_body", "Invalid request body")
@@ -1010,6 +1018,12 @@ func (a *API) updateSettings(c *gin.Context) {
 		if s.SessionTTLHours > 720 {
 			s.SessionTTLHours = 720
 		}
+		if s.QuotaUsers < 0 {
+			s.QuotaUsers = 0
+		}
+		if s.QuotaClients < 0 {
+			s.QuotaClients = 0
+		}
 		domains := []string{}
 		for _, d := range s.AllowedEmailDomains {
 			d = strings.ToLower(strings.TrimSpace(d))
@@ -1053,7 +1067,7 @@ func (a *API) listTenants(c *gin.Context) {
 			"branding":  t.Branding,
 			"users":     users,
 			"clients":   clients,
-			"createdAt": t.CreatedAt,
+			"createdAt": t.CreatedAt, "deletedAt": t.DeletedAt, "purgeAfter": t.PurgeAfter,
 		})
 	}
 	ok(c, gin.H{"items": items})

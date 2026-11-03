@@ -275,6 +275,12 @@ tenant with `X-Tenant-ID: <id-or-slug>`.
 | `POST` | `/api/auth/mfa-recovery` | Request an MFA recovery email |
 | `POST` | `/api/auth/mfa-recovery/confirm` | Disable MFA with a recovery token |
 | `POST` | `/api/auth/accept-invite` | Accept an invitation and set a password |
+| `POST` | `/api/public/signup` | Self-service tenant signup |
+| `GET` | `/api/public/tenant-by-host` | Resolve a tenant by hostname |
+| `GET` | `/api/admin/export` | Export sanitized tenant data |
+| `DELETE` | `/api/admin/tenants/:id` | Soft-delete and schedule purge |
+| `POST` | `/api/admin/tenants/:id/restore` | Restore a disabled tenant |
+| `POST` | `/api/admin/tenants/:id/purge` | Permanently purge a tenant |
 | `GET` | `/api/auth/me` | Current user, tenant, roles, permissions |
 | `GET` | `/api/auth/request/:id` | Public authorization-request details |
 | `POST` | `/api/auth/request/:id/complete` | Issue a code or request consent |
@@ -315,6 +321,7 @@ tenant with `X-Tenant-ID: <id-or-slug>`.
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `ADDR` | `:8080` | HTTP listen address |
+| `ALLOW_SELF_SIGNUP` | `true` | Allow public tenant signup at `/signup` |
 | `BASE_URL` | `http://localhost:8080` | Public origin used in issuer URLs |
 | `MONGO_URI` | `mongodb://127.0.0.1:27017` | MongoDB connection string |
 | `MONGO_DB` | `ucenter` | Database name |
@@ -370,11 +377,14 @@ ucenter/
 │   ├── src/pages/           # login, consent, admin and account pages
 │   └── src/lib/             # API client, auth, theme, i18n and utilities
 ├── scripts/oidc-smoke.sh    # end-to-end OIDC test
+├── scripts/tenant-smoke.sh  # tenant lifecycle test
+├── server/cmd/purge-tenants # retention purge job
 ├── scripts/mcp-smoke.sh     # end-to-end MCP test
 ├── docs/OIDC.md             # OIDC reference
 ├── docs/MCP.md              # MCP integration and tool reference
 ├── docs/UPSTREAM-IDP.md     # WeChat/Alipay/social provider reference
 ├── docs/WEBAUTHN.md         # Passkeys and step-up authentication
+├── docs/TENANT-LIFECYCLE.md # signup, domains, export, retention, quotas
 ├── Dockerfile
 └── docker-compose.yml
 ```
@@ -437,6 +447,7 @@ the MCP token/scope/revocation flow against a running server and seeded database
 ```bash
 BASE_URL=http://localhost:8080 ./scripts/oidc-smoke.sh
 BASE_URL=http://localhost:8080 ./scripts/mcp-smoke.sh
+BASE_URL=http://localhost:8080 ./scripts/tenant-smoke.sh
 ```
 
 ## Security notes

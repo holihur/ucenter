@@ -23,6 +23,7 @@ help:
 	@echo "  make mcp-smoke    Run the MCP end-to-end smoke test"
 	@echo "  make email-smoke  Run the email invite/reset/verify/MFA smoke test"
 	@echo "  make scim-smoke   Run the SCIM 2.0 contract smoke test"
+	@echo "  make tenant-smoke Run the tenant lifecycle smoke test"
 	@echo "  make docker-up    Start MongoDB + UCenter with Docker Compose"
 	@echo "  make docker-seed  Seed the Docker deployment"
 
@@ -64,6 +65,9 @@ email-smoke:
 
 scim-smoke:
 	BASE_URL=$(BASE_URL) ./scripts/scim-smoke.sh
+
+tenant-smoke:
+	BASE_URL=$(BASE_URL) ./scripts/tenant-smoke.sh
 
 docker-up:
 	docker compose up -d --build

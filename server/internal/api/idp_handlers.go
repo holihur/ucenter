@@ -380,6 +380,9 @@ func (a *API) resolveIdPUser(ctx context.Context, tenant *models.Tenant, rec *mo
 	if !rec.AutoProvision {
 		return nil, fmt.Errorf("account_not_linked")
 	}
+	if err := a.checkUserQuotaFor(ctx, tenant); err != nil {
+		return nil, fmt.Errorf("quota_exceeded")
+	}
 	email := security.NormalizeEmail(identity.Email)
 	emailVerified := rec.TrustEmail && identity.EmailVerified
 	if email == "" {

@@ -409,6 +409,10 @@ func (a *API) scimCreateUser(c *gin.Context) {
 	}
 	ctx := c.Request.Context()
 	tenantID := a.currentTenantID(c)
+	if err := a.checkUserQuota(c); err != nil {
+		scimError(c, http.StatusForbidden, err.Error())
+		return
+	}
 	if existing, err := a.Store.FindUserByEmail(ctx, email); err == nil && existing.Membership(tenantID) != nil {
 		scimError(c, http.StatusConflict, "userName already exists")
 		return

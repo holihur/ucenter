@@ -58,6 +58,8 @@ type TenantSettings struct {
 	SCIMEnabled         bool     `bson:"scim_enabled" json:"scimEnabled"`
 	SCIMTokenHash       string   `bson:"scim_token_hash,omitempty" json:"-"`
 	SCIMTokenPrefix     string   `bson:"scim_token_prefix,omitempty" json:"scimTokenPrefix"`
+	QuotaUsers          int      `bson:"quota_users" json:"quotaUsers"`
+	QuotaClients        int      `bson:"quota_clients" json:"quotaClients"`
 }
 
 func DefaultSettings() TenantSettings {
@@ -71,15 +73,17 @@ func DefaultSettings() TenantSettings {
 }
 
 type Tenant struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	Slug      string             `bson:"slug" json:"slug"`
-	Name      string             `bson:"name" json:"name"`
-	Status    string             `bson:"status" json:"status"`
-	Domains   []string           `bson:"domains" json:"domains"`
-	Branding  Branding           `bson:"branding" json:"branding"`
-	Settings  TenantSettings     `bson:"settings" json:"settings"`
-	CreatedAt time.Time          `bson:"created_at" json:"createdAt"`
-	UpdatedAt time.Time          `bson:"updated_at" json:"updatedAt"`
+	ID         primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Slug       string             `bson:"slug" json:"slug"`
+	Name       string             `bson:"name" json:"name"`
+	Status     string             `bson:"status" json:"status"`
+	Domains    []string           `bson:"domains" json:"domains"`
+	Branding   Branding           `bson:"branding" json:"branding"`
+	Settings   TenantSettings     `bson:"settings" json:"settings"`
+	DeletedAt  *time.Time         `bson:"deleted_at,omitempty" json:"deletedAt,omitempty"`
+	PurgeAfter *time.Time         `bson:"purge_after,omitempty" json:"purgeAfter,omitempty"`
+	CreatedAt  time.Time          `bson:"created_at" json:"createdAt"`
+	UpdatedAt  time.Time          `bson:"updated_at" json:"updatedAt"`
 }
 
 type Membership struct {

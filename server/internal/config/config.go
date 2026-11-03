@@ -37,6 +37,7 @@ type Config struct {
 	RedisPrefix         string
 	WebAuthnRPID        string
 	WebAuthnOrigins     []string
+	AllowSelfSignup     bool
 }
 
 func Load() Config {
@@ -68,6 +69,7 @@ func Load() Config {
 		RedisURL:            env("REDIS_URL", ""),
 		RedisPrefix:         env("REDIS_PREFIX", "ucenter:rl:"),
 		WebAuthnRPID:        env("WEBAUTHN_RP_ID", ""),
+		AllowSelfSignup:     envBool("ALLOW_SELF_SIGNUP", true),
 	}
 	if origins := env("ALLOWED_ORIGINS", ""); origins != "" {
 		c.AllowedOrigins = strings.Split(origins, ",")

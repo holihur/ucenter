@@ -91,6 +91,10 @@ export interface TenantSettings {
   sessionTtlHours: number;
   allowedEmailDomains: string[] | null;
   allowPasswordLogin: boolean;
+  scimEnabled?: boolean;
+  scimTokenPrefix?: string;
+  quotaUsers?: number;
+  quotaClients?: number;
 }
 
 export interface PublicTenant {
@@ -108,6 +112,8 @@ export interface Tenant extends PublicTenant {
   id: string;
   domains: string[] | null;
   settings: TenantSettings;
+  deletedAt?: string | null;
+  purgeAfter?: string | null;
   createdAt: string;
   updatedAt: string;
 }

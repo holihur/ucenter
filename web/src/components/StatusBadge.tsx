@@ -6,6 +6,7 @@ const map: Record<string, { label: string; variant: "success" | "warning" | "des
   enabled: { label: "Enabled", variant: "success" },
   disabled: { label: "Disabled", variant: "destructive" },
   invited: { label: "Invited", variant: "warning" },
+  deleted: { label: "Deleted", variant: "destructive" },
   pending: { label: "Pending", variant: "warning" },
 };
 

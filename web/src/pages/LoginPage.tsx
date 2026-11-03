@@ -479,6 +479,14 @@ export function LoginPage() {
         </div>
       )}
 
+      {!requestId && (
+        <p className="mt-5 text-center text-xs text-muted-foreground">
+          <Link to="/signup" className="font-medium text-primary hover:underline">
+            {t("Create a new organization")}
+          </Link>
+        </p>
+      )}
+
       {tenant?.branding?.supportEmail && (
         <p className="mt-6 text-center text-xs text-muted-foreground">
           {helpParts[0]}

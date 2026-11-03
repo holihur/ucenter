@@ -8,6 +8,7 @@ import { AcceptInvitePage, ForgotPasswordPage, MfaRecoveryConfirmPage, MfaRecove
 import { LoginPage } from "@/pages/LoginPage";
 import { NotFound } from "@/pages/NotFound";
 import { RegisterPage } from "@/pages/RegisterPage";
+import { SignupPage } from "@/pages/SignupPage";
 import { useAuth } from "@/lib/auth";
 
 const AccountPage = lazy(() => import("@/pages/AccountPage").then((m) => ({ default: m.AccountPage })));
@@ -66,6 +67,7 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path="/consent" element={<ConsentPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />

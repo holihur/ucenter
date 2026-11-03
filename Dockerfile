@@ -14,14 +14,15 @@ COPY server/go.mod server/go.sum ./
 RUN go mod download
 COPY server/ ./
 RUN CGO_ENABLED=0 go build -tags nomsgpack -trimpath -ldflags="-s -w" -o /out/ucenter ./cmd/server \
- && CGO_ENABLED=0 go build -tags nomsgpack -trimpath -ldflags="-s -w" -o /out/seed ./cmd/seed
+ && CGO_ENABLED=0 go build -tags nomsgpack -trimpath -ldflags="-s -w" -o /out/seed ./cmd/seed \
+ && CGO_ENABLED=0 go build -tags nomsgpack -trimpath -ldflags="-s -w" -o /out/purge-tenants ./cmd/purge-tenants
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
 FROM alpine:3.20
 RUN apk add --no-cache ca-certificates \
  && addgroup -S -g 10001 ucenter && adduser -S -D -H -u 10001 -G ucenter ucenter
 WORKDIR /app
-COPY --from=server /out/ucenter /out/seed ./
+COPY --from=server /out/ucenter /out/seed /out/purge-tenants ./
 COPY --from=web /app/web/dist ./web/dist
 USER ucenter
 EXPOSE 8080

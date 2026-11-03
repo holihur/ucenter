@@ -146,6 +146,9 @@ func (a *API) buildMCPServer(auth *MCPAuth) *mcp.Server {
 				if strings.TrimSpace(in.Name) == "" {
 					return mcpErr("name is required")
 				}
+				if err := a.checkUserQuotaFor(ctx, auth.Tenant); err != nil {
+					return mcpErr("%v", err)
+				}
 				roles := normalizeRoles(in.Roles)
 				if err := a.validateMCPRoles(ctx, auth, roles); err != nil {
 					return mcpErr("%v", err)
@@ -332,6 +335,9 @@ func (a *API) buildMCPServer(auth *MCPAuth) *mcp.Server {
 				name := strings.TrimSpace(in.Name)
 				if name == "" {
 					return mcpErr("name is required")
+				}
+				if err := a.checkClientQuotaFor(ctx, auth.Tenant); err != nil {
+					return mcpErr("%v", err)
 				}
 				typ := in.Type
 				if typ == "" {

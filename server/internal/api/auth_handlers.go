@@ -208,6 +208,10 @@ func (a *API) register(c *gin.Context) {
 		fail(c, http.StatusBadRequest, "email_domain_not_allowed", "This email domain is not allowed for this organization")
 		return
 	}
+	if err := a.checkUserQuotaFor(ctx, tenant); err != nil {
+		fail(c, http.StatusForbidden, "quota_exceeded", err.Error())
+		return
+	}
 	if err := validatePassword(tenant, req.Password); err != nil {
 		fail(c, http.StatusBadRequest, "weak_password", err.Error())
 		return

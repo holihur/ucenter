@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Building2, ExternalLink, Loader2, Plus, Power } from "lucide-react";
+import { Building2, ExternalLink, Loader2, Plus, Power, RotateCcw, Trash2, XCircle } from "lucide-react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { CopyButton } from "@/components/CopyButton";
 import { EmptyState } from "@/components/EmptyState";
 import { PageHeader } from "@/components/PageHeader";
@@ -37,6 +38,8 @@ interface PlatformTenant {
   users: number;
   clients: number;
   createdAt: string;
+  deletedAt?: string | null;
+  purgeAfter?: string | null;
 }
 
 export function AdminTenants() {
@@ -48,6 +51,8 @@ export function AdminTenants() {
   const [tempPassword, setTempPassword] = useState<{ email: string; password: string; tenant: string } | null>(
     null,
   );
+  const [action, setAction] = useState<{ tenant: PlatformTenant; kind: "delete" | "restore" | "purge" } | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
 
   const query = useQuery({
     queryKey: ["admin-tenants"],
@@ -60,6 +65,29 @@ export function AdminTenants() {
     setAdminTenantId(tenant.id);
     queryClient.invalidateQueries();
     navigate("/admin");
+  }
+
+  async function performAction() {
+    if (!action) return;
+    setActionBusy(true);
+    try {
+      if (action.kind === "delete") {
+        await api.del(`/admin/tenants/${action.tenant.id}`);
+        toast.success(t("Tenant disabled"));
+      } else if (action.kind === "restore") {
+        await api.post(`/admin/tenants/${action.tenant.id}/restore`, {});
+        toast.success(t("Tenant restored"));
+      } else {
+        await api.post(`/admin/tenants/${action.tenant.id}/purge`, {});
+        toast.success(t("Tenant purged"));
+      }
+      setAction(null);
+      queryClient.invalidateQueries({ queryKey: ["admin-tenants"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t("Unable to update tenant"));
+    } finally {
+      setActionBusy(false);
+    }
   }
 
   async function toggleStatus(tenant: PlatformTenant) {
@@ -121,7 +149,12 @@ export function AdminTenants() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <StatusBadge status={tenant.status} />
+                    <StatusBadge status={tenant.deletedAt ? "deleted" : tenant.status} />
+                    {tenant.purgeAfter && (
+                      <p className="mt-1 text-[10px] text-muted-foreground">
+                        {t("Purge after {date}", { date: formatDate(tenant.purgeAfter) })}
+                      </p>
+                    )}
                   </TableCell>
                   <TableCell className="text-sm">{tenant.users}</TableCell>
                   <TableCell className="text-sm">{tenant.clients}</TableCell>
@@ -130,16 +163,35 @@ export function AdminTenants() {
                   </TableCell>
                   <TableCell>
                     <Switch
-                      checked={tenant.status === "active"}
+                      checked={tenant.status === "active" && !tenant.deletedAt}
                       onCheckedChange={() => void toggleStatus(tenant)}
-                      disabled={!can("platform:manage")}
+                      disabled={!can("platform:manage") || Boolean(tenant.deletedAt)}
                     />
                   </TableCell>
                   <TableCell>
-                    <Button variant="outline" size="sm" onClick={() => manage(tenant)}>
-                      <ExternalLink className="h-3.5 w-3.5" />
-                      {t("Manage")}
-                    </Button>
+                    <div className="flex items-center gap-1">
+                      <Button variant="outline" size="sm" onClick={() => manage(tenant)}>
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        {t("Manage")}
+                      </Button>
+                      {tenant.deletedAt ? (
+                        <>
+                          <Button variant="ghost" size="sm" onClick={() => setAction({ tenant, kind: "restore" })}>
+                            <RotateCcw className="h-3.5 w-3.5" />
+                            {t("Restore")}
+                          </Button>
+                          <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setAction({ tenant, kind: "purge" })}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                            {t("Purge")}
+                          </Button>
+                        </>
+                      ) : (
+                        <Button variant="ghost" size="sm" className="text-destructive" onClick={() => setAction({ tenant, kind: "delete" })}>
+                          <XCircle className="h-3.5 w-3.5" />
+                          {t("Delete")}
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -174,6 +226,23 @@ export function AdminTenants() {
             toast.success(t("Tenant created"));
           }
         }}
+      />
+
+      <ConfirmDialog
+        open={Boolean(action)}
+        onOpenChange={(open) => !open && setAction(null)}
+        title={action?.kind === "delete" ? t("Disable tenant?") : action?.kind === "restore" ? t("Restore tenant?") : t("Permanently purge tenant?")}
+        description={
+          action?.kind === "delete"
+            ? t("{name} will be disabled and scheduled for purge in 30 days.", { name: action.tenant.name })
+            : action?.kind === "restore"
+              ? t("{name} will be active again.", { name: action?.tenant.name ?? "" })
+              : t("All users, clients, roles, sessions and audit events for {name} will be permanently deleted.", { name: action?.tenant.name ?? "" })
+        }
+        confirmLabel={action?.kind === "delete" ? t("Disable tenant") : action?.kind === "restore" ? t("Restore tenant") : t("Purge tenant")}
+        destructive={action?.kind !== "restore"}
+        loading={actionBusy}
+        onConfirm={performAction}
       />
 
       <Dialog open={Boolean(tempPassword)} onOpenChange={(open) => !open && setTempPassword(null)}>
