@@ -389,3 +389,41 @@ type MFAPending struct {
 	Used      bool               `bson:"used" json:"used"`
 	CreatedAt time.Time          `bson:"created_at" json:"createdAt"`
 }
+
+type WebhookEndpoint struct {
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	TenantID  primitive.ObjectID `bson:"tenant_id" json:"tenantId"`
+	Name      string             `bson:"name" json:"name"`
+	URL       string             `bson:"url" json:"url"`
+	SecretEnc string             `bson:"secret_enc" json:"-"`
+	Events    []string           `bson:"events" json:"events"`
+	Enabled   bool               `bson:"enabled" json:"enabled"`
+	CreatedAt time.Time          `bson:"created_at" json:"createdAt"`
+	UpdatedAt time.Time          `bson:"updated_at" json:"updatedAt"`
+}
+
+type WebhookDelivery struct {
+	ID            primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	TenantID      primitive.ObjectID `bson:"tenant_id" json:"tenantId"`
+	EndpointID    primitive.ObjectID `bson:"endpoint_id" json:"endpointId"`
+	Event         string             `bson:"event" json:"event"`
+	Payload       string             `bson:"payload" json:"-"`
+	Status        string             `bson:"status" json:"status"`
+	Attempts      int                `bson:"attempts" json:"attempts"`
+	NextAttemptAt time.Time          `bson:"next_attempt_at" json:"nextAttemptAt"`
+	LeaseUntil    *time.Time         `bson:"lease_until,omitempty" json:"-"`
+	ResponseCode  int                `bson:"response_code,omitempty" json:"responseCode,omitempty"`
+	Error         string             `bson:"error,omitempty" json:"error,omitempty"`
+	CreatedAt     time.Time          `bson:"created_at" json:"createdAt"`
+	DeliveredAt   *time.Time         `bson:"delivered_at,omitempty" json:"deliveredAt,omitempty"`
+}
+
+var WebhookEvents = []string{
+	"auth.login.success", "auth.login.failed", "auth.logout",
+	"user.created", "user.registered", "user.updated", "user.deleted",
+	"user.password.reset", "user.mfa.enabled", "user.mfa.disabled",
+	"oidc.authorize.approved", "oidc.token.issued",
+	"client.created", "client.updated", "client.deleted",
+	"role.created", "role.updated", "role.deleted",
+	"tenant.settings.updated", "idp.updated", "scim.user.updated", "user.idp.provisioned",
+}

@@ -26,6 +26,9 @@ jobs:
       BASE_URL: http://localhost:8080
       DEV: "true"
       MAIL_DRIVER: mock
+      WEBHOOK_ALLOW_PRIVATE: "true"
+      WEBHOOK_RETRY_BASE_SECONDS: "1"
+      WEBHOOK_WORKER_SECONDS: "1"
       ENCRYPTION_KEY: ci-test-encryption-key
       E2E_BASE_URL: http://localhost:8080
     steps:
@@ -119,6 +122,15 @@ jobs:
           curl -fsS http://127.0.0.1:8080/readyz | jq -e '.status == "ready"'
           curl -fsS http://127.0.0.1:8080/metrics | grep -q 'ucenter_http_requests_total'
           curl -fsS http://127.0.0.1:8080/login > /dev/null
+
+      - name: Start webhook receiver
+        run: |
+          rm -f /tmp/webhook-deliveries.jsonl
+          python3 scripts/webhook-receiver.py > /tmp/webhook-receiver.log 2>&1 &
+          sleep 1
+
+      - name: Webhook smoke test
+        run: BASE_URL=http://127.0.0.1:8080 ./scripts/webhook-smoke.sh
 
       - name: Tenant lifecycle smoke test
         run: BASE_URL=http://127.0.0.1:8080 ./scripts/tenant-smoke.sh

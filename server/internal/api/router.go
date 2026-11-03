@@ -143,6 +143,14 @@ func (a *API) Router() *gin.Engine {
 
 	admin.GET("/export", a.RequirePermission("tenant:write"), a.exportTenant)
 
+	admin.GET("/webhooks", a.RequirePermission("tenant:write"), a.listWebhooks)
+	admin.POST("/webhooks", a.RequirePermission("tenant:write"), a.createWebhook)
+	admin.PATCH("/webhooks/:id", a.RequirePermission("tenant:write"), a.updateWebhook)
+	admin.DELETE("/webhooks/:id", a.RequirePermission("tenant:write"), a.deleteWebhook)
+	admin.POST("/webhooks/:id/rotate-secret", a.RequirePermission("tenant:write"), a.rotateWebhookSecret)
+	admin.POST("/webhooks/:id/test", a.RequirePermission("tenant:write"), a.testWebhook)
+	admin.GET("/webhook-deliveries", a.RequirePermission("audit:read"), a.listWebhookDeliveries)
+
 	admin.GET("/tenants", a.RequirePermission("platform:manage"), a.listTenants)
 	admin.POST("/tenants", a.RequirePermission("platform:manage"), a.createTenant)
 	admin.PATCH("/tenants/:id", a.RequirePermission("platform:manage"), a.updateTenant)

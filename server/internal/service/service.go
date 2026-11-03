@@ -17,6 +17,7 @@ import (
 	"ucenter/internal/security"
 	"ucenter/internal/store"
 	"ucenter/internal/token"
+	"ucenter/internal/webhook"
 )
 
 var (
@@ -34,9 +35,10 @@ var (
 )
 
 type Service struct {
-	Store  *store.Store
-	Tokens *token.Manager
-	Config config.Config
+	Store    *store.Store
+	Tokens   *token.Manager
+	Config   config.Config
+	Webhooks *webhook.Dispatcher
 }
 
 func New(s *store.Store, t *token.Manager, c config.Config) *Service {
@@ -212,6 +214,16 @@ func (s *Service) Audit(ctx context.Context, tenantID primitive.ObjectID, actor 
 		a.ActorEmail = actor.Email
 	}
 	_ = s.Store.CreateAudit(ctx, a)
+	if s.Webhooks != nil {
+		data := map[string]interface{}{
+			"action": action, "target_type": targetType, "target_id": targetID,
+			"actor_email": a.ActorEmail, "ip": ip,
+		}
+		for k, v := range metadata {
+			data[k] = v
+		}
+		s.Webhooks.Publish(ctx, tenantID, action, data)
+	}
 }
 
 // ---- OIDC helpers ----

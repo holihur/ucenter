@@ -136,6 +136,13 @@ func (s *Store) EnsureIndexes(ctx context.Context) error {
 		{s.DB.Collection("mfa_pending"), []mongo.IndexModel{
 			{Keys: bson.D{{Key: "expires_at", Value: 1}}, Options: options.Index().SetExpireAfterSeconds(0)},
 		}},
+		{s.DB.Collection("webhook_endpoints"), []mongo.IndexModel{
+			{Keys: bson.D{{Key: "tenant_id", Value: 1}}},
+		}},
+		{s.DB.Collection("webhook_deliveries"), []mongo.IndexModel{
+			{Keys: bson.D{{Key: "tenant_id", Value: 1}, {Key: "created_at", Value: -1}}},
+			{Keys: bson.D{{Key: "status", Value: 1}, {Key: "next_attempt_at", Value: 1}}},
+		}},
 	}
 	for _, sp := range specs {
 		if _, err := sp.coll.Indexes().CreateMany(ctx, sp.models); err != nil {

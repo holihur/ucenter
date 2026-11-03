@@ -20,6 +20,7 @@ import (
 	"ucenter/internal/service"
 	"ucenter/internal/store"
 	"ucenter/internal/token"
+	"ucenter/internal/webhook"
 )
 
 func main() {
@@ -55,6 +56,9 @@ func main() {
 	defer monitorCancel()
 	go metrics.StartDBMonitor(monitorCtx, st.Client, 15*time.Second)
 	svc := service.New(st, token.NewManager(st, cipher), cfg)
+	dispatcher := webhook.New(st, cipher, cfg, slog.Default())
+	svc.Webhooks = dispatcher
+	go dispatcher.Start(monitorCtx)
 	if err := bootstrapAdmin(startCtx, st, svc, cfg); err != nil {
 		log.Fatalf("bootstrap failed: %v", err)
 	}
