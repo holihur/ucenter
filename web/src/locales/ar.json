@@ -558,5 +558,7 @@
   "Unable to revoke token": "غير قادر على إبطال الرمز المميز",
   "Unable to create token": "غير قادر على إنشاء الرمز المميز",
   "Unable to rotate signing key": "غير قادر على تدوير مفتاح التوقيع",
-  "Unable to save settings": "غير قادر على حفظ الإعدادات"
+  "Unable to save settings": "غير قادر على حفظ الإعدادات",
+  "Creative · Education": "إبداعي · تعليم",
+  "Sketchbook paper, handwritten headlines, doodles and imperfect ink borders.": "ورق كراسة الرسم والعناوين المكتوبة بخط اليد ورسومات الشعار المبتكرة وحدود الحبر غير الكاملة."
 }

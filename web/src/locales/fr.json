@@ -558,5 +558,7 @@
   "Unable to revoke token": "Impossible de révoquer le jeton",
   "Unable to create token": "Impossible de créer le jeton",
   "Unable to rotate signing key": "Impossible de faire pivoter la clé de signature",
-  "Unable to save settings": "Impossible d'enregistrer les paramètres"
+  "Unable to save settings": "Impossible d'enregistrer les paramètres",
+  "Creative · Education": "Créatif · Éducation",
+  "Sketchbook paper, handwritten headlines, doodles and imperfect ink borders.": "Papier pour carnet de croquis, titres manuscrits, gribouillages et bordures d'encre imparfaites."
 }

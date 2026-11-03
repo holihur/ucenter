@@ -558,5 +558,7 @@
   "Unable to revoke token": "无法撤销令牌",
   "Unable to create token": "无法创建令牌",
   "Unable to rotate signing key": "无法轮换签名密钥",
-  "Unable to save settings": "无法保存设置"
+  "Unable to save settings": "无法保存设置",
+  "Creative · Education": "创意·教育",
+  "Sketchbook paper, handwritten headlines, doodles and imperfect ink borders.": "素描纸、手写标题、涂鸦和不完美的墨水边框。"
 }

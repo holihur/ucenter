@@ -558,5 +558,7 @@
   "Unable to revoke token": "トークンを取り消すことができません",
   "Unable to create token": "トークンを作成できません",
   "Unable to rotate signing key": "署名キーをローテーションできません",
-  "Unable to save settings": "設定を保存できません"
+  "Unable to save settings": "設定を保存できません",
+  "Creative · Education": "クリエイティブ · 教育",
+  "Sketchbook paper, handwritten headlines, doodles and imperfect ink borders.": "スケッチブックの紙、手書きの見出し、落書き、不完全なインクの境界線。"
 }

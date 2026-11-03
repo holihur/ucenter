@@ -558,5 +558,7 @@
   "Unable to revoke token": "Невозможно отозвать токен",
   "Unable to create token": "Невозможно создать токен",
   "Unable to rotate signing key": "Невозможно повернуть ключ подписи",
-  "Unable to save settings": "Невозможно сохранить настройки"
+  "Unable to save settings": "Невозможно сохранить настройки",
+  "Creative · Education": "Творчество · Образование",
+  "Sketchbook paper, handwritten headlines, doodles and imperfect ink borders.": "Бумага для альбомов, рукописные заголовки, рисунки и несовершенные чернильные границы."
 }

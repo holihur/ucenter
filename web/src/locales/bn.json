@@ -558,5 +558,7 @@
   "Unable to revoke token": "টোকেন প্রত্যাহার করতে অক্ষম",
   "Unable to create token": "টোকেন তৈরি করতে অক্ষম",
   "Unable to rotate signing key": "সাইনিং কী ঘোরাতে অক্ষম",
-  "Unable to save settings": "সেটিংস সংরক্ষণ করতে অক্ষম৷"
+  "Unable to save settings": "সেটিংস সংরক্ষণ করতে অক্ষম৷",
+  "Creative · Education": "সৃজনশীল · শিক্ষা",
+  "Sketchbook paper, handwritten headlines, doodles and imperfect ink borders.": "স্কেচবুক কাগজ, হাতে লেখা শিরোনাম, ডুডল এবং অসম্পূর্ণ কালি সীমানা।"
 }

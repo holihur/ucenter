@@ -558,5 +558,7 @@
   "Unable to revoke token": "No se puede revocar el token",
   "Unable to create token": "No se puede crear el token",
   "Unable to rotate signing key": "No se puede rotar la clave de firma",
-  "Unable to save settings": "No se pueden guardar las configuraciones"
+  "Unable to save settings": "No se pueden guardar las configuraciones",
+  "Creative · Education": "Creativo · Educación",
+  "Sketchbook paper, handwritten headlines, doodles and imperfect ink borders.": "Papel de cuaderno de bocetos, titulares escritos a mano, garabatos y bordes de tinta imperfectos."
 }
