@@ -697,5 +697,10 @@
   "Endpoint URL": "समापन बिंदु यूआरएल",
   "Private and loopback addresses are blocked unless configured for development.": "जब तक विकास के लिए कॉन्फ़िगर नहीं किया जाता तब तक निजी और लूपबैक पते अवरुद्ध रहते हैं।",
   "Save webhook": "वेबहुक सहेजें",
-  "Events": "घटनाएँ"
+  "Events": "घटनाएँ",
+  "Brand name": "ब्रांड का नाम",
+  "Replaces the UCenter name on login pages when platform branding is hidden.": "प्लेटफ़ॉर्म ब्रांडिंग छिपी होने पर लॉगिन पेजों पर UCenter नाम बदल देता है।",
+  "Hide platform branding": "प्लेटफ़ॉर्म ब्रांडिंग छुपाएं",
+  "Show only this organization's logo and brand name on sign-in pages.": "साइन-इन पृष्ठों पर केवल इस संगठन का लोगो और ब्रांड नाम दिखाएं।",
+  "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.": "प्रति पंक्ति एक डोमेन. इन होस्टनामों से अनुरोध इस किरायेदार को हल करते हैं; प्रत्येक डोमेन केवल एक किरायेदार का हो सकता है।"
 }

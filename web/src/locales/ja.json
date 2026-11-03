@@ -697,5 +697,10 @@
   "Private and loopback addresses are blocked unless configured for development.": "開発用に構成されていない限り、プライベート アドレスとループバック アドレスはブロックされます。",
   "Save webhook": "Webhook を保存する",
   "Events": "イベント",
-  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "Face ID、Touch ID、Windows Hello、またはセキュリティキーでサインインできます。"
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "Face ID、Touch ID、Windows Hello、またはセキュリティキーでサインインできます。",
+  "Brand name": "ブランド名",
+  "Replaces the UCenter name on login pages when platform branding is hidden.": "プラットフォームのブランドが非表示の場合、ログイン ページの UCenter 名を置き換えます。",
+  "Hide platform branding": "プラットフォームのブランドを非表示にする",
+  "Show only this organization's logo and brand name on sign-in pages.": "サインイン ページにはこの組織のロゴとブランド名のみを表示します。",
+  "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.": "1 行に 1 つのドメイン。これらのホスト名からのリクエストはこのテナントに解決されます。各ドメインは 1 つのテナントのみに属することができます。"
 }

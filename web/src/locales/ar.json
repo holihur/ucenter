@@ -697,5 +697,10 @@
   "Endpoint URL": "عنوان URL لنقطة النهاية",
   "Private and loopback addresses are blocked unless configured for development.": "يتم حظر العناوين الخاصة وعناوين الاسترجاع ما لم يتم تكوينها للتطوير.",
   "Save webhook": "حفظ خطاف الويب",
-  "Events": "الأحداث"
+  "Events": "الأحداث",
+  "Brand name": "اسم العلامة التجارية",
+  "Replaces the UCenter name on login pages when platform branding is hidden.": "يستبدل اسم UCenter في صفحات تسجيل الدخول عندما تكون العلامة التجارية للنظام الأساسي مخفية.",
+  "Hide platform branding": "إخفاء العلامة التجارية للمنصة",
+  "Show only this organization's logo and brand name on sign-in pages.": "إظهار شعار هذه المؤسسة واسم علامتها التجارية فقط في صفحات تسجيل الدخول.",
+  "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.": "مجال واحد في كل سطر. يتم حل الطلبات الواردة من أسماء المضيفين هذه إلى هذا المستأجر؛ يمكن أن ينتمي كل مجال إلى مستأجر واحد فقط."
 }

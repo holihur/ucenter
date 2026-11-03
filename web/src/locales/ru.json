@@ -697,5 +697,10 @@
   "Endpoint URL": "URL-адрес конечной точки",
   "Private and loopback addresses are blocked unless configured for development.": "Частные адреса и адреса обратной связи блокируются, если они не настроены для разработки.",
   "Save webhook": "Сохранить вебхук",
-  "Events": "События"
+  "Events": "События",
+  "Brand name": "Название бренда",
+  "Replaces the UCenter name on login pages when platform branding is hidden.": "Заменяет имя UCenter на страницах входа, когда брендинг платформы скрыт.",
+  "Hide platform branding": "Скрыть брендинг платформы",
+  "Show only this organization's logo and brand name on sign-in pages.": "Показывать на страницах входа только логотип и название бренда этой организации.",
+  "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.": "Один домен на строку. Запросы от этих имен хостов разрешаются этому клиенту; каждый домен может принадлежать только одному арендатору."
 }

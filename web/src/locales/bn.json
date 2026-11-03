@@ -697,5 +697,10 @@
   "Endpoint URL": "এন্ডপয়েন্ট URL",
   "Private and loopback addresses are blocked unless configured for development.": "বিকাশের জন্য কনফিগার না করা পর্যন্ত ব্যক্তিগত এবং লুপব্যাক ঠিকানাগুলি ব্লক করা হয়েছে৷",
   "Save webhook": "ওয়েবহুক সংরক্ষণ করুন",
-  "Events": "ঘটনা"
+  "Events": "ঘটনা",
+  "Brand name": "ব্র্যান্ড নাম",
+  "Replaces the UCenter name on login pages when platform branding is hidden.": "যখন প্ল্যাটফর্ম ব্র্যান্ডিং লুকানো থাকে তখন লগইন পৃষ্ঠাগুলিতে UCenter নামটি প্রতিস্থাপন করে৷",
+  "Hide platform branding": "প্ল্যাটফর্ম ব্র্যান্ডিং লুকান",
+  "Show only this organization's logo and brand name on sign-in pages.": "সাইন-ইন পৃষ্ঠাগুলিতে শুধুমাত্র এই সংস্থার লোগো এবং ব্র্যান্ডের নাম দেখান৷",
+  "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.": "প্রতি লাইনে একটি ডোমেইন। এই হোস্টনাম থেকে অনুরোধ এই ভাড়াটিয়া সমাধান; প্রতিটি ডোমেইন শুধুমাত্র একজন ভাড়াটে হতে পারে।"
 }

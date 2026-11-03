@@ -697,5 +697,10 @@
   "Endpoint URL": "端点 URL",
   "Private and loopback addresses are blocked unless configured for development.": "除非配置用于开发，否则私有地址和环回地址将被阻止。",
   "Save webhook": "保存网络钩子",
-  "Events": "活动"
+  "Events": "活动",
+  "Brand name": "品牌名称",
+  "Replaces the UCenter name on login pages when platform branding is hidden.": "当隐藏平台品牌时，替换登录页面上的 UCenter 名称。",
+  "Hide platform branding": "隐藏平台品牌",
+  "Show only this organization's logo and brand name on sign-in pages.": "在登录页面上仅显示该组织的徽标和品牌名称。",
+  "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.": "每行一个域。来自这些主机名的请求解析到该租户；每个域只能属于一个租户。"
 }

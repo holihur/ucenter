@@ -697,5 +697,10 @@
   "Endpoint URL": "URL del punto final",
   "Private and loopback addresses are blocked unless configured for development.": "Las direcciones privadas y de bucle invertido están bloqueadas a menos que se configuren para el desarrollo.",
   "Save webhook": "Guardar webhook",
-  "Events": "Eventos"
+  "Events": "Eventos",
+  "Brand name": "Nombre de la marca",
+  "Replaces the UCenter name on login pages when platform branding is hidden.": "Reemplaza el nombre UCenter en las páginas de inicio de sesión cuando la marca de la plataforma está oculta.",
+  "Hide platform branding": "Ocultar la marca de la plataforma",
+  "Show only this organization's logo and brand name on sign-in pages.": "Muestre solo el logotipo y la marca de esta organización en las páginas de inicio de sesión.",
+  "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.": "Un dominio por línea. Las solicitudes de estos nombres de host se resuelven en este inquilino; cada dominio puede pertenecer a un solo inquilino."
 }

@@ -697,5 +697,10 @@
   "Endpoint URL": "URL do terminal",
   "Private and loopback addresses are blocked unless configured for development.": "Endereços privados e de loopback são bloqueados, a menos que sejam configurados para desenvolvimento.",
   "Save webhook": "Salvar webhook",
-  "Events": "Eventos"
+  "Events": "Eventos",
+  "Brand name": "Marca",
+  "Replaces the UCenter name on login pages when platform branding is hidden.": "Substitui o nome UCenter nas páginas de login quando a marca da plataforma está oculta.",
+  "Hide platform branding": "Ocultar a marca da plataforma",
+  "Show only this organization's logo and brand name on sign-in pages.": "Mostre apenas o logotipo e o nome da marca desta organização nas páginas de login.",
+  "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.": "Um domínio por linha. As solicitações desses nomes de host são resolvidas para esse locatário; cada domínio pode pertencer a apenas um locatário."
 }
