@@ -479,6 +479,7 @@ const previewPatternClass: Record<AuthTemplate["pattern"], string> = {
   terminal: "auth-terminal-lines",
   seal: "auth-seal",
   retail: "auth-retail-shapes",
+  sketch: "auth-sketch-doodles",
   none: "",
 };
 

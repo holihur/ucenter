@@ -33,7 +33,7 @@ type Branding struct {
 
 var LoginTemplates = []string{
 	"aurora", "minimal", "glass", "enterprise", "fintech",
-	"healthcare", "education", "developer", "government", "retail",
+	"healthcare", "education", "developer", "government", "retail", "handdrawn",
 }
 
 func ValidLoginTemplate(id string) bool {

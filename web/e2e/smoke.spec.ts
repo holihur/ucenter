@@ -50,6 +50,24 @@ test("admin can browse the login template gallery", async ({ page }) => {
   await expect(page.getByText("Government", { exact: true })).toBeVisible();
 });
 
+test("hand-drawn auth template renders and can be restored", async ({ page }) => {
+  await login(page);
+  const settingsResponse = await page.request.get("/api/admin/settings");
+  const settings = await settingsResponse.json();
+  const original = settings.tenant.branding;
+  const handDrawn = { ...original, loginTemplate: "handdrawn" };
+  try {
+    const patch = await page.request.patch("/api/admin/settings", { data: { branding: handDrawn } });
+    expect(patch.ok()).toBeTruthy();
+    await page.goto("/login?tenant=acme");
+    await expect(page.locator('[data-template="handdrawn"]')).toBeVisible();
+    await expect(page.locator(".auth-hand-card")).toBeVisible();
+    await expect(page.locator(".font-hand").first()).toBeVisible();
+  } finally {
+    await page.request.patch("/api/admin/settings", { data: { branding: original } });
+  }
+});
+
 test("Arabic switches the shell to RTL", async ({ page }) => {
   await page.goto("/login");
   await page.getByTestId("language-menu").click();

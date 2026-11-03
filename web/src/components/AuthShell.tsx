@@ -39,6 +39,23 @@ function Pattern({ pattern, panel = false }: { pattern: AuthPattern; panel?: boo
       </div>
     );
   }
+  if (pattern === "sketch") {
+    return (
+      <div className="auth-sketch-doodles absolute inset-0 -z-10">
+        <svg className="absolute start-[6%] top-[10%] h-24 w-24 text-[#3f3a33]/35" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          <circle cx="50" cy="50" r="18" />
+          <path d="M50 20v-8M50 88v-8M20 50h-8M88 50h-8M29 29l-6-6M77 77l-6-6M71 29l6-6M23 77l6-6" />
+        </svg>
+        <svg className="absolute end-[8%] top-[18%] h-20 w-32 text-[#3f3a33]/35" viewBox="0 0 140 90" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
+          <path d="M12 62c26-30 58-32 78-12 9 9 5 22-4 23-10 1-12-10 0-17 14-8 33-3 42 8" />
+          <path d="M128 64l-2-10M128 64l-9 3" />
+        </svg>
+        <svg className="absolute bottom-[12%] start-[12%] h-16 w-24 text-[#3f3a33]/25" viewBox="0 0 120 80" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          <path d="M8 40c10-18 24-18 30-4 5 12-6 20-12 12-5-7 4-15 15-13 16 3 22 17 35 15 8-1 16-7 24-17" />
+        </svg>
+      </div>
+    );
+  }
   if (pattern === "retail") {
     return (
       <div className="auth-retail-shapes absolute inset-0 -z-10">

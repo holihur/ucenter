@@ -132,3 +132,63 @@
     background-color: hsl(var(--background));
   }
 }
+
+@layer components {
+  .font-hand {
+    font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", "Chalkboard SE", cursive;
+  }
+  .auth-handdrawn {
+    --background: 44 65% 96%;
+    --foreground: 35 15% 17%;
+    --card: 48 100% 98%;
+    --card-foreground: 35 15% 17%;
+    --popover: 48 100% 98%;
+    --popover-foreground: 35 15% 17%;
+    --primary: 35 15% 22%;
+    --primary-foreground: 48 100% 98%;
+    --secondary: 43 50% 90%;
+    --secondary-foreground: 35 15% 17%;
+    --muted: 43 50% 92%;
+    --muted-foreground: 35 10% 40%;
+    --border: 35 15% 22%;
+    --input: 35 15% 22%;
+    --ring: 35 15% 22%;
+    background-color: #f7efdc;
+    background-image:
+      radial-gradient(circle at 12% 18%, rgb(63 58 51 / 0.06) 0 1px, transparent 1px 100%),
+      radial-gradient(circle at 78% 72%, rgb(63 58 51 / 0.05) 0 1px, transparent 1px 100%),
+      linear-gradient(0deg, transparent 23px, rgb(63 58 51 / 0.045) 23px 24px);
+    background-size: 24px 24px, 31px 31px, 100% 24px;
+  }
+  .auth-handdrawn .auth-hand-card {
+    transform: rotate(-0.4deg);
+  }
+  .auth-handdrawn .auth-hand-card input,
+  .auth-handdrawn .auth-hand-card textarea,
+  .auth-handdrawn .auth-hand-card [role="combobox"] {
+    border-width: 2px;
+    border-style: dashed;
+    border-color: #3f3a33;
+    background: #fffdf4;
+    border-radius: 0.7rem 0.45rem 0.8rem 0.5rem;
+    box-shadow: 2px 2px 0 rgb(63 58 51 / 0.25);
+  }
+  .auth-handdrawn .auth-hand-card button[type="submit"] {
+    border: 2px solid #3f3a33;
+    border-radius: 0.8rem 0.45rem 0.9rem 0.5rem;
+    box-shadow: 3px 3px 0 #3f3a33;
+    font-family: "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive;
+    font-weight: 600;
+  }
+  .auth-handdrawn .auth-hand-card button[type="submit"]:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #3f3a33;
+  }
+  .auth-sketch-doodles {
+    background-image:
+      radial-gradient(circle at 8% 16%, rgb(244 114 182 / 0.25) 0 5px, transparent 6px),
+      radial-gradient(circle at 88% 12%, rgb(59 130 246 / 0.2) 0 7px, transparent 8px),
+      radial-gradient(circle at 78% 84%, rgb(250 204 21 / 0.3) 0 9px, transparent 10px),
+      radial-gradient(circle at 18% 82%, rgb(34 197 94 / 0.18) 0 6px, transparent 7px);
+  }
+}

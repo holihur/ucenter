@@ -1,5 +1,5 @@
 export type AuthLayout = "split" | "centered" | "poster";
-export type AuthPattern = "mesh" | "grid" | "waves" | "blobs" | "terminal" | "seal" | "retail" | "none";
+export type AuthPattern = "mesh" | "grid" | "waves" | "blobs" | "terminal" | "seal" | "retail" | "sketch" | "none";
 
 export interface AuthTemplate {
   id: string;
@@ -152,6 +152,21 @@ export const AUTH_TEMPLATES: AuthTemplate[] = [
     formClass: "",
     headlineClass: "font-serif",
     pattern: "seal",
+  },
+  {
+    id: "handdrawn",
+    name: "Hand-drawn",
+    industry: "Creative · Education",
+    description: "Sketchbook paper, handwritten headlines, doodles and imperfect ink borders.",
+    layout: "centered",
+    accent: "#3f3a33",
+    panelClass: "",
+    panelTextClass: "text-foreground",
+    panelMutedClass: "text-muted-foreground",
+    shellClass: "auth-handdrawn",
+    formClass: "auth-hand-card rounded-[1.8rem] border-2 border-dashed border-[#3f3a33] bg-[#fffdf4] p-8 text-[#2c2822] shadow-[8px_8px_0_#3f3a33]",
+    headlineClass: "font-hand",
+    pattern: "sketch",
   },
   {
     id: "retail",
