@@ -6,8 +6,6 @@ OpenID Connect (OIDC) provider, a React admin console, and a Go + MongoDB backen
 Each tenant gets its own issuer, signing key, users, roles, OIDC clients, sessions and
 audit trail. A single platform administrator can manage every tenant from one console.
 
-![Login](docs/screenshots/login.png)
-
 ## Highlights
 
 - **OpenID Connect provider** — discovery, authorization code + PKCE, ID tokens, userinfo,
@@ -39,20 +37,6 @@ audit trail. A single platform administrator can manage every tenant from one co
   relative times use the selected locale.
 - **Polished UX** — React 19, Tailwind CSS, shadcn/ui components, responsive layouts,
   tenant branding and accessible Radix primitives.
-
-### Screenshots
-
-| Admin overview | Users |
-| --- | --- |
-| ![Overview](docs/screenshots/overview.png) | ![Users](docs/screenshots/users.png) |
-
-| OIDC consent | Platform tenant switcher |
-| --- | --- |
-| ![Consent](docs/screenshots/consent.png) | ![Tenant switch](docs/screenshots/tenant-switch.png) |
-
-| Dark theme · 简体中文 | Dark theme · العربية (RTL) |
-| --- | --- |
-| ![Dark Chinese](docs/screenshots/theme-dark-zh-admin.png) | ![Arabic RTL](docs/screenshots/theme-dark-ar-rtl.png) |
 
 ## Tech stack
 
@@ -237,11 +221,10 @@ admin and account screens.
   `end-*`).
 - **Dates & relative times** — formatted with `Intl.DateTimeFormat` /
   `Intl.RelativeTimeFormat` using the selected locale.
-- **Translations** — `web/src/locales/*.json` maps English source strings to translated
-  values, with English fallback for keys that have not been translated yet. Core
-  navigation, authentication, consent, account and dashboard strings are translated
-  into all ten languages. Add new keys to `en.json` and the matching locale files;
-  `scripts/translate-locales.py` is an optional helper for bootstrapping dictionaries.
+- **Translations** — `web/src/locales/*.json` maps every English source string to all
+  ten supported languages; the GitHub `Generate translations` workflow keeps the
+  dictionaries in sync. Add new keys to `en.json`, then let the workflow (or
+  `scripts/translate-clients5.py`) fill the other locales.
 
 ## Email flows
 
@@ -484,23 +467,35 @@ For production: terminate TLS in front of UCenter, set `COOKIE_SECURE=true`,
 (`openssl rand -base64 32`), replace the bootstrap/demo credentials, and back up
 MongoDB (signing keys and encrypted secrets live in the database).
 
-## Known limitations / roadmap
+## Known limitations
 
-- No outbound email yet: password-reset emails, email verification and invitation emails
-  are not implemented. Administrators generate temporary passwords in the console.
-- Access tokens are stateless JWTs; revocation applies to refresh tokens and sessions, so
-  an access token remains valid until it expires (default 1 hour, configurable per client).
-- Rate limiting uses an in-memory sliding window by default. Set `REDIS_URL` (or run
-  `docker compose --profile redis up -d`) for a shared fixed-window limiter across
-  replicas; Redis failures fall back to memory and log a warning.
-- SAML, SCIM provisioning, WebAuthn/passkeys and social/OIDC federation as an upstream
-  identity source are not included.
-- Tenant deletion is a soft disable; there is no cascading data purge.
+- Real third-party credentials are intentionally not bundled. SMTP, SAML IdPs, WeChat/
+  Alipay and Stripe use adapters plus local mock/test providers; configure real values at
+  deployment time and never commit keys.
+- Access tokens are stateless RS256 JWTs. Session logout, password reset and MFA changes
+  bump `token_version`, which userinfo/introspection enforce immediately; an offline
+  resource server that only validates the JWT signature will accept it until expiry.
+- Rates and usage events fall back to per-process memory when Redis is not configured.
+  Run the `redis` compose profile for shared rate limits across replicas.
+- Stripe support is a test-mode Checkout/cancel adapter. Production reconciliation should
+  additionally verify Stripe webhooks before granting paid limits.
+- Custom-domain TLS certificates and DNS are managed by the operator's reverse proxy.
+- SAML supports the SP-initiated Web Browser SSO profile and SLO metadata; SCIM implements
+  the common Users/Groups subset (`eq` filters, pagination, PATCH) rather than every
+  optional extension.
 - Theme and locale preferences are stored per browser (`uc_theme`, `uc_lang`), not on the
   user profile.
-- The ten locale files cover core navigation, authentication, consent, account and
-  dashboard strings; some long-form admin descriptions intentionally fall back to English.
-  Add the missing keys to `web/src/locales/*.json` to extend coverage.
+- Tenant deletion is soft by default with a 30-day restore window; `purge-tenants` (or the
+  platform purge action) performs the irreversible cascading delete.
+
+## Documentation
+
+- [OIDC](docs/OIDC.md) · [API](docs/API.md) · [OpenAPI](docs/openapi.yaml)
+- [Operations](docs/OPERATIONS.md) · [Upgrading](docs/UPGRADING.md)
+- [SAML](docs/SAML.md) · [SCIM](docs/SCIM.md) · [Upstream IdPs](docs/UPSTREAM-IDP.md) · [WebAuthn](docs/WEBAUTHN.md)
+- [MCP](docs/MCP.md) · [Authorization](docs/AUTHZ.md) · [Webhooks](docs/WEBHOOKS.md)
+- [Custom domains](docs/CUSTOM-DOMAINS.md) · [Billing](docs/BILLING.md) · [Tenant lifecycle](docs/TENANT-LIFECYCLE.md)
+- [Acceptance report](docs/ACCEPTANCE.md)
 
 ## SDKs and examples
 
@@ -522,9 +517,9 @@ const { items } = await client.listUsers({ pageSize: 5 });
 console.log(items);
 ```
 
-The TypeScript SDK accepts a `cookie` option for server-side use; the Go client captures
-the `uc_session` cookie from `Login`. Admin API tokens are currently MCP-scoped; use an
-admin session cookie for the admin API.
+The TypeScript SDK accepts `cookie` or `token` for server-side use; the Go client
+supports `Cookie` and `Token`. API tokens created under MCP access are also valid admin API
+bearer credentials (`Authorization: Bearer ucm_...`).
 
 ### Custom domains and white-label
 
