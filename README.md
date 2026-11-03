@@ -19,6 +19,11 @@ audit trail. A single platform administrator can manage every tenant from one co
 - **MCP access** — a Streamable HTTP Model Context Protocol server lets AI clients
   (Claude Desktop, Cursor, custom agents) inspect and manage a tenant with scoped,
   revocable API tokens. See [docs/MCP.md](docs/MCP.md).
+- **Upstream identity providers** — per-tenant WeChat Open Platform, Official Account,
+  WeCom, Alipay, DingTalk, Feishu, QQ, Weibo, Douyin, Google, Microsoft, GitHub, Apple and
+  custom OAuth2/OIDC. Only configured and enabled providers are shown on the login page;
+  account linking, JIT provisioning and a local mock provider are included. See
+  [docs/UPSTREAM-IDP.md](docs/UPSTREAM-IDP.md).
 - **Platform administration** — create tenants, assign owners, enable/disable tenants and
   switch between organizations without re-authenticating.
 - **Security first** — Argon2id passwords, TOTP MFA with hashed recovery codes, exact
@@ -293,6 +298,11 @@ tenant with `X-Tenant-ID: <id-or-slug>`.
 | `GET/POST` | `/api/admin/api-tokens` | List / create MCP API tokens |
 | `DELETE` | `/api/admin/api-tokens/:id` | Revoke an MCP API token |
 | `POST` | `/mcp` | MCP Streamable HTTP endpoint (Bearer token) |
+| `GET` | `/api/public/tenants/:slug/identity-providers` | Enabled upstream providers |
+| `GET/PUT/DELETE` | `/api/admin/identity-providers` | Tenant provider configuration |
+| `GET` | `/t/:slug/idp/:type/start` | Start upstream login |
+| `GET` | `/t/:slug/idp/:type/callback` | Upstream callback |
+| `GET/DELETE` | `/api/me/identities` | Linked sign-in methods |
 
 ## Configuration
 
@@ -336,7 +346,8 @@ ucenter/
 │   ├── cmd/server/          # HTTP server + bootstrap
 │   ├── cmd/seed/            # demo tenants, users and clients
 │   └── internal/
-│       ├── api/             # Gin routes, OIDC + admin + MCP handlers, middleware
+│       ├── api/             # Gin routes, OIDC + admin + MCP + IdP handlers
+│       ├── idp/             # upstream provider framework and adapters
 │       ├── config/          # environment configuration
 │       ├── models/          # BSON models and permission catalogue
 │       ├── security/        # Argon2id, PKCE, TOTP, recovery codes
@@ -353,6 +364,7 @@ ucenter/
 ├── scripts/mcp-smoke.sh     # end-to-end MCP test
 ├── docs/OIDC.md             # OIDC reference
 ├── docs/MCP.md              # MCP integration and tool reference
+├── docs/UPSTREAM-IDP.md     # WeChat/Alipay/social provider reference
 ├── Dockerfile
 └── docker-compose.yml
 ```

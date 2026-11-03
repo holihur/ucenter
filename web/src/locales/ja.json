@@ -590,5 +590,6 @@
   "Unable to update identity provider": "アイデンティティ プロバイダーを更新できません",
   "Unlink": "リンクを解除",
   "fields configured": "設定されたフィールド",
-  "or continue with": "または続行してください"
+  "or continue with": "または続行してください",
+  "Configure": "設定"
 }
