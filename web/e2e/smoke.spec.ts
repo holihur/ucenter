@@ -85,6 +85,48 @@ test("mock upstream provider provisions and links a user", async ({ page, browse
   await page.request.delete("/api/admin/identity-providers/mock");
 });
 
+test("SAML mock IdP signs in and provisions a user", async ({ page, browser }) => {
+  await login(page);
+  const origin = new URL(page.url()).origin;
+  const idpMetadata = await (await page.request.get("http://127.0.0.1:9091/metadata")).text();
+  const configure = await page.request.put("/api/admin/identity-providers/saml", {
+    data: {
+      name: "Mock SAML IdP",
+      enabled: true,
+      config: { idpMetadataXML: idpMetadata, emailAttribute: "email", nameAttribute: "name" },
+      autoProvision: true,
+      defaultRoles: ["member"],
+      trustEmail: false,
+    },
+  });
+  expect(configure.ok()).toBeTruthy();
+
+  const spMetadata = await (await page.request.get("/t/acme/saml/metadata")).text();
+  const register = await page.request.post("http://127.0.0.1:9091/services/acme", {
+    headers: { "Content-Type": "application/xml" },
+    data: spMetadata,
+  });
+  expect(register.ok()).toBeTruthy();
+
+  const samlContext = await browser.newContext({ baseURL: origin });
+  const samlPage = await samlContext.newPage();
+  try {
+    await samlPage.goto("/t/acme/saml/login?return_to=/account");
+    await samlPage.locator('input[name="user"]').fill("samluser");
+    await samlPage.locator('input[name="password"]').fill("Password123!");
+    await samlPage.locator('input[type="submit"]').click();
+    await samlPage.waitForURL(/\/account/, { timeout: 30_000 });
+    await expect(samlPage.locator("body")).toContainText("saml@acme.test");
+  } finally {
+    await samlContext.close();
+  }
+
+  const users = await page.request.get("/api/admin/users?q=saml@acme.test");
+  const user = (await users.json()).items[0];
+  if (user) await page.request.delete(`/api/admin/users/${user.id}`);
+  await page.request.delete("/api/admin/identity-providers/saml");
+});
+
 test("hand-drawn auth template renders and can be restored", async ({ page }) => {
   await login(page);
   const settingsResponse = await page.request.get("/api/admin/settings");

@@ -90,6 +90,18 @@ jobs:
           curl -fsS http://127.0.0.1:8080/metrics | grep -q 'ucenter_http_requests_total'
           curl -fsS http://127.0.0.1:8080/login > /dev/null
 
+      - name: Start mock SAML IdP
+        working-directory: server
+        run: |
+          go build -tags nomsgpack -o /tmp/mock-saml-idp ./cmd/mock-saml-idp
+          /tmp/mock-saml-idp > /tmp/mock-saml-idp.log 2>&1 &
+          for i in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:9091/metadata >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/mock-saml-idp.log
+          exit 1
+
       - name: Install Playwright browser
         working-directory: web
         run: pnpm exec playwright install --with-deps chromium
