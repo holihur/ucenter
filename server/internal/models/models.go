@@ -330,13 +330,14 @@ type UserIdentity struct {
 }
 
 type IdPState struct {
-	ID         string              `bson:"_id" json:"id"`
-	TenantID   primitive.ObjectID  `bson:"tenant_id" json:"tenantId"`
-	Provider   string              `bson:"provider" json:"provider"`
-	ReturnTo   string              `bson:"return_to" json:"returnTo"`
-	RequestID  string              `bson:"request_id,omitempty" json:"requestId,omitempty"`
-	BindUserID *primitive.ObjectID `bson:"bind_user_id,omitempty" json:"bindUserId,omitempty"`
-	ExpiresAt  time.Time           `bson:"expires_at" json:"expiresAt"`
-	Used       bool                `bson:"used" json:"used"`
-	CreatedAt  time.Time           `bson:"created_at" json:"createdAt"`
+	ID            string              `bson:"_id" json:"id"`
+	TenantID      primitive.ObjectID  `bson:"tenant_id" json:"tenantId"`
+	Provider      string              `bson:"provider" json:"provider"`
+	ReturnTo      string              `bson:"return_to" json:"returnTo"`
+	RequestID     string              `bson:"request_id,omitempty" json:"requestId,omitempty"`
+	SAMLRequestID string              `bson:"saml_request_id,omitempty" json:"samlRequestId,omitempty"`
+	BindUserID    *primitive.ObjectID `bson:"bind_user_id,omitempty" json:"bindUserId,omitempty"`
+	ExpiresAt     time.Time           `bson:"expires_at" json:"expiresAt"`
+	Used          bool                `bson:"used" json:"used"`
+	CreatedAt     time.Time           `bson:"created_at" json:"createdAt"`
 }

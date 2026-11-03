@@ -19,7 +19,6 @@ import (
 	"github.com/crewjam/saml"
 	"github.com/crewjam/saml/samlsp"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"ucenter/internal/idp"
 	"ucenter/internal/models"
@@ -118,7 +117,7 @@ func (a *API) samlServiceProvider(tenant *models.Tenant, cfg idp.Config) (*saml.
 		Certificate:           cert,
 		MetadataURL:           metadataURL,
 		AcsURL:                acsURL,
-		SLOURL:                url.URL{Scheme: metadataURL.Scheme, Host: metadataURL.Host, Path: "/t/" + tenant.Slug + "/saml/slo"},
+		SloURL:                url.URL{Scheme: metadataURL.Scheme, Host: metadataURL.Host, Path: "/t/" + tenant.Slug + "/saml/slo"},
 		IDPMetadata:           metadata,
 		AuthnNameIDFormat:     nameIDFormat,
 		AllowIDPInitiated:     true,
