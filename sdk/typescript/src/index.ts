@@ -135,7 +135,7 @@ export class UCenterClient {
     this.fetchImpl = options.fetch ?? fetch;
   }
 
-  private async request<T>(path: string, init: (RequestInit & { body?: unknown }) = {}): Promise<T> {
+  private async request<T>(path: string, init: (Omit<RequestInit, "body"> & { body?: unknown }) = {}): Promise<T> {
     const headers = new Headers(this.headers);
     if (this.cookie) headers.set("Cookie", this.cookie);
     if (this.tenantId) headers.set("X-Tenant-ID", this.tenantId);
@@ -149,7 +149,7 @@ export class UCenterClient {
       body,
       headers,
       credentials: "include",
-    });
+    } as RequestInit);
     const setCookies = (response.headers as Headers & { getSetCookie?: () => string[] }).getSetCookie?.() ?? [];
     const setCookie = setCookies[0] ?? response.headers.get("set-cookie");
     if (setCookie) this.cookie = setCookie.split(";")[0];
