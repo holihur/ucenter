@@ -178,3 +178,29 @@ func (s *Store) BumpTokenVersion(ctx context.Context, userID primitive.ObjectID)
 	_, err := s.Users.UpdateOne(ctx, bson.M{"_id": userID}, bson.M{"$inc": bson.M{"token_version": 1}})
 	return err
 }
+
+func (s *Store) ListUsersWithRole(ctx context.Context, tenantID primitive.ObjectID, role string) ([]models.User, error) {
+	cur, err := s.Users.Find(ctx, bson.M{
+		"memberships": bson.M{"$elemMatch": bson.M{"tenant_id": tenantID, "roles": role}},
+	}, options.Find().SetSort(bson.D{{Key: "email", Value: 1}}))
+	if err != nil {
+		return nil, err
+	}
+	var out []models.User
+	if err := cur.All(ctx, &out); err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (s *Store) FindUserByExternalID(ctx context.Context, tenantID primitive.ObjectID, externalID string) (*models.User, error) {
+	var u models.User
+	err := s.Users.FindOne(ctx, bson.M{
+		"external_id":           externalID,
+		"memberships.tenant_id": tenantID,
+	}).Decode(&u)
+	if err == mongo.ErrNoDocuments {
+		return nil, ErrNotFound
+	}
+	return &u, err
+}

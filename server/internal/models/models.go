@@ -55,6 +55,9 @@ type TenantSettings struct {
 	SessionTTLHours     int      `bson:"session_ttl_hours" json:"sessionTtlHours"`
 	AllowedEmailDomains []string `bson:"allowed_email_domains" json:"allowedEmailDomains"`
 	AllowPasswordLogin  bool     `bson:"allow_password_login" json:"allowPasswordLogin"`
+	SCIMEnabled         bool     `bson:"scim_enabled" json:"scimEnabled"`
+	SCIMTokenHash       string   `bson:"scim_token_hash,omitempty" json:"-"`
+	SCIMTokenPrefix     string   `bson:"scim_token_prefix,omitempty" json:"scimTokenPrefix"`
 }
 
 func DefaultSettings() TenantSettings {
@@ -100,6 +103,7 @@ type User struct {
 	Name          string             `bson:"name" json:"name"`
 	Picture       string             `bson:"picture" json:"picture"`
 	PasswordHash  string             `bson:"password_hash" json:"-"`
+	ExternalID    string             `bson:"external_id,omitempty" json:"externalId,omitempty"`
 	Status        string             `bson:"status" json:"status"`
 	PlatformAdmin bool               `bson:"platform_admin" json:"platformAdmin"`
 	Memberships   []Membership       `bson:"memberships" json:"memberships"`

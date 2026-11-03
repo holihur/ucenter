@@ -90,6 +90,9 @@ jobs:
           curl -fsS http://127.0.0.1:8080/metrics | grep -q 'ucenter_http_requests_total'
           curl -fsS http://127.0.0.1:8080/login > /dev/null
 
+      - name: SCIM smoke test
+        run: BASE_URL=http://127.0.0.1:8080 ./scripts/scim-smoke.sh
+
       - name: Start mock SAML IdP
         working-directory: server
         run: |

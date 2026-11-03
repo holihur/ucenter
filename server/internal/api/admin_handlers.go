@@ -994,6 +994,10 @@ func (a *API) updateSettings(c *gin.Context) {
 	}
 	if body.Settings != nil {
 		s := *body.Settings
+		// SCIM stays managed by its dedicated endpoints.
+		s.SCIMEnabled = tenant.Settings.SCIMEnabled
+		s.SCIMTokenHash = tenant.Settings.SCIMTokenHash
+		s.SCIMTokenPrefix = tenant.Settings.SCIMTokenPrefix
 		if s.PasswordMinLength < 8 {
 			s.PasswordMinLength = 8
 		}

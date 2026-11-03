@@ -121,6 +121,10 @@ func (a *API) Router() *gin.Engine {
 	admin.PATCH("/settings", a.RequirePermission("tenant:write"), a.updateSettings)
 	admin.POST("/signing-keys/rotate", a.RequirePermission("tenant:write"), a.rotateSigningKey)
 
+	admin.GET("/scim", a.RequirePermission("tenant:read"), a.getSCIMSettings)
+	admin.PATCH("/scim", a.RequirePermission("tenant:write"), a.updateSCIMSettings)
+	admin.POST("/scim/token", a.RequirePermission("tenant:write"), a.rotateSCIMToken)
+
 	admin.GET("/api-tokens", a.listAPITokens)
 	admin.POST("/api-tokens", a.createAPIToken)
 	admin.DELETE("/api-tokens/:id", a.revokeAPIToken)
@@ -130,6 +134,22 @@ func (a *API) Router() *gin.Engine {
 	admin.PATCH("/tenants/:id", a.RequirePermission("platform:manage"), a.updateTenant)
 
 	r.Any("/mcp", a.mcpAuth(), a.mcpHTTPHandler())
+
+	scim := r.Group("/t/:slug/scim/v2", a.scimAuth())
+	scim.GET("/ServiceProviderConfig", a.scimServiceProviderConfig)
+	scim.GET("/Schemas", a.scimSchemas)
+	scim.GET("/Users", a.scimListUsers)
+	scim.POST("/Users", a.scimCreateUser)
+	scim.GET("/Users/:id", a.scimGetUser)
+	scim.PUT("/Users/:id", a.scimUpdateUser)
+	scim.PATCH("/Users/:id", a.scimPatchUser)
+	scim.DELETE("/Users/:id", a.scimDeleteUser)
+	scim.GET("/Groups", a.scimListGroups)
+	scim.POST("/Groups", a.scimCreateGroup)
+	scim.GET("/Groups/:id", a.scimGetGroup)
+	scim.PUT("/Groups/:id", a.scimUpdateGroup)
+	scim.PATCH("/Groups/:id", a.scimPatchGroup)
+	scim.DELETE("/Groups/:id", a.scimDeleteGroup)
 
 	r.GET("/t/:slug/saml/metadata", a.samlMetadata)
 	r.GET("/t/:slug/saml/login", func(c *gin.Context) {
