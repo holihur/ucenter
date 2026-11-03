@@ -37,6 +37,7 @@ type API struct {
 	Mailer       mail.Mailer
 	Cipher       *security.Cipher
 	Metrics      *observability.Metrics
+	WebAuthn     *webauthn.WebAuthn
 	limiter      ratelimit.Limiter
 	mailLimiter  ratelimit.Limiter
 	tokenLimiter ratelimit.Limiter
