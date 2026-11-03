@@ -428,17 +428,21 @@ docker compose --profile observability --profile redis up -d --build
 ```bash
 make test                              # Go unit tests + TypeScript checks
 BASE_URL=http://localhost:8080 ./scripts/oidc-smoke.sh
+BASE_URL=http://localhost:8080 ./scripts/mcp-smoke.sh
+BASE_URL=http://localhost:8080 ./scripts/email-smoke.sh
+BASE_URL=http://localhost:8080 ./scripts/billing-smoke.sh
+BASE_URL=http://localhost:8080 ./scripts/authz-smoke.sh
+BASE_URL=http://localhost:8080 ./scripts/tenant-smoke.sh
+BASE_URL=http://localhost:8080 ./scripts/scim-smoke.sh
+BASE_URL=http://localhost:8080 ./scripts/webhook-smoke.sh
 ```
 
 The Go test suite covers password hashing, PKCE, client-secret hashing, recovery codes,
-scope handling and the login limiter. The smoke tests exercise the complete OIDC flow and
-the MCP token/scope/revocation flow against a running server and seeded database:
-
-```bash
-BASE_URL=http://localhost:8080 ./scripts/oidc-smoke.sh
-BASE_URL=http://localhost:8080 ./scripts/mcp-smoke.sh
-BASE_URL=http://localhost:8080 ./scripts/tenant-smoke.sh
-```
+scope handling, token-version revocation, signing-key rotation, Redis fallback and the
+login limiter. The smoke scripts exercise OIDC, MCP, email, billing, authorization,
+tenant lifecycle, SCIM and webhook retries against a running server and seeded database.
+GitHub Actions additionally runs the 12-test Playwright suite and every smoke script; see
+the [acceptance report](docs/ACCEPTANCE.md).
 
 ## Security notes
 
@@ -495,7 +499,7 @@ MongoDB (signing keys and encrypted secrets live in the database).
 - [SAML](docs/SAML.md) · [SCIM](docs/SCIM.md) · [Upstream IdPs](docs/UPSTREAM-IDP.md) · [WebAuthn](docs/WEBAUTHN.md)
 - [MCP](docs/MCP.md) · [Authorization](docs/AUTHZ.md) · [Webhooks](docs/WEBHOOKS.md)
 - [Custom domains](docs/CUSTOM-DOMAINS.md) · [Billing](docs/BILLING.md) · [Tenant lifecycle](docs/TENANT-LIFECYCLE.md)
-- [Acceptance report](docs/ACCEPTANCE.md)
+- [Acceptance report](docs/ACCEPTANCE.md) · [Security notes](#security-notes)
 
 ## SDKs and examples
 
