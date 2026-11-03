@@ -126,7 +126,6 @@ export class UCenterClient {
   tenantId?: string;
   token?: string;
   cookie?: string;
-  token?: string;
   headers: Record<string, string>;
   private fetchImpl: typeof fetch;
 
