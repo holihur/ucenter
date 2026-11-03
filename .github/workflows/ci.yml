@@ -123,6 +123,15 @@ jobs:
           curl -fsS http://127.0.0.1:8080/metrics | grep -q 'ucenter_http_requests_total'
           curl -fsS http://127.0.0.1:8080/login > /dev/null
 
+      - name: OIDC smoke test
+        run: BASE_URL=http://127.0.0.1:8080 ./scripts/oidc-smoke.sh
+
+      - name: MCP smoke test
+        run: BASE_URL=http://127.0.0.1:8080 ./scripts/mcp-smoke.sh
+
+      - name: Email flows smoke test
+        run: BASE_URL=http://127.0.0.1:8080 ./scripts/email-smoke.sh
+
       - name: Billing smoke test
         run: BASE_URL=http://127.0.0.1:8080 ./scripts/billing-smoke.sh
 
