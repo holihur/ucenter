@@ -519,6 +519,12 @@ The TypeScript SDK accepts a `cookie` option for server-side use; the Go client 
 the `uc_session` cookie from `Login`. Admin API tokens are currently MCP-scoped; use an
 admin session cookie for the admin API.
 
+### Custom domains and white-label
+
+Tenants can own hostnames, resolve sign-in by hostname and replace the platform mark with
+their own logo/brand name. Duplicate domains are rejected. See
+[docs/CUSTOM-DOMAINS.md](docs/CUSTOM-DOMAINS.md) for DNS, TLS and reverse-proxy examples.
+
 ### API authorization
 
 API tokens created for MCP are also valid for the admin API as bearer credentials:

@@ -38,6 +38,8 @@ export function AdminSettings() {
     supportEmail: "",
     loginTemplate: "aurora",
     loginTagline: "",
+    brandName: "",
+    hidePlatformBranding: false,
   });
   const [settings, setSettings] = useState<TenantSettings>({
     allowRegistration: false,
@@ -66,6 +68,8 @@ export function AdminSettings() {
       supportEmail: tenant.branding?.supportEmail ?? "",
       loginTemplate: tenant.branding?.loginTemplate || "aurora",
       loginTagline: tenant.branding?.loginTagline ?? "",
+      brandName: tenant.branding?.brandName ?? "",
+      hidePlatformBranding: tenant.branding?.hidePlatformBranding ?? false,
     });
     setSettings({
       ...tenant.settings,
@@ -228,7 +232,7 @@ export function AdminSettings() {
                   className="font-mono text-xs"
                 />
                 <p className="text-[11px] text-muted-foreground">
-                  {t("One domain per line. Domains can be used to resolve the tenant by hostname in a future deployment.")}
+                  {t("One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.")}
                 </p>
               </div>
             </CardContent>
@@ -242,6 +246,26 @@ export function AdminSettings() {
               <CardDescription>{t("Applied to the login experience and admin console accents.")}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="brand-name">{t("Brand name")}</Label>
+                  <Input
+                    id="brand-name"
+                    value={branding.brandName}
+                    onChange={(e) => setBranding({ ...branding, brandName: e.target.value })}
+                    disabled={!editable}
+                    placeholder="Acme Identity"
+                  />
+                  <p className="text-[11px] text-muted-foreground">{t("Replaces the UCenter name on login pages when platform branding is hidden.")}</p>
+                </div>
+                <label className="flex items-center justify-between gap-4 rounded-lg border p-3 text-sm">
+                  <span>
+                    <span className="font-medium">{t("Hide platform branding")}</span>
+                    <span className="mt-0.5 block text-xs text-muted-foreground">{t("Show only this organization's logo and brand name on sign-in pages.")}</span>
+                  </span>
+                  <Switch checked={branding.hidePlatformBranding} onCheckedChange={(v) => setBranding({ ...branding, hidePlatformBranding: v })} disabled={!editable} />
+                </label>
+              </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="logo-url">{t("Logo URL")}</Label>

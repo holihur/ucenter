@@ -983,6 +983,10 @@ func (a *API) updateSettings(c *gin.Context) {
 			fail(c, http.StatusBadRequest, "invalid_login_template", "Unknown login page template")
 			return
 		}
+		if len([]rune(b.BrandName)) > 60 {
+			fail(c, http.StatusBadRequest, "invalid_brand_name", "Brand name must be at most 60 characters")
+			return
+		}
 		update["branding"] = b
 	}
 	if body.Domains != nil {
@@ -997,6 +1001,12 @@ func (a *API) updateSettings(c *gin.Context) {
 				return
 			}
 			domains = append(domains, d)
+		}
+		for _, d := range domains {
+			if existing, err := a.Store.FindTenantByDomain(c.Request.Context(), d); err == nil && existing.ID != tenant.ID {
+				fail(c, http.StatusBadRequest, "domain_in_use", "Domain is already used by another tenant: "+d)
+				return
+			}
 		}
 		update["domains"] = domains
 	}
@@ -1191,10 +1201,37 @@ func (a *API) updateTenant(c *gin.Context) {
 		update["status"] = *body.Status
 	}
 	if body.Domains != nil {
-		update["domains"] = *body.Domains
+		domains := []string{}
+		seen := map[string]bool{}
+		for _, d := range *body.Domains {
+			d = strings.ToLower(strings.TrimSpace(d))
+			if d == "" || seen[d] {
+				continue
+			}
+			if !regexp.MustCompile(`^[a-z0-9.-]+\.[a-z]{2,}$`).MatchString(d) {
+				fail(c, http.StatusBadRequest, "invalid_domain", "Invalid domain: "+d)
+				return
+			}
+			if existing, err := a.Store.FindTenantByDomain(c.Request.Context(), d); err == nil && existing.ID != id {
+				fail(c, http.StatusBadRequest, "domain_in_use", "Domain is already used by another tenant: "+d)
+				return
+			}
+			seen[d] = true
+			domains = append(domains, d)
+		}
+		update["domains"] = domains
 	}
 	if body.Branding != nil {
-		update["branding"] = *body.Branding
+		b := *body.Branding
+		if !models.ValidLoginTemplate(b.LoginTemplate) {
+			fail(c, http.StatusBadRequest, "invalid_login_template", "Unknown login page template")
+			return
+		}
+		if len([]rune(b.BrandName)) > 60 {
+			fail(c, http.StatusBadRequest, "invalid_brand_name", "Brand name must be at most 60 characters")
+			return
+		}
+		update["branding"] = b
 	}
 	if len(update) == 0 {
 		fail(c, http.StatusBadRequest, "empty_update", "Nothing to update")

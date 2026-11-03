@@ -697,5 +697,10 @@
   "Endpoint URL": "Endpoint URL",
   "Private and loopback addresses are blocked unless configured for development.": "Private and loopback addresses are blocked unless configured for development.",
   "Save webhook": "Save webhook",
-  "Events": "Events"
+  "Events": "Events",
+  "Brand name": "Brand name",
+  "Replaces the UCenter name on login pages when platform branding is hidden.": "Replaces the UCenter name on login pages when platform branding is hidden.",
+  "Hide platform branding": "Hide platform branding",
+  "Show only this organization's logo and brand name on sign-in pages.": "Show only this organization's logo and brand name on sign-in pages.",
+  "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant.": "One domain per line. Requests from these hostnames resolve to this tenant; each domain can belong to only one tenant."
 }

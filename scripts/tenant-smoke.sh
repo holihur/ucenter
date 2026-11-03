@@ -38,8 +38,14 @@ STATUS="$(json -b "$JAR" -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type
 [[ "$STATUS" == "403" ]] || { echo "quota was not enforced: $STATUS" >&2; exit 1; }
 json -b "$JAR" -X PATCH -H 'Content-Type: application/json' -d "$(jq -nc --argjson s "$(jq -c '.tenant.settings | .quotaUsers=0' <<<"$TENANT_SETTINGS")" '{settings:$s}')" "$BASE_URL/api/admin/settings" >/dev/null
 
-echo "→ platform login + soft delete"
+echo "→ domain conflict validation"
 json -c "$PLATJAR" -X POST -H 'Content-Type: application/json' -d '{"tenant":"acme","email":"admin@ucenter.local","password":"Admin12345!"}' "$BASE_URL/api/auth/login" >/dev/null
+GLOBEX_ID="$(json -b "$PLATJAR" "$BASE_URL/api/admin/tenants" | jq -r '.items[] | select(.slug=="globex") | .id')"
+STATUS="$(json -b "$PLATJAR" -o /dev/null -w '%{http_code}' -X PATCH -d "$(jq -nc --arg d "$DOMAIN" '{domains:[$d]}')" "$BASE_URL/api/admin/tenants/$GLOBEX_ID")"
+[[ "$STATUS" == "400" ]] || { echo "duplicate domain was accepted: $STATUS" >&2; exit 1; }
+echo "  duplicate domain rejected"
+
+echo "→ platform login + soft delete"
 json -b "$PLATJAR" -X DELETE "$BASE_URL/api/admin/tenants/$TENANT_ID" | jq -e '.ok == true' >/dev/null
 LIST="$(json -b "$PLATJAR" "$BASE_URL/api/admin/tenants")"
 jq -e --arg id "$TENANT_ID" 'any(.items[]; .id == $id and .status == "disabled" and .deletedAt != null)' <<<"$LIST" >/dev/null

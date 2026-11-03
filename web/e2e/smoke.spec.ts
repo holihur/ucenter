@@ -145,6 +145,28 @@ test("hand-drawn auth template renders and can be restored", async ({ page }) =>
   }
 });
 
+test("custom domain resolves the tenant and applies white-label branding", async ({ page, browser }) => {
+  await login(page);
+  const settings = await (await page.request.get("/api/admin/settings")).json();
+  const original = settings.tenant.branding;
+  const originalDomains = settings.tenant.domains ?? [];
+  const domain = `login-${Date.now()}.acme.test`;
+  const branded = { ...original, brandName: "Acme Identity Cloud", hidePlatformBranding: true };
+  try {
+    const patch = await page.request.patch("/api/admin/settings", { data: { domains: [...originalDomains, domain], branding: branded } });
+    expect(patch.ok()).toBeTruthy();
+    const ctx = await browser.newContext();
+    const domainPage = await ctx.newPage();
+    await domainPage.goto(`/login?domain=${domain}`);
+    await expect(domainPage.locator("[data-template]")).toBeVisible();
+    await expect(domainPage.getByText("Acme Identity Cloud").first()).toBeVisible();
+    await expect(domainPage.getByText("Acme Corporation").first()).toBeVisible();
+    await ctx.close();
+  } finally {
+    await page.request.patch("/api/admin/settings", { data: { domains: originalDomains, branding: original } });
+  }
+});
+
 test("passkey enrollment, password + passkey login, and removal", async ({ page, context }) => {
   await login(page);
   const client = await context.newCDPSession(page);

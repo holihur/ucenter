@@ -82,6 +82,8 @@ export interface Branding {
   supportEmail: string;
   loginTemplate?: string;
   loginTagline?: string;
+  brandName?: string;
+  hidePlatformBranding?: boolean;
 }
 
 export interface TenantSettings {

@@ -23,12 +23,14 @@ const (
 )
 
 type Branding struct {
-	LogoURL         string `bson:"logo_url" json:"logoUrl"`
-	PrimaryColor    string `bson:"primary_color" json:"primaryColor"`
-	BackgroundColor string `bson:"background_color" json:"backgroundColor"`
-	SupportEmail    string `bson:"support_email" json:"supportEmail"`
-	LoginTemplate   string `bson:"login_template" json:"loginTemplate"`
-	LoginTagline    string `bson:"login_tagline" json:"loginTagline"`
+	LogoURL              string `bson:"logo_url" json:"logoUrl"`
+	PrimaryColor         string `bson:"primary_color" json:"primaryColor"`
+	BackgroundColor      string `bson:"background_color" json:"backgroundColor"`
+	SupportEmail         string `bson:"support_email" json:"supportEmail"`
+	LoginTemplate        string `bson:"login_template" json:"loginTemplate"`
+	LoginTagline         string `bson:"login_tagline" json:"loginTagline"`
+	BrandName            string `bson:"brand_name" json:"brandName"`
+	HidePlatformBranding bool   `bson:"hide_platform_branding" json:"hidePlatformBranding"`
 }
 
 var LoginTemplates = []string{

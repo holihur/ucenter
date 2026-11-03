@@ -36,7 +36,8 @@ export function LoginPage() {
   const errorText = useErrorText();
   const requestId = params.get("request") || "";
   const reauth = params.get("reauth") === "1";
-  const tenantParam = params.get("tenant") || localStorage.getItem("uc_tenant") || "";
+  const explicitTenant = params.get("tenant") || "";
+  const tenantParam = explicitTenant || localStorage.getItem("uc_tenant") || "";
 
   const [selectedTenant, setSelectedTenant] = useState(tenantParam);
   const [email, setEmail] = useState("");
@@ -62,6 +63,15 @@ export function LoginPage() {
     retry: false,
   });
 
+  const hostDomain = params.get("domain") || window.location.hostname;
+  const hostTenantQuery = useQuery({
+    queryKey: ["tenant-by-host", hostDomain],
+    queryFn: () => api.get<PublicTenant>(`/public/tenant-by-host?domain=${encodeURIComponent(hostDomain)}`),
+    enabled: !requestId && !explicitTenant && Boolean(hostDomain),
+    retry: false,
+  });
+  const hostTenant = hostTenantQuery.data;
+
   const tenants = tenantsQuery.data?.items ?? [];
   const request = requestQuery.data;
 
@@ -76,6 +86,12 @@ export function LoginPage() {
     enabled: Boolean(tenant?.slug),
     retry: false,
   });
+
+  useEffect(() => {
+    if (!requestId && hostTenant && selectedTenant !== hostTenant.slug) {
+      setSelectedTenant(hostTenant.slug);
+    }
+  }, [hostTenant, requestId]);
 
   useEffect(() => {
     if (!requestId && !selectedTenant && tenants.length > 0) {

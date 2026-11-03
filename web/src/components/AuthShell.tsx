@@ -105,6 +105,8 @@ export function AuthShell({
   const template = getAuthTemplate(tenant?.branding?.loginTemplate);
   const split = template.layout === "split";
   const description = tenant?.branding?.loginTagline || t("A modern SSO user center with OIDC discovery, tenant isolation and enterprise-grade access controls.");
+  const hidePlatformBranding = Boolean(tenant?.branding?.hidePlatformBranding);
+  const brandName = tenant?.branding?.brandName?.trim() || "UCenter";
 
   const form = (
     <div className={cn(split ? "w-full max-w-md animate-fade-in" : "w-full animate-fade-in", split && template.formClass)}>
@@ -119,10 +121,14 @@ export function AuthShell({
 
   const brandHeader = (
     <div className={cn("flex items-center gap-3", template.panelTextClass)}>
-      <BrandMark className="h-10 w-10" />
+      {hidePlatformBranding && tenant ? (
+        <TenantLogo tenant={tenant} className="h-10 w-10" />
+      ) : (
+        <BrandMark className="h-10 w-10" />
+      )}
       <div>
-        <p className="text-sm font-semibold tracking-tight">UCenter</p>
-        <p className={cn("text-xs", template.panelMutedClass)}>{t("Identity platform")}</p>
+        <p className="text-sm font-semibold tracking-tight">{brandName}</p>
+        <p className={cn("text-xs", template.panelMutedClass)}>{hidePlatformBranding && tenant ? tenant.name : t("Identity platform")}</p>
       </div>
     </div>
   );
@@ -136,7 +142,12 @@ export function AuthShell({
         </div>
         <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-5 py-16 sm:px-8">
           <div className="mb-8 flex flex-col items-center gap-4 text-center">
-            <BrandMark className="h-11 w-11" />
+            {hidePlatformBranding && tenant ? (
+              <TenantLogo tenant={tenant} className="h-12 w-12" />
+            ) : (
+              <BrandMark className="h-11 w-11" />
+            )}
+            {hidePlatformBranding && tenant && <p className={cn("text-sm font-semibold", template.panelTextClass)}>{brandName}</p>}
             {tenant && (
               <div className={cn("flex items-center gap-2", template.panelTextClass)}>
                 <TenantLogo tenant={tenant} className="h-6 w-6" rounded="rounded-md" />
