@@ -356,6 +356,7 @@ func (a *API) deleteUser(c *gin.Context) {
 	ctx := c.Request.Context()
 	_ = a.Store.RevokeAllUserSessions(ctx, tenantID, target.ID)
 	_ = a.Store.RevokeUserRefreshTokens(ctx, tenantID, target.ID)
+	_ = a.Store.DeleteUserIdentities(ctx, tenantID, target.ID)
 	remaining := len(target.Memberships)
 	if target.PlatformAdmin {
 		remaining = 2

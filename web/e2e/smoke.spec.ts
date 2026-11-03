@@ -50,6 +50,41 @@ test("admin can browse the login template gallery", async ({ page }) => {
   await expect(page.getByText("Government", { exact: true })).toBeVisible();
 });
 
+test("mock upstream provider provisions and links a user", async ({ page, browser }) => {
+  await login(page);
+  const origin = new URL(page.url()).origin;
+  const configure = await page.request.put("/api/admin/identity-providers/mock", {
+    data: {
+      name: "Mock Provider",
+      enabled: true,
+      config: { subject: "mock-e2e", email: "mock-idp@acme.test", name: "Mock IdP User" },
+      autoProvision: true,
+      defaultRoles: ["member"],
+      trustEmail: true,
+    },
+  });
+  expect(configure.ok()).toBeTruthy();
+
+  const publicList = await page.request.get("/api/public/tenants/acme/identity-providers");
+  expect((await publicList.json()).items.some((item: { type: string }) => item.type === "mock")).toBeTruthy();
+
+  const mockContext = await browser.newContext({ baseURL: origin });
+  const mockPage = await mockContext.newPage();
+  try {
+    await mockPage.goto("/t/acme/idp/mock/start?return_to=/account");
+    await mockPage.waitForURL(/\/account/);
+    await expect(mockPage.locator("body")).toContainText("Mock IdP User");
+    await expect(mockPage.locator("body")).toContainText("Mock Provider");
+  } finally {
+    await mockContext.close();
+  }
+
+  const users = await page.request.get("/api/admin/users?q=mock-idp@acme.test");
+  const user = (await users.json()).items[0];
+  if (user) await page.request.delete(`/api/admin/users/${user.id}`);
+  await page.request.delete("/api/admin/identity-providers/mock");
+});
+
 test("hand-drawn auth template renders and can be restored", async ({ page }) => {
   await login(page);
   const settingsResponse = await page.request.get("/api/admin/settings");

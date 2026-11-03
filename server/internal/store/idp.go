@@ -131,3 +131,8 @@ func (s *Store) ConsumeIdPState(ctx context.Context, hash string) (*models.IdPSt
 	}
 	return &st, err
 }
+
+func (s *Store) DeleteUserIdentities(ctx context.Context, tenantID, userID primitive.ObjectID) error {
+	_, err := s.DB.Collection("user_identities").DeleteMany(ctx, bson.M{"tenant_id": tenantID, "user_id": userID})
+	return err
+}
