@@ -269,6 +269,7 @@ func (a *API) exchangeCode(c *gin.Context, t *models.Tenant, client *models.Clie
 	}
 	a.Svc.Audit(ctx, t.ID, user, "oidc.token.issued", "client", client.ClientID, a.clientIP(c), c.Request.UserAgent(),
 		map[string]interface{}{"scope": code.Scope, "grant": "authorization_code"})
+	a.recordUsage(t.ID, "token_requests", 1, map[string]interface{}{"grant": "authorization_code"})
 	c.JSON(http.StatusOK, resp)
 }
 

@@ -9,6 +9,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"ucenter/internal/billing"
 	"ucenter/internal/config"
 	"ucenter/internal/models"
 	"ucenter/internal/security"
@@ -46,6 +47,7 @@ func main() {
 			LoginTemplate:   "aurora",
 			LoginTagline:    "One identity for the whole Acme ecosystem.",
 		},
+		Subscription: billing.DefaultSubscription(),
 		Settings: func() models.TenantSettings {
 			s := models.DefaultSettings()
 			s.AllowRegistration = true
@@ -64,7 +66,8 @@ func main() {
 			LoginTemplate:   "fintech",
 			LoginTagline:    "Secure access to the Globex platform.",
 		},
-		Settings: models.DefaultSettings(),
+		Subscription: billing.DefaultSubscription(),
+		Settings:     models.DefaultSettings(),
 	})
 
 	users := []struct {

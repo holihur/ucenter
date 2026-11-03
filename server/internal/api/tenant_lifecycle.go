@@ -10,6 +10,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"ucenter/internal/billing"
 	"ucenter/internal/models"
 	"ucenter/internal/security"
 	"ucenter/internal/store"
@@ -117,15 +118,16 @@ func (a *API) checkUserQuota(c *gin.Context) error {
 }
 
 func (a *API) checkUserQuotaFor(ctx context.Context, tenant *models.Tenant) error {
-	if tenant.Settings.QuotaUsers <= 0 {
+	limit := billing.EffectiveLimits(tenant.Subscription, tenant.Settings.QuotaUsers, 0).Users
+	if limit <= 0 {
 		return nil
 	}
 	count, err := a.Store.CountUsersInTenant(ctx, tenant.ID, "")
 	if err != nil {
 		return err
 	}
-	if count >= int64(tenant.Settings.QuotaUsers) {
-		return fmt.Errorf("user quota reached (%d)", tenant.Settings.QuotaUsers)
+	if count >= int64(limit) {
+		return fmt.Errorf("user limit reached (%d)", limit)
 	}
 	return nil
 }
@@ -135,15 +137,16 @@ func (a *API) checkClientQuota(c *gin.Context) error {
 }
 
 func (a *API) checkClientQuotaFor(ctx context.Context, tenant *models.Tenant) error {
-	if tenant.Settings.QuotaClients <= 0 {
+	limit := billing.EffectiveLimits(tenant.Subscription, 0, tenant.Settings.QuotaClients).Clients
+	if limit <= 0 {
 		return nil
 	}
 	count, err := a.Store.CountClients(ctx, tenant.ID)
 	if err != nil {
 		return err
 	}
-	if count >= int64(tenant.Settings.QuotaClients) {
-		return fmt.Errorf("application quota reached (%d)", tenant.Settings.QuotaClients)
+	if count >= int64(limit) {
+		return fmt.Errorf("application limit reached (%d)", limit)
 	}
 	return nil
 }

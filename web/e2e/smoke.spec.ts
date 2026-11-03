@@ -203,6 +203,16 @@ test("Arabic switches the shell to RTL", async ({ page }) => {
   await expect(page.locator("h2")).toContainText("مرحبًا بعودتك");
 });
 
+test("admin can open billing, plans and usage", async ({ page }) => {
+  await login(page);
+  await page.goto("/admin/billing");
+  await expect(page.locator("h1").first()).toContainText("Billing & usage");
+  await expect(page.getByText("Current plan").first()).toBeVisible();
+  await expect(page.getByText("Free", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("API requests this month")).toBeVisible();
+  await expect(page.getByText("Pro", { exact: true }).first()).toBeVisible();
+});
+
 test("admin can open MCP access and mail outbox", async ({ page }) => {
   await login(page);
   await page.goto("/admin/mcp");

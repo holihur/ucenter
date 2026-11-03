@@ -29,6 +29,8 @@ type Store struct {
 	Keys     *mongo.Collection
 	Consents *mongo.Collection
 	Audit    *mongo.Collection
+	Usage    *mongo.Collection
+	Invoices *mongo.Collection
 }
 
 func New(ctx context.Context, uri, dbName string) (*Store, error) {
@@ -56,6 +58,8 @@ func New(ctx context.Context, uri, dbName string) (*Store, error) {
 		Keys:     db.Collection("signing_keys"),
 		Consents: db.Collection("consents"),
 		Audit:    db.Collection("audit_logs"),
+		Usage:    db.Collection("usage_events"),
+		Invoices: db.Collection("invoices"),
 	}, nil
 }
 

@@ -317,6 +317,62 @@ paths:
       summary: List upstream identity providers
       responses:
         '200': { description: Providers }
+  /api/admin/billing:
+    get:
+      tags: [Admin]
+      summary: Billing overview, usage and invoices
+      responses:
+        '200': { description: Subscription, plan, limits, usage and invoices }
+  /api/admin/billing/checkout:
+    post:
+      tags: [Admin]
+      summary: Change plan via the configured billing provider
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [plan]
+              properties:
+                plan: { type: string, enum: [free, pro, enterprise] }
+      responses:
+        '200': { description: Checkout URL and updated subscription }
+  /api/admin/billing/cancel:
+    post:
+      tags: [Admin]
+      summary: Schedule cancellation at period end
+      responses:
+        '200': { description: Updated subscription }
+  /api/admin/billing/resume:
+    post:
+      tags: [Admin]
+      summary: Resume a scheduled cancellation
+      responses:
+        '200': { description: Updated subscription }
+  /api/admin/billing/invoices:
+    get:
+      tags: [Admin]
+      summary: List invoices
+      responses:
+        '200': { description: Invoices }
+  /api/admin/webhooks:
+    get:
+      tags: [Admin]
+      summary: List webhook endpoints and event catalogue
+      responses:
+        '200': { description: Endpoints and events }
+    post:
+      tags: [Admin]
+      summary: Create a webhook endpoint
+      responses:
+        '201': { description: Endpoint and one-time signing secret }
+  /api/admin/webhook-deliveries:
+    get:
+      tags: [Admin]
+      summary: List webhook delivery attempts
+      responses:
+        '200': { description: Delivery log }
   /api/admin/scim:
     get:
       tags: [Admin]

@@ -349,6 +349,13 @@ tenant with `X-Tenant-ID: <id-or-slug>`.
 | `SMTP_USER` / `SMTP_PASS` | empty | SMTP credentials (optional for local relays) |
 | `SMTP_FROM` / `SMTP_FROM_NAME` | `no-reply@ucenter.local` / `UCenter` | From header |
 | `SMTP_TLS` | `false` | `true` for implicit TLS (port 465); STARTTLS is used otherwise |
+| `WEBHOOK_WORKER_SECONDS` | `2` | Webhook delivery polling interval |
+| `WEBHOOK_RETRY_BASE_SECONDS` | `30` | Initial webhook retry delay |
+| `WEBHOOK_MAX_ATTEMPTS` | `5` | Attempts before a delivery becomes a dead letter |
+| `WEBHOOK_ALLOW_PRIVATE` | `false` | Allow localhost/private webhook receivers (development only) |
+| `BILLING_PROVIDER` | `mock` | `mock` or `stripe` (test mode) |
+| `STRIPE_SECRET_KEY` | empty | Stripe test secret key; never commit |
+| `STRIPE_SUCCESS_URL` / `STRIPE_CANCEL_URL` | admin billing URLs | Stripe Checkout redirects |
 
 Theme (`uc_theme`) and language (`uc_lang`) are browser preferences managed by the
 frontend; no server configuration is required.
@@ -524,6 +531,12 @@ admin session cookie for the admin API.
 Tenants can own hostnames, resolve sign-in by hostname and replace the platform mark with
 their own logo/brand name. Duplicate domains are rejected. See
 [docs/CUSTOM-DOMAINS.md](docs/CUSTOM-DOMAINS.md) for DNS, TLS and reverse-proxy examples.
+
+### Billing and usage
+
+Plans, metered API/login/token usage, plan quotas, mock checkout and invoices are built
+in. Set `BILLING_PROVIDER=stripe` with a test key to use the Stripe adapter. See
+[docs/BILLING.md](docs/BILLING.md).
 
 ### API authorization
 

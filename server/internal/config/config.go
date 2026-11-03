@@ -42,6 +42,10 @@ type Config struct {
 	WebhookRetryBase     int
 	WebhookMaxAttempts   int
 	WebhookAllowPrivate  bool
+	BillingProvider      string
+	StripeSecretKey      string
+	StripeSuccessURL     string
+	StripeCancelURL      string
 }
 
 func Load() Config {
@@ -78,6 +82,10 @@ func Load() Config {
 		WebhookRetryBase:     envInt("WEBHOOK_RETRY_BASE_SECONDS", 30),
 		WebhookMaxAttempts:   envInt("WEBHOOK_MAX_ATTEMPTS", 5),
 		WebhookAllowPrivate:  envBool("WEBHOOK_ALLOW_PRIVATE", false),
+		BillingProvider:      env("BILLING_PROVIDER", "mock"),
+		StripeSecretKey:      os.Getenv("STRIPE_SECRET_KEY"),
+		StripeSuccessURL:     env("STRIPE_SUCCESS_URL", env("BASE_URL", "http://localhost:8080")+"/admin/billing?checkout=success"),
+		StripeCancelURL:      env("STRIPE_CANCEL_URL", env("BASE_URL", "http://localhost:8080")+"/admin/billing?checkout=cancel"),
 	}
 	if origins := env("ALLOWED_ORIGINS", ""); origins != "" {
 		c.AllowedOrigins = strings.Split(origins, ",")

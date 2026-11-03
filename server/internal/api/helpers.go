@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-webauthn/webauthn/webauthn"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"ucenter/internal/billing"
 	"ucenter/internal/config"
 	"ucenter/internal/mail"
 	"ucenter/internal/models"
@@ -40,6 +41,7 @@ type API struct {
 	Cipher       *security.Cipher
 	Metrics      *observability.Metrics
 	WebAuthn     *webauthn.WebAuthn
+	Billing      billing.Provider
 	limiter      ratelimit.Limiter
 	mailLimiter  ratelimit.Limiter
 	tokenLimiter ratelimit.Limiter
@@ -59,6 +61,10 @@ func New(s *store.Store, svc *service.Service, cfg config.Config, cipher *securi
 			tokenLimiter = ratelimit.NewRedis(client, 120, time.Minute, cfg.RedisPrefix+"token:", slog.Default())
 		}
 	}
+	provider := billing.Provider(billing.MockProvider{})
+	if cfg.BillingProvider == "stripe" && cfg.StripeSecretKey != "" {
+		provider = billing.NewStripe(cfg.StripeSecretKey, cfg.StripeSuccessURL, cfg.StripeCancelURL)
+	}
 	wa, waErr := newWebAuthn(cfg)
 	if waErr != nil {
 		slog.Warn("webauthn_disabled", "error", waErr)
@@ -71,6 +77,7 @@ func New(s *store.Store, svc *service.Service, cfg config.Config, cipher *securi
 		Cipher:       cipher,
 		Metrics:      metrics,
 		WebAuthn:     wa,
+		Billing:      provider,
 		limiter:      limiter,
 		mailLimiter:  mailLimiter,
 		tokenLimiter: tokenLimiter,

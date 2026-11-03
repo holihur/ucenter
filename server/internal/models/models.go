@@ -33,6 +33,37 @@ type Branding struct {
 	HidePlatformBranding bool   `bson:"hide_platform_branding" json:"hidePlatformBranding"`
 }
 
+type Subscription struct {
+	Plan               string    `bson:"plan" json:"plan"`
+	Status             string    `bson:"status" json:"status"`
+	Provider           string    `bson:"provider" json:"provider"`
+	CustomerID         string    `bson:"customer_id" json:"customerId"`
+	SubscriptionID     string    `bson:"subscription_id" json:"subscriptionId"`
+	CurrentPeriodStart time.Time `bson:"current_period_start" json:"currentPeriodStart"`
+	CurrentPeriodEnd   time.Time `bson:"current_period_end" json:"currentPeriodEnd"`
+	CancelAtPeriodEnd  bool      `bson:"cancel_at_period_end" json:"cancelAtPeriodEnd"`
+}
+
+type UsageEvent struct {
+	ID        primitive.ObjectID     `bson:"_id,omitempty" json:"id"`
+	TenantID  primitive.ObjectID     `bson:"tenant_id" json:"tenantId"`
+	Metric    string                 `bson:"metric" json:"metric"`
+	Quantity  int64                  `bson:"quantity" json:"quantity"`
+	Metadata  map[string]interface{} `bson:"metadata,omitempty" json:"metadata,omitempty"`
+	CreatedAt time.Time              `bson:"created_at" json:"createdAt"`
+}
+
+type Invoice struct {
+	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	TenantID    primitive.ObjectID `bson:"tenant_id" json:"tenantId"`
+	Number      string             `bson:"number" json:"number"`
+	Plan        string             `bson:"plan" json:"plan"`
+	AmountCents int                `bson:"amount_cents" json:"amountCents"`
+	Currency    string             `bson:"currency" json:"currency"`
+	Status      string             `bson:"status" json:"status"`
+	CreatedAt   time.Time          `bson:"created_at" json:"createdAt"`
+}
+
 var LoginTemplates = []string{
 	"aurora", "minimal", "glass", "enterprise", "fintech",
 	"healthcare", "education", "developer", "government", "retail", "handdrawn",
@@ -75,17 +106,18 @@ func DefaultSettings() TenantSettings {
 }
 
 type Tenant struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty" json:"id"`
-	Slug       string             `bson:"slug" json:"slug"`
-	Name       string             `bson:"name" json:"name"`
-	Status     string             `bson:"status" json:"status"`
-	Domains    []string           `bson:"domains" json:"domains"`
-	Branding   Branding           `bson:"branding" json:"branding"`
-	Settings   TenantSettings     `bson:"settings" json:"settings"`
-	DeletedAt  *time.Time         `bson:"deleted_at,omitempty" json:"deletedAt,omitempty"`
-	PurgeAfter *time.Time         `bson:"purge_after,omitempty" json:"purgeAfter,omitempty"`
-	CreatedAt  time.Time          `bson:"created_at" json:"createdAt"`
-	UpdatedAt  time.Time          `bson:"updated_at" json:"updatedAt"`
+	ID           primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Slug         string             `bson:"slug" json:"slug"`
+	Name         string             `bson:"name" json:"name"`
+	Status       string             `bson:"status" json:"status"`
+	Domains      []string           `bson:"domains" json:"domains"`
+	Branding     Branding           `bson:"branding" json:"branding"`
+	Subscription Subscription       `bson:"subscription" json:"subscription"`
+	Settings     TenantSettings     `bson:"settings" json:"settings"`
+	DeletedAt    *time.Time         `bson:"deleted_at,omitempty" json:"deletedAt,omitempty"`
+	PurgeAfter   *time.Time         `bson:"purge_after,omitempty" json:"purgeAfter,omitempty"`
+	CreatedAt    time.Time          `bson:"created_at" json:"createdAt"`
+	UpdatedAt    time.Time          `bson:"updated_at" json:"updatedAt"`
 }
 
 type Membership struct {

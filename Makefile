@@ -26,6 +26,7 @@ help:
 	@echo "  make tenant-smoke Run the tenant lifecycle smoke test"
 	@echo "  make webhook-smoke Run the webhook retry/signature smoke test"
 	@echo "  make authz-smoke   Run the RBAC/API-scope smoke test"
+	@echo "  make billing-smoke Run the metering/billing smoke test"
 	@echo "  make docker-up    Start MongoDB + UCenter with Docker Compose"
 	@echo "  make docker-seed  Seed the Docker deployment"
 
@@ -76,6 +77,9 @@ webhook-smoke:
 
 authz-smoke:
 	BASE_URL=$(BASE_URL) ./scripts/authz-smoke.sh
+
+billing-smoke:
+	BASE_URL=$(BASE_URL) ./scripts/billing-smoke.sh
 
 docker-up:
 	docker compose up -d --build

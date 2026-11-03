@@ -21,6 +21,7 @@ const AdminMail = lazy(() => import("@/pages/AdminMail").then((m) => ({ default:
 const AdminIdentityProviders = lazy(() => import("@/pages/AdminIdentityProviders").then((m) => ({ default: m.AdminIdentityProviders })));
 const AdminScim = lazy(() => import("@/pages/AdminScim").then((m) => ({ default: m.AdminScim })));
 const AdminWebhooks = lazy(() => import("@/pages/AdminWebhooks").then((m) => ({ default: m.AdminWebhooks })));
+const AdminBilling = lazy(() => import("@/pages/AdminBilling").then((m) => ({ default: m.AdminBilling })));
 const AdminSessions = lazy(() => import("@/pages/AdminSessions").then((m) => ({ default: m.AdminSessions })));
 const AdminAudit = lazy(() => import("@/pages/AdminAudit").then((m) => ({ default: m.AdminAudit })));
 const AdminSettings = lazy(() => import("@/pages/AdminSettings").then((m) => ({ default: m.AdminSettings })));
@@ -101,6 +102,7 @@ export default function App() {
           <Route path="identity-providers" element={<AdminIdentityProviders />} />
           <Route path="scim" element={<AdminScim />} />
           <Route path="webhooks" element={<AdminWebhooks />} />
+          <Route path="billing" element={<AdminBilling />} />
           <Route path="sessions" element={<AdminSessions />} />
           <Route path="audit" element={<AdminAudit />} />
           <Route path="settings" element={<AdminSettings />} />

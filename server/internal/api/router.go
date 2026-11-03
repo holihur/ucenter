@@ -95,7 +95,7 @@ func (a *API) Router() *gin.Engine {
 	me.POST("/step-up/webauthn/begin", a.beginWebAuthnStepUp)
 	me.POST("/step-up/webauthn/finish", a.finishWebAuthnStepUp)
 
-	admin := r.Group("/api/admin", a.RequireAdminAuth(), a.RequireAdmin())
+	admin := r.Group("/api/admin", a.RequireAdminAuth(), a.RequireAdmin(), a.meterAdmin())
 	admin.GET("/context", a.adminContext)
 	admin.GET("/overview", a.overview)
 	admin.GET("/permissions", a.listPermissions)
@@ -136,6 +136,12 @@ func (a *API) Router() *gin.Engine {
 	admin.GET("/scim", a.RequirePermission("tenant:read"), a.getSCIMSettings)
 	admin.PATCH("/scim", a.RequirePermission("tenant:write"), a.updateSCIMSettings)
 	admin.POST("/scim/token", a.RequirePermission("tenant:write"), a.rotateSCIMToken)
+
+	admin.GET("/billing", a.RequirePermission("tenant:read"), a.billingOverview)
+	admin.POST("/billing/checkout", a.RequirePermission("tenant:write"), a.billingCheckout)
+	admin.POST("/billing/cancel", a.RequirePermission("tenant:write"), a.billingCancel)
+	admin.POST("/billing/resume", a.RequirePermission("tenant:write"), a.billingResume)
+	admin.GET("/billing/invoices", a.RequirePermission("tenant:read"), a.listInvoices)
 
 	admin.GET("/api-tokens", a.RequirePermission("tenant:write"), a.listAPITokens)
 	admin.POST("/api-tokens", a.RequirePermission("tenant:write"), a.createAPIToken)

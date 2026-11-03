@@ -154,6 +154,7 @@ func (a *API) login(c *gin.Context) {
 	a.Metrics.Login("success")
 	a.Svc.Audit(ctx, tenant.ID, user, "auth.login.success", "session", sess.ID, a.clientIP(c), c.Request.UserAgent(),
 		map[string]interface{}{"mfa": mfaUsed})
+	a.recordUsage(tenant.ID, "logins", 1, map[string]interface{}{"mfa": mfaUsed})
 
 	next := ""
 	if authReq != nil {

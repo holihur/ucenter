@@ -123,6 +123,9 @@ jobs:
           curl -fsS http://127.0.0.1:8080/metrics | grep -q 'ucenter_http_requests_total'
           curl -fsS http://127.0.0.1:8080/login > /dev/null
 
+      - name: Billing smoke test
+        run: BASE_URL=http://127.0.0.1:8080 ./scripts/billing-smoke.sh
+
       - name: Authorization smoke test
         run: BASE_URL=http://127.0.0.1:8080 ./scripts/authz-smoke.sh
 
