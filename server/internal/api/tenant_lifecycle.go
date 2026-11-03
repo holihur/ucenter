@@ -59,7 +59,7 @@ func (a *API) selfSignup(c *gin.Context) {
 		fail(c, http.StatusBadRequest, "invalid_body", "A valid organization slug, name, owner email and password are required")
 		return
 	}
-	if !a.mailLimiter.Allow(c.Request.Context(), "signup|"+a.clientIP(c)) {
+	if ok, _ := a.mailLimiter.Allow(c.Request.Context(), "signup|"+a.clientIP(c)); !ok {
 		fail(c, http.StatusTooManyRequests, "rate_limited", "Too many signup attempts. Please try again later.")
 		return
 	}
