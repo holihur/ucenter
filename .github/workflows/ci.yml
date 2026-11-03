@@ -69,6 +69,36 @@ jobs:
       - name: Validate compose file
         run: docker compose config > /dev/null
 
+      - name: Validate OpenAPI
+        run: |
+          python3 -m pip install --quiet pyyaml
+          python3 - <<'PY'
+          import yaml
+          spec = yaml.safe_load(open("docs/openapi.yaml"))
+          assert spec["openapi"].startswith("3.1"), spec["openapi"]
+          assert "/api/auth/login" in spec["paths"]
+          assert "/api/admin/users" in spec["paths"]
+          print(f"OpenAPI {spec['openapi']}: {len(spec['paths'])} paths")
+          PY
+
+      - name: Go SDK tests
+        working-directory: sdk/go
+        run: go test ./...
+
+      - name: Install TypeScript SDK
+        working-directory: sdk/typescript
+        run: pnpm install --frozen-lockfile
+
+      - name: Build TypeScript SDK
+        working-directory: sdk/typescript
+        run: pnpm build
+
+      - name: Build Vite example
+        working-directory: examples/oidc-vite
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
       - name: Seed demo data
         working-directory: server
         run: go run ./cmd/seed
@@ -92,6 +122,9 @@ jobs:
 
       - name: Tenant lifecycle smoke test
         run: BASE_URL=http://127.0.0.1:8080 ./scripts/tenant-smoke.sh
+
+      - name: TypeScript SDK smoke test
+        run: BASE_URL=http://localhost:8080 pnpm --dir sdk/typescript smoke
 
       - name: SCIM smoke test
         run: BASE_URL=http://127.0.0.1:8080 ./scripts/scim-smoke.sh

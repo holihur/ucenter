@@ -494,3 +494,27 @@ MongoDB (signing keys and encrypted secrets live in the database).
 - The ten locale files cover core navigation, authentication, consent, account and
   dashboard strings; some long-form admin descriptions intentionally fall back to English.
   Add the missing keys to `web/src/locales/*.json` to extend coverage.
+
+## SDKs and examples
+
+- **OpenAPI 3.1**: [`docs/openapi.yaml`](docs/openapi.yaml)
+- **TypeScript SDK**: [`sdk/typescript`](sdk/typescript) — cookie/session-aware admin client,
+  built with `pnpm --dir sdk/typescript build`
+- **Go client**: [`sdk/go`](sdk/go) — standard-library client for login/admin APIs
+- **Vite OIDC example**: [`examples/oidc-vite`](examples/oidc-vite) — public client + PKCE
+- **Next.js/Auth.js snippet**: [`examples/nextjs`](examples/nextjs)
+
+Quick TypeScript usage:
+
+```ts
+import { UCenterClient } from "@ucenter/sdk";
+
+const client = new UCenterClient({ baseURL: "http://localhost:8080" });
+await client.login({ tenant: "acme", email: "owner@acme.test", password: "Password123!" });
+const { items } = await client.listUsers({ pageSize: 5 });
+console.log(items);
+```
+
+The TypeScript SDK accepts a `cookie` option for server-side use; the Go client captures
+the `uc_session` cookie from `Login`. Admin API tokens are currently MCP-scoped; use an
+admin session cookie for the admin API.
