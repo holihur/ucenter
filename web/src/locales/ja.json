@@ -616,5 +616,21 @@
   "This token is shown only once. Store it in your identity provider.": "このトークンは 1 回だけ表示されます。 ID プロバイダーに保存します。",
   "Content-Type": "コンテンツ タイプ",
   "Filter": "フィルター",
-  "Groups": "グループ"
+  "Groups": "グループ",
+  "Use a passkey": "パスキーを使用する",
+  "Use your passkey to finish signing in": "パスキーを使用してサインインを完了してください",
+  "Passkey verification failed": "パスキーの検証に失敗しました",
+  "Passkey added": "パスキーが追加されました",
+  "Passkey removed": "パスキーが削除されました",
+  "Passkeys": "パスキー",
+  "Add passkey": "Face ID、Touch ID、Windows Hello、またはセキュリティ キーを使用してサインインします。パスキーを追加",
+  "Added {date}": "{date} を追加しました",
+  "Last used {date}": "最後に使用したのは {date}",
+  "Remove": "削除",
+  "No passkeys registered yet.": "パスキーはまだ登録されていません。",
+  "Reset MFA": "MFA をリセット",
+  "Reset MFA?": "MFA をリセットしますか?",
+  "This will disable TOTP and remove all passkeys for {email}.": "これにより、TOTP が無効になり、{email} のすべてのパスキーが削除されます。",
+  "MFA reset": "MFA リセット",
+  "Unable to reset MFA": "MFA をリセットできません"
 }

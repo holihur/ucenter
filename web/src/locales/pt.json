@@ -616,5 +616,22 @@
   "This token is shown only once. Store it in your identity provider.": "Este token é mostrado apenas uma vez. Armazene-o em seu provedor de identidade.",
   "Content-Type": "Tipo de conteúdo",
   "Filter": "Filtrar",
-  "Groups": "Grupos"
+  "Groups": "Grupos",
+  "Use a passkey": "Use uma senha",
+  "Use your passkey to finish signing in": "Use sua senha para concluir o login",
+  "Passkey verification failed": "Falha na verificação da senha",
+  "Passkey added": "Chave de acesso adicionada",
+  "Passkey removed": "Chave de acesso removida",
+  "Passkeys": "Chaves de acesso",
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "Use Face ID, Touch ID, Windows Hello ou uma chave de segurança para fazer login.",
+  "Add passkey": "Adicionar senha",
+  "Added {date}": "Adicionado {date}",
+  "Last used {date}": "Última utilização {date}",
+  "Remove": "Remover",
+  "No passkeys registered yet.": "Nenhuma senha registrada ainda.",
+  "Reset MFA": "Redefinir MFA",
+  "Reset MFA?": "Redefinir MFA?",
+  "This will disable TOTP and remove all passkeys for {email}.": "Isso desativará TOTP e removerá todas as chaves de acesso de {email}.",
+  "MFA reset": "MFA redefinir",
+  "Unable to reset MFA": "Não foi possível redefinir MFA"
 }

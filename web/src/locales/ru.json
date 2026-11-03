@@ -616,5 +616,22 @@
   "This token is shown only once. Store it in your identity provider.": "Этот токен отображается только один раз. Сохраните его у своего поставщика удостоверений.",
   "Content-Type": "Тип контента",
   "Filter": "Фильтр",
-  "Groups": "Группы"
+  "Groups": "Группы",
+  "Use a passkey": "Используйте пароль",
+  "Use your passkey to finish signing in": "Используйте свой пароль для завершения входа в систему",
+  "Passkey verification failed": "Проверка пароля не удалась",
+  "Passkey added": "Ключ доступа добавлен",
+  "Passkey removed": "Ключ доступа удален",
+  "Passkeys": "Ключи доступа",
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "Для входа используйте Face ID, Touch ID, Windows Hello или ключ безопасности.",
+  "Add passkey": "Добавить ключ доступа",
+  "Added {date}": "Добавлен {date}",
+  "Last used {date}": "Последнее использование {date}",
+  "Remove": "Удалить",
+  "No passkeys registered yet.": "Коды доступа еще не зарегистрированы.",
+  "Reset MFA": "Сбросить MFA",
+  "Reset MFA?": "Сбросить MFA?",
+  "This will disable TOTP and remove all passkeys for {email}.": "Это отключит TOTP и удалит все ключи доступа для {email}.",
+  "MFA reset": "MFA сброс",
+  "Unable to reset MFA": "Невозможно сбросить MFA"
 }

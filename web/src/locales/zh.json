@@ -616,5 +616,22 @@
   "This token is shown only once. Store it in your identity provider.": "该令牌仅显示一次。将其存储在您的身份提供商中。",
   "Content-Type": "内容类型",
   "Filter": "过滤",
-  "Groups": "团体"
+  "Groups": "团体",
+  "Use a passkey": "使用密钥",
+  "Use your passkey to finish signing in": "使用您的密钥完成登录",
+  "Passkey verification failed": "密钥验证失败",
+  "Passkey added": "添加密钥",
+  "Passkey removed": "密钥已删除",
+  "Passkeys": "万能钥匙",
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "使用 Face ID、Touch ID、Windows Hello 或安全密钥登录。",
+  "Add passkey": "添加密钥",
+  "Added {date}": "添加了 {date}",
+  "Last used {date}": "最后使用 {date}",
+  "Remove": "删除",
+  "No passkeys registered yet.": "尚未注册密钥。",
+  "Reset MFA": "重置 MFA",
+  "Reset MFA?": "重置MFA？",
+  "This will disable TOTP and remove all passkeys for {email}.": "这将禁用 TOTP 并删除 {email} 的所有密钥。",
+  "MFA reset": "MFA 重置",
+  "Unable to reset MFA": "无法重置 MFA"
 }

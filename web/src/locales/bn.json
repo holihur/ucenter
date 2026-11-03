@@ -616,5 +616,22 @@
   "This token is shown only once. Store it in your identity provider.": "এই টোকেন শুধুমাত্র একবার দেখানো হয়. আপনার পরিচয় প্রদানকারীতে এটি সংরক্ষণ করুন।",
   "Content-Type": "বিষয়বস্তুর প্রকার",
   "Filter": "ফিল্টার",
-  "Groups": "গোষ্ঠী"
+  "Groups": "গোষ্ঠী",
+  "Use a passkey": "একটি পাসকি ব্যবহার করুন",
+  "Use your passkey to finish signing in": "সাইন ইন করা শেষ করতে আপনার পাসকি ব্যবহার করুন",
+  "Passkey verification failed": "পাসকি যাচাইকরণ ব্যর্থ হয়েছে",
+  "Passkey added": "পাসকি যোগ করা হয়েছে",
+  "Passkey removed": "পাসকি সরানো হয়েছে",
+  "Passkeys": "পাসকি",
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "সাইন ইন করতে ফেস আইডি, টাচ আইডি, উইন্ডোজ হ্যালো বা একটি নিরাপত্তা কী ব্যবহার করুন।",
+  "Add passkey": "পাসকি যোগ করুন",
+  "Added {date}": "যোগ করা হয়েছে {date}",
+  "Last used {date}": "সর্বশেষ ব্যবহৃত {date}",
+  "Remove": "সরান",
+  "No passkeys registered yet.": "কোন পাসকি এখনও নিবন্ধিত.",
+  "Reset MFA": "রিসেট করুন MFA",
+  "Reset MFA?": "MFA রিসেট করবেন?",
+  "This will disable TOTP and remove all passkeys for {email}.": "এটি TOTP নিষ্ক্রিয় করবে এবং {email} এর জন্য সমস্ত পাসকি সরিয়ে দেবে।",
+  "MFA reset": "MFA রিসেট",
+  "Unable to reset MFA": "রিসেট করতে অক্ষম MFA"
 }

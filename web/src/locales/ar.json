@@ -616,5 +616,22 @@
   "This token is shown only once. Store it in your identity provider.": "يتم عرض هذا الرمز مرة واحدة فقط. قم بتخزينه في مزود الهوية الخاص بك.",
   "Content-Type": "نوع المحتوى",
   "Filter": "تصفية",
-  "Groups": "المجموعات"
+  "Groups": "المجموعات",
+  "Use a passkey": "استخدم مفتاح المرور",
+  "Use your passkey to finish signing in": "استخدم مفتاح المرور الخاص بك لإنهاء تسجيل الدخول",
+  "Passkey verification failed": "فشل التحقق من مفتاح المرور",
+  "Passkey added": "تمت إضافة مفتاح المرور",
+  "Passkey removed": "تمت إزالة مفتاح المرور",
+  "Passkeys": "مفاتيح المرور",
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "استخدم Face ID أو Touch ID أو Windows Hello أو مفتاح أمان لتسجيل الدخول.",
+  "Add passkey": "إضافة مفتاح المرور",
+  "Added {date}": "تمت الإضافة {date}",
+  "Last used {date}": "آخر استخدام {date}",
+  "Remove": "إزالة",
+  "No passkeys registered yet.": "لم يتم تسجيل أي مفاتيح مرور حتى الآن.",
+  "Reset MFA": "إعادة تعيين MFA",
+  "Reset MFA?": "إعادة تعيين MFA؟",
+  "This will disable TOTP and remove all passkeys for {email}.": "سيؤدي هذا إلى تعطيل TOTP وإزالة كافة مفاتيح المرور لـ {email}.",
+  "MFA reset": "MFA إعادة تعيين",
+  "Unable to reset MFA": "غير قادر على إعادة تعيين MFA"
 }

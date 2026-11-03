@@ -616,5 +616,22 @@
   "This token is shown only once. Store it in your identity provider.": "यह टोकन केवल एक बार दिखाया जाता है. इसे अपने पहचान प्रदाता में संग्रहित करें.",
   "Content-Type": "सामग्री-प्रकार",
   "Filter": "फ़िल्टर",
-  "Groups": "समूह"
+  "Groups": "समूह",
+  "Use a passkey": "पासकी का प्रयोग करें",
+  "Use your passkey to finish signing in": "साइन इन पूरा करने के लिए अपनी पासकी का उपयोग करें",
+  "Passkey verification failed": "पासकी सत्यापन विफल रहा",
+  "Passkey added": "पासकी ने जोड़ा",
+  "Passkey removed": "पासकी हटा दी गई",
+  "Passkeys": "पासकीज़",
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "साइन इन करने के लिए फेस आईडी, टच आईडी, विंडोज हैलो या सुरक्षा कुंजी का उपयोग करें।",
+  "Add passkey": "पासकी जोड़ें",
+  "Added {date}": "जोड़ा गया{date}",
+  "Last used {date}": "अंतिम बार उपयोग किया गया {date}",
+  "Remove": "निकालना",
+  "No passkeys registered yet.": "अभी तक कोई पासकी पंजीकृत नहीं है.",
+  "Reset MFA": "MFA रीसेट करें",
+  "Reset MFA?": "MFA रीसेट करें?",
+  "This will disable TOTP and remove all passkeys for {email}.": "यह TOTP को अक्षम कर देगा और {email} के लिए सभी पासकी हटा देगा।",
+  "MFA reset": "MFA रीसेट",
+  "Unable to reset MFA": "MFA रीसेट करने में असमर्थ"
 }

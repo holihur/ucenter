@@ -616,5 +616,22 @@
   "This token is shown only once. Store it in your identity provider.": "Ce jeton n'est affiché qu'une seule fois. Stockez-le dans votre fournisseur d'identité.",
   "Content-Type": "Type de contenu",
   "Filter": "Filtrer",
-  "Groups": "Groupes"
+  "Groups": "Groupes",
+  "Use a passkey": "Utiliser un mot de passe",
+  "Use your passkey to finish signing in": "Utilisez votre mot de passe pour terminer la connexion",
+  "Passkey verification failed": "La vérification du mot de passe a échoué",
+  "Passkey added": "Clé d'accès ajoutée",
+  "Passkey removed": "Clé d'accès supprimée",
+  "Passkeys": "Clés d'accès",
+  "Use Face ID, Touch ID, Windows Hello or a security key to sign in.": "Utilisez Face ID, Touch ID, Windows Hello ou une clé de sécurité pour vous connecter.",
+  "Add passkey": "Ajouter un mot de passe",
+  "Added {date}": "Ajout de {date}",
+  "Last used {date}": "Dernière utilisation {date}",
+  "Remove": "Supprimer",
+  "No passkeys registered yet.": "Aucun mot de passe enregistré pour l'instant.",
+  "Reset MFA": "Réinitialiser MFA",
+  "Reset MFA?": "Réinitialiser MFA ?",
+  "This will disable TOTP and remove all passkeys for {email}.": "Cela désactivera TOTP et supprimera tous les mots de passe pour {email}.",
+  "MFA reset": "MFA réinitialiser",
+  "Unable to reset MFA": "Impossible de réinitialiser MFA"
 }
