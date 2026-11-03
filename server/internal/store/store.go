@@ -115,6 +115,17 @@ func (s *Store) EnsureIndexes(ctx context.Context) error {
 			{Keys: bson.D{{Key: "token_hash", Value: 1}}, Options: options.Index().SetUnique(true)},
 			{Keys: bson.D{{Key: "expires_at", Value: 1}}, Options: options.Index().SetExpireAfterSeconds(0)},
 		}},
+		{s.DB.Collection("identity_providers"), []mongo.IndexModel{
+			{Keys: bson.D{{Key: "tenant_id", Value: 1}, {Key: "type", Value: 1}}, Options: options.Index().SetUnique(true)},
+		}},
+		{s.DB.Collection("user_identities"), []mongo.IndexModel{
+			{Keys: bson.D{{Key: "tenant_id", Value: 1}, {Key: "provider", Value: 1}, {Key: "subject", Value: 1}}, Options: options.Index().SetUnique(true)},
+			{Keys: bson.D{{Key: "tenant_id", Value: 1}, {Key: "provider", Value: 1}, {Key: "union_id", Value: 1}}, Options: options.Index().SetSparse(true)},
+			{Keys: bson.D{{Key: "tenant_id", Value: 1}, {Key: "user_id", Value: 1}}},
+		}},
+		{s.DB.Collection("idp_states"), []mongo.IndexModel{
+			{Keys: bson.D{{Key: "expires_at", Value: 1}}, Options: options.Index().SetExpireAfterSeconds(0)},
+		}},
 	}
 	for _, sp := range specs {
 		if _, err := sp.coll.Indexes().CreateMany(ctx, sp.models); err != nil {

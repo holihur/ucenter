@@ -53,6 +53,7 @@ func (a *API) Router() *gin.Engine {
 	public := r.Group("/api/public")
 	public.GET("/tenants", a.listPublicTenants)
 	public.GET("/tenants/:slug", a.getPublicTenant)
+	public.GET("/tenants/:slug/identity-providers", a.publicIdentityProviders)
 	public.GET("/permissions", a.listPermissions)
 
 	auth := r.Group("/api/auth")
@@ -79,6 +80,8 @@ func (a *API) Router() *gin.Engine {
 	me.POST("/mfa/enable", a.enableMFA)
 	me.POST("/mfa/disable", a.disableMFA)
 	me.POST("/mfa/recovery-codes", a.regenerateRecoveryCodes)
+	me.GET("/identities", a.myIdentities)
+	me.DELETE("/identities/:id", a.unlinkIdentity)
 
 	admin := r.Group("/api/admin", a.RequireAuth(), a.RequireAdmin())
 	admin.GET("/context", a.adminContext)
@@ -94,6 +97,9 @@ func (a *API) Router() *gin.Engine {
 	admin.POST("/users/:id/revoke-sessions", a.RequirePermission("sessions:write"), a.revokeUserSessions)
 	admin.POST("/users/:id/send-invite", a.RequirePermission("users:write"), a.sendUserInvite)
 	admin.GET("/mail-outbox", a.RequirePermission("tenant:write"), a.mailOutbox)
+	admin.GET("/identity-providers", a.RequirePermission("tenant:read"), a.listIdentityProviders)
+	admin.PUT("/identity-providers/:type", a.RequirePermission("tenant:write"), a.putIdentityProvider)
+	admin.DELETE("/identity-providers/:type", a.RequirePermission("tenant:write"), a.deleteIdentityProvider)
 
 	admin.GET("/roles", a.RequirePermission("roles:read"), a.listRoles)
 	admin.POST("/roles", a.RequirePermission("roles:write"), a.createRole)
@@ -123,6 +129,9 @@ func (a *API) Router() *gin.Engine {
 	admin.PATCH("/tenants/:id", a.RequirePermission("platform:manage"), a.updateTenant)
 
 	r.Any("/mcp", a.mcpAuth(), a.mcpHTTPHandler())
+
+	r.GET("/t/:slug/idp/:type/start", a.startIdentityProvider)
+	r.GET("/t/:slug/idp/:type/callback", a.callbackIdentityProvider)
 
 	oidc := r.Group("/t/:slug")
 	oidc.GET("/.well-known/openid-configuration", a.discovery)

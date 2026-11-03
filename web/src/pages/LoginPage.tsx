@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { AlertCircle, ArrowRight, Loader2, LockKeyhole, Mail, ShieldCheck } from "lucide-react";
+import { AlertCircle, ArrowRight, Building2, Globe, KeyRound, Loader2, LockKeyhole, Mail, MessageCircle, ShieldCheck, Wallet } from "lucide-react";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/AuthShell";
 import { TenantLogo } from "@/components/TenantLogo";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { api, setAdminTenantId, type AuthRequestInfo, type PublicTenant, type User } from "@/lib/api";
+import type { IdentityProviderItem } from "@/lib/api";
 import { applyBrandColor } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { useErrorText, useI18n } from "@/lib/i18n";
@@ -63,6 +64,13 @@ export function LoginPage() {
     return tenants.find((t) => t.slug === selectedTenant) ?? tenants[0] ?? null;
   }, [request, tenants, selectedTenant]);
 
+  const providersQuery = useQuery({
+    queryKey: ["public-idps", tenant?.slug],
+    queryFn: () => api.get<{ items: Pick<IdentityProviderItem, "type" | "name" | "mode">[] }>(`/public/tenants/${tenant!.slug}/identity-providers`),
+    enabled: Boolean(tenant?.slug),
+    retry: false,
+  });
+
   useEffect(() => {
     if (!requestId && !selectedTenant && tenants.length > 0) {
       setSelectedTenant(tenants[0].slug);
@@ -100,6 +108,18 @@ export function LoginPage() {
       toast.error(errorText(err));
       setContinuing(false);
     }
+  }
+
+  function startIdP(type: string) {
+    if (!tenant) return;
+    const sp = new URLSearchParams();
+    if (requestId) {
+      sp.set("request", requestId);
+      sp.set("return_to", `/consent?request=${requestId}`);
+    } else {
+      sp.set("return_to", "/admin");
+    }
+    window.location.assign(`/t/${tenant.slug}/idp/${type}/start?${sp.toString()}`);
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -145,6 +165,18 @@ export function LoginPage() {
   const helpParts = supportEmail
     ? t("Need help? Contact {email}", { email: "__EMAIL__" }).split("__EMAIL__")
     : [];
+  const idpError = params.get("idp_error") || "";
+  const idpErrorMessage: Record<string, string> = {
+    unavailable: t("This provider is not configured or enabled."),
+    config: t("This provider is not configured or enabled."),
+    state: t("This sign-in request expired. Please try again."),
+    exchange: t("Unable to sign in with this provider. Please try again."),
+    mfa_required: t("MFA is enabled for this account. Sign in with your password and verification code."),
+    account_not_linked: t("No account is linked to this provider. Sign in with your password first, then link it from Account."),
+    email_exists_use_password: t("An account with this email already exists. Sign in with your password to link it."),
+    linked: t("This sign-in method is already linked to another account."),
+  };
+  const providers = providersQuery.data?.items ?? [];
   const expired = request && (request.status === "expired" || request.status === "completed" || request.status === "denied");
   const canContinue = Boolean(request?.status === "authenticated" && request.user && !reauth);
 
@@ -355,6 +387,43 @@ export function LoginPage() {
             </p>
           )}
         </form>
+      )}
+
+      {idpError && (
+        <Alert variant="destructive" className="mt-5">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{idpErrorMessage[idpError] || t("Unable to sign in with this provider. Please try again.")}</AlertDescription>
+        </Alert>
+      )}
+
+      {!canContinue && !expired && !requestQuery.error && providers.length > 0 && (
+        <div className="mt-6 space-y-3">
+          <div className="relative flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-[11px] uppercase tracking-wide text-muted-foreground">{t("or continue with")}</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {providers.map((provider) => {
+              const Icon =
+                provider.type === "alipay"
+                  ? Wallet
+                  : provider.type.includes("wechat") || provider.type === "wecom"
+                    ? MessageCircle
+                    : provider.type === "dingtalk" || provider.type === "feishu"
+                      ? Building2
+                      : provider.type === "custom_oauth2" || provider.type === "custom_oidc"
+                        ? KeyRound
+                        : Globe;
+              return (
+                <Button key={provider.type} type="button" variant="outline" onClick={() => startIdP(provider.type)}>
+                  <Icon className="h-4 w-4" />
+                  <span className="truncate">{provider.name}</span>
+                </Button>
+              );
+            })}
+          </div>
+        </div>
       )}
 
       {tenant?.branding?.supportEmail && (

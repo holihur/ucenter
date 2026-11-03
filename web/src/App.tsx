@@ -17,6 +17,7 @@ const AdminRoles = lazy(() => import("@/pages/AdminRoles").then((m) => ({ defaul
 const AdminClients = lazy(() => import("@/pages/AdminClients").then((m) => ({ default: m.AdminClients })));
 const AdminMcp = lazy(() => import("@/pages/AdminMcp").then((m) => ({ default: m.AdminMcp })));
 const AdminMail = lazy(() => import("@/pages/AdminMail").then((m) => ({ default: m.AdminMail })));
+const AdminIdentityProviders = lazy(() => import("@/pages/AdminIdentityProviders").then((m) => ({ default: m.AdminIdentityProviders })));
 const AdminSessions = lazy(() => import("@/pages/AdminSessions").then((m) => ({ default: m.AdminSessions })));
 const AdminAudit = lazy(() => import("@/pages/AdminAudit").then((m) => ({ default: m.AdminAudit })));
 const AdminSettings = lazy(() => import("@/pages/AdminSettings").then((m) => ({ default: m.AdminSettings })));
@@ -93,6 +94,7 @@ export default function App() {
           <Route path="clients" element={<AdminClients />} />
           <Route path="mcp" element={<AdminMcp />} />
           <Route path="mail" element={<AdminMail />} />
+          <Route path="identity-providers" element={<AdminIdentityProviders />} />
           <Route path="sessions" element={<AdminSessions />} />
           <Route path="audit" element={<AdminAudit />} />
           <Route path="settings" element={<AdminSettings />} />

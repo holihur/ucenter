@@ -300,3 +300,43 @@ type EmailToken struct {
 	Used      bool               `bson:"used" json:"used"`
 	CreatedAt time.Time          `bson:"created_at" json:"createdAt"`
 }
+
+type IdentityProvider struct {
+	ID            primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	TenantID      primitive.ObjectID `bson:"tenant_id" json:"tenantId"`
+	Type          string             `bson:"type" json:"type"`
+	Name          string             `bson:"name" json:"name"`
+	Enabled       bool               `bson:"enabled" json:"enabled"`
+	ConfigEnc     string             `bson:"config_enc" json:"-"`
+	AutoProvision bool               `bson:"auto_provision" json:"autoProvision"`
+	DefaultRoles  []string           `bson:"default_roles" json:"defaultRoles"`
+	TrustEmail    bool               `bson:"trust_email" json:"trustEmail"`
+	CreatedAt     time.Time          `bson:"created_at" json:"createdAt"`
+	UpdatedAt     time.Time          `bson:"updated_at" json:"updatedAt"`
+}
+
+type UserIdentity struct {
+	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	TenantID    primitive.ObjectID `bson:"tenant_id" json:"tenantId"`
+	UserID      primitive.ObjectID `bson:"user_id" json:"userId"`
+	Provider    string             `bson:"provider" json:"provider"`
+	Subject     string             `bson:"subject" json:"subject"`
+	UnionID     string             `bson:"union_id,omitempty" json:"unionId,omitempty"`
+	Email       string             `bson:"email,omitempty" json:"email,omitempty"`
+	Name        string             `bson:"name,omitempty" json:"name,omitempty"`
+	Avatar      string             `bson:"avatar,omitempty" json:"avatar,omitempty"`
+	CreatedAt   time.Time          `bson:"created_at" json:"createdAt"`
+	LastLoginAt *time.Time         `bson:"last_login_at,omitempty" json:"lastLoginAt,omitempty"`
+}
+
+type IdPState struct {
+	ID         string              `bson:"_id" json:"id"`
+	TenantID   primitive.ObjectID  `bson:"tenant_id" json:"tenantId"`
+	Provider   string              `bson:"provider" json:"provider"`
+	ReturnTo   string              `bson:"return_to" json:"returnTo"`
+	RequestID  string              `bson:"request_id,omitempty" json:"requestId,omitempty"`
+	BindUserID *primitive.ObjectID `bson:"bind_user_id,omitempty" json:"bindUserId,omitempty"`
+	ExpiresAt  time.Time           `bson:"expires_at" json:"expiresAt"`
+	Used       bool                `bson:"used" json:"used"`
+	CreatedAt  time.Time           `bson:"created_at" json:"createdAt"`
+}

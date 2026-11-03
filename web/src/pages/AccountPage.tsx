@@ -37,7 +37,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/lib/auth";
 import { useErrorText, useI18n } from "@/lib/i18n";
-import { api, type SessionItem } from "@/lib/api";
+import { api, type IdentityProviderItem, type LinkedIdentity, type SessionItem } from "@/lib/api";
 import { displayIP, formatDate, initials } from "@/lib/utils";
 
 export function AccountPage() {
@@ -71,6 +71,17 @@ export function AccountPage() {
     queryKey: ["my-sessions"],
     queryFn: () => api.get<{ items: SessionItem[] }>("/auth/sessions"),
     enabled: Boolean(me),
+  });
+  const identitiesQuery = useQuery({
+    queryKey: ["my-identities"],
+    queryFn: () => api.get<{ items: LinkedIdentity[] }>("/me/identities"),
+    enabled: Boolean(me),
+  });
+  const providersQuery = useQuery({
+    queryKey: ["public-idps", me?.tenant.slug],
+    queryFn: () => api.get<{ items: Pick<IdentityProviderItem, "type" | "name" | "mode">[] }>(`/public/tenants/${me!.tenant.slug}/identity-providers`),
+    enabled: Boolean(me?.tenant.slug),
+    retry: false,
   });
 
   useEffect(() => {
@@ -392,6 +403,68 @@ export function AccountPage() {
                 </Button>
               )}
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <KeyRound className="h-4 w-4 text-primary" />
+              {t("Linked sign-in methods")}
+            </CardTitle>
+            <CardDescription>{t("Connect WeChat, Alipay, WeCom, social or a custom identity provider.")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {identitiesQuery.isLoading ? (
+              <Skeleton className="h-12 w-full" />
+            ) : identitiesQuery.data?.items.length ? (
+              identitiesQuery.data.items.map((identity) => (
+                <div key={identity.id} className="flex items-center justify-between gap-3 rounded-lg border p-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium">{identity.providerName}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {identity.email || identity.name || identity.subject}
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-destructive"
+                    onClick={async () => {
+                      try {
+                        await api.del(`/me/identities/${identity.id}`);
+                        toast.success(t("Sign-in method unlinked"));
+                        queryClient.invalidateQueries({ queryKey: ["my-identities"] });
+                      } catch (err) {
+                        toast.error(errorText(err));
+                      }
+                    }}
+                  >
+                    {t("Unlink")}
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <p className="py-2 text-sm text-muted-foreground">{t("No linked sign-in methods yet.")}</p>
+            )}
+            {(providersQuery.data?.items ?? []).filter(
+              (provider) => !(identitiesQuery.data?.items ?? []).some((identity) => identity.provider === provider.type),
+            ).length > 0 && (
+              <div className="flex flex-wrap gap-2 border-t pt-3">
+                {(providersQuery.data?.items ?? [])
+                  .filter((provider) => !(identitiesQuery.data?.items ?? []).some((identity) => identity.provider === provider.type))
+                  .map((provider) => (
+                    <Button
+                      key={provider.type}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.location.assign(`/t/${me.tenant.slug}/idp/${provider.type}/start?bind=1&return_to=/account`)}
+                    >
+                      {t("Link {provider}", { provider: provider.name })}
+                    </Button>
+                  ))}
+              </div>
+            )}
           </CardContent>
         </Card>
 

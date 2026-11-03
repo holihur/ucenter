@@ -71,6 +71,7 @@ export const api = {
   get: <T>(path: string) => request<T>(path),
   post: <T>(path: string, body?: unknown) => request<T>(path, { method: "POST", body }),
   patch: <T>(path: string, body?: unknown) => request<T>(path, { method: "PATCH", body }),
+  put: <T>(path: string, body?: unknown) => request<T>(path, { method: "PUT", body }),
   del: <T>(path: string) => request<T>(path, { method: "DELETE" }),
 };
 
@@ -225,6 +226,41 @@ export interface SessionItem {
   expiresAt: string;
   authTime: string;
   current?: boolean;
+}
+
+export interface IdPField {
+  key: string;
+  label: string;
+  secret: boolean;
+  required: boolean;
+  placeholder?: string;
+  help?: string;
+}
+
+export interface IdentityProviderItem {
+  type: string;
+  name: string;
+  category: string;
+  mode: string;
+  description: string;
+  fields: IdPField[];
+  enabled: boolean;
+  configured: boolean;
+  autoProvision: boolean;
+  defaultRoles: string[];
+  trustEmail: boolean;
+  config: Record<string, string>;
+}
+
+export interface LinkedIdentity {
+  id: string;
+  provider: string;
+  providerName: string;
+  subject: string;
+  email?: string;
+  name?: string;
+  createdAt: string;
+  lastLoginAt?: string;
 }
 
 export interface AuthRequestInfo {
