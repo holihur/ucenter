@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { AlertCircle, ArrowRight, Building2, Globe, KeyRound, Loader2, LockKeyhole, Mail, MessageCircle, ShieldCheck, Wallet } from "lucide-react";
 import { toast } from "sonner";
@@ -31,6 +31,7 @@ interface LoginResponse {
 export function LoginPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { refresh } = useAuth();
   const { t } = useI18n();
   const errorText = useErrorText();
@@ -125,7 +126,13 @@ export function LoginPage() {
         window.location.assign(out.redirectUrl);
         return;
       }
-      if (out.next === "consent") navigate(`/consent?request=${requestId}`);
+      if (out.next === "consent") {
+        // The login page cached this request while it was still pending. Drop it
+        // before entering the consent screen, otherwise ConsentPage sees the
+        // stale "pending" status and bounces straight back to /login.
+        queryClient.removeQueries({ queryKey: ["auth-request", requestId] });
+        navigate(`/consent?request=${requestId}`);
+      }
     } catch (err) {
       toast.error(errorText(err));
       setContinuing(false);

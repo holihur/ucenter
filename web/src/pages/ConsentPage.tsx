@@ -46,8 +46,11 @@ export function ConsentPage() {
       setError(t("This authorization request is no longer valid. Please return to the application and try again."));
       return;
     }
+    // A cached pending record can coexist with an in-flight refetch after the
+    // login page completes the request. Wait for the fresh status instead of
+    // bouncing back to /login.
     if (request.status === "pending") {
-      navigate(`/login?request=${requestId}`, { replace: true });
+      if (!query.isFetching) navigate(`/login?request=${requestId}`, { replace: true });
       return;
     }
     started.current = true;

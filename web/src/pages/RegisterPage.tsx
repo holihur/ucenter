@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, ArrowRight, Loader2, LockKeyhole, Mail, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { AuthShell } from "@/components/AuthShell";
@@ -23,6 +23,7 @@ interface RegisterResponse {
 export function RegisterPage() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { refresh } = useAuth();
   const { t } = useI18n();
   const errorText = useErrorText();
@@ -88,6 +89,7 @@ export function RegisterPage() {
           return;
         }
         if (out.next === "consent") {
+          queryClient.removeQueries({ queryKey: ["auth-request", requestId] });
           navigate(`/consent?request=${requestId}`);
           return;
         }
